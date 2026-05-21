@@ -1,0 +1,218 @@
+﻿<Window x:Class="HMI_Master_KX7500.Modules.Language.LanguageTranslationEditorView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HMI_Master_KX7500.Modules.Language"
+        xmlns:cmd="http://www.galasoft.ch/mvvmlight"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        x:Name="LanguageTranslationEditorWindow" Height="800"
+        ResizeMode="NoResize" TextElement.FontSize="16"
+        TextElement.FontWeight="Regular" TextOptions.TextFormattingMode="Ideal" IsVisibleChanged="LanguageTranslationEditorWindow_IsVisibleChanged"
+        TextOptions.TextRenderingMode="Auto" Title="{DynamicResource LanguageTranslationEditor}"
+        Topmost="True" Width="1000" WindowStartupLocation="CenterScreen">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <cmd:EventToCommand Command="{Binding LanguageTranslationEditorViewClosingCommand}"
+                                EventArgsConverter="{StaticResource EventArgsConverter}"
+                                EventArgsConverterParameter="{Binding ElementName=LanguageTranslationEditorWindow}"
+                                PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0">
+            <GroupBox.Header>
+                <Grid Height="25">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Source="pack://application:,,,/HMI_Master_KX7500;component/Icon/Pencil.png" />
+                    <TextBlock Grid.Column="1" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                               Text="{DynamicResource Edit}" />
+                </Grid>
+            </GroupBox.Header>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}" Text="{DynamicResource Key}" />
+
+                <ComboBox Grid.Column="1" x:Name="LanguageTranslationKeyComboBox"
+                          DisplayMemberPath="LanguageTranslationKey"
+                          IsEditable="True" ItemsSource="{Binding LanguageTranslationEditList}">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+
+                <Button Grid.Column="2" Command="{Binding AddLanguageTranslationKeyCommand}"
+                        CommandParameter="{Binding ElementName=LanguageTranslationKeyComboBox}"
+                        IsEnabled="{Binding ElementName=LanguageTranslationKeyComboBox, Path=Text, Converter={StaticResource StringToBooleanConverter}}"
+                        Height="60">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" Source="pack://application:,,,/HMI_Master_KX7500;component/Icon/Add.png" Width="35" />
+                        <TextBlock Grid.Column="1" Style="{StaticResource ValueTextBlockStyle}"
+                                   Text="{DynamicResource Add}" />
+                    </Grid>
+                </Button>
+
+                <Button Grid.Column="3" Command="{Binding DeleteLanguageTranslationKeyCommand}"
+                        CommandParameter="{Binding ElementName=LanguageTranslationKeyComboBox, Path=SelectedItem}"
+                        IsEnabled="{Binding ElementName=LanguageTranslationKeyComboBox, Path=SelectedItem, Converter={StaticResource NullToBooleanConverter}}"
+                        Height="60">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" Source="pack://application:,,,/HMI_Master_KX7500;component/Icon/TrashCan.png" Width="35" />
+                        <TextBlock Grid.Column="1" Style="{StaticResource ValueTextBlockStyle}"
+                                   Text="{DynamicResource Delete}" />
+                    </Grid>
+                </Button>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1">
+            <GroupBox.Header>
+                <Grid Height="25">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Source="pack://application:,,,/HMI_Master_KX7500;component/Icon/Redesign.png" />
+                    <TextBlock Grid.Column="1" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                               Text="{DynamicResource Translation}" />
+                </Grid>
+            </GroupBox.Header>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="300" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource CenterTextBlock}"
+                           Text="{DynamicResource Key}" />
+                <ItemsControl Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Language}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource CenterTextBlock}"
+                                       Text="{Binding LanguageName}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                    <ItemsControl ItemsSource="{Binding LanguageTranslationEditList}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" MinWidth="300" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox Grid.Column="0" Margin="10 2" Text="{Binding LanguageTranslationKey}">
+                                        <TextBox.Style>
+                                            <Style TargetType="{x:Type TextBox}"
+                                                   BasedOn="{StaticResource TextBoxStyle}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="Text" Value="">
+                                                        <Setter Property="Background" Value="Red" />
+                                                    </Trigger>
+                                                    <Trigger Property="Text" Value="{x:Null}">
+                                                        <Setter Property="Background" Value="Red" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+
+                                    <ItemsControl Grid.Column="1"
+                                                  ItemsSource="{Binding LanguageTranslationValueList, IsAsync=True}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <UniformGrid Rows="1" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBox Margin="10 2" Text="{Binding LanguageTranslationValue}">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="{x:Type TextBox}"
+                                                               BasedOn="{StaticResource TextBoxStyle}">
+                                                            <Style.Triggers>
+                                                                <Trigger Property="Text" Value="">
+                                                                    <Setter Property="Background" Value="Red" />
+                                                                </Trigger>
+                                                                <Trigger Property="Text" Value="{x:Null}">
+                                                                    <Setter Property="Background" Value="Red" />
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBox.Style>
+                                                </TextBox>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </GroupBox>
+
+        <Button Grid.Row="2" Command="{Binding SaveLanguageTranslationEditListCommand}"
+                CommandParameter="{Binding ElementName=LanguageTranslationEditorWindow}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0" Source="pack://application:,,,/HMI_Master_KX7500;component/Icon/Diskette.png" Width="35" />
+                <TextBlock Grid.Column="1" Style="{StaticResource ValueTextBlockStyle}"
+                           Text="{DynamicResource Save}" />
+            </Grid>
+        </Button>
+    </Grid>
+</Window>

@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HMI_Master_KX7500"
+             xmlns:mahApps="http://metro.mahapps.com/winfx/xaml/controls">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ItemsControl x:Name="ItemsControlSettings"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"  ItemsSource="{Binding SettingsGeneralInterfaceModel.SettingsGeneralModel.SettingsGeneralGroupList}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <GroupBox Header="{Binding SettingsGeneralGroupName}" VerticalAlignment="Top">
+                        <StackPanel>
+                            <ItemsControl x:Name="ItemsControlNumericUpDown"
+                                          VirtualizingPanel.IsVirtualizing="True"
+                                          VirtualizingPanel.VirtualizationMode="Recycling"
+                                          ItemsSource="{Binding SettingsGeneralGroupNumericList}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <UniformGrid Rows="1">
+                                            <TextBlock Text="{Binding SettingsGeneralGroupNumericName}" VerticalAlignment="Center"/>
+                                            <mahApps:NumericUpDown HorizontalContentAlignment="Center"
+                                                                   x:Name="SettingsNumericUpDown"
+                                                                   Tag="{Binding}"
+                                                                   HasDecimals="True"
+                                                                   Minimum="{Binding SettingsGeneralGroupNumericMinimum}"
+                                                                   Maximum="{Binding SettingsGeneralGroupNumericMaximum}"
+                                                                   Value="{Binding SettingsGeneralGroupNumericValue}"/>
+                                            <Button Content="{DynamicResource Set}" Command="{Binding SetSettingsGeneralGroupNumericCommand}" CommandParameter="{Binding ElementName=SettingsNumericUpDown}"/>
+                                        </UniformGrid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl x:Name="ItemsControlToggle"
+                                          ItemsSource="{Binding SettingsGeneralGroupToggleList}"
+                                          VirtualizingPanel.IsVirtualizing="True"
+                                          VirtualizingPanel.VirtualizationMode="Recycling">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <UniformGrid Rows="1">
+                                            <TextBlock Text="{Binding SettingsGeneralGroupToggleName}" VerticalAlignment="Center"/>
+                                            <UniformGrid Rows="1">
+                                                <TextBlock Text="{DynamicResource Off}" Style="{StaticResource RightTextBlock}"/>
+                                                <mahApps:ToggleSwitch x:Name="GeneralToggleSwitch"
+                                                                          IsChecked="{Binding SettingsGeneralGroupToggleValue, Converter={StaticResource StringToBooleanConverter}}"
+                                                                          CheckChangedCommand="{Binding SettingsGeneralGroupToggleCommand}" CheckChangedCommandParameter="{Binding}"
+                                                                          VerticalAlignment="Center">
+
+                                                </mahApps:ToggleSwitch>
+                                                <TextBlock Text="{DynamicResource On}" Style="{StaticResource LeftTextBlock}"/>
+                                            </UniformGrid>
+                                        </UniformGrid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl x:Name="ItemsControlReadOnly"
+                                          ItemsSource="{Binding SettingsGeneralGroupReadOnlyList}"
+                                          VirtualizingPanel.IsVirtualizing="True"
+                                          VirtualizingPanel.VirtualizationMode="Recycling">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <UniformGrid Rows="1">
+                                            <TextBlock Text="{Binding SettingsGeneralGroupReadOnlyName}" VerticalAlignment="Center"/>
+                                            <UniformGrid Rows="1">
+                                                <TextBlock Text="{DynamicResource Off}" Style="{StaticResource RightTextBlock}"/>
+                                                <mahApps:ToggleSwitch x:Name="GeneralReadOnlySwitch"
+                                                                          IsChecked="{Binding SettingsGeneralGroupReadOnlyValue, Converter={StaticResource StringToBooleanConverter}}"
+                                                                          
+                                                                          VerticalAlignment="Center" IsEnabled="False">
+
+                                                </mahApps:ToggleSwitch>
+                                                <!--<Button x:Name="GeneralReadOnly" Background="Aqua"></Button>-->
+                                                <TextBlock Text="{DynamicResource On}" Style="{StaticResource LeftTextBlock}"/>
+                                            </UniformGrid>
+                                        </UniformGrid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </GroupBox>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

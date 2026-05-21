@@ -1,0 +1,310 @@
+﻿<Window x:Class="HMI_Master_KX7500.Modules.Frame.FrameView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:HMI_Master_KX7500" xmlns:liveCharts="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:pentaUserAccount="clr-namespace:Pentamaster.HMI.Modules.UserAccount;assembly=Pentamaster" Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}" TextElement.FontSize="16" TextElement.FontWeight="Regular"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}" TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Auto" Title="HMI"
+        WindowState="Maximized" Closing="HMI_Application_Closing">
+
+    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=ToggleButtonMenu, Path=IsChecked}">
+        <materialDesign:DrawerHost.LeftDrawerContent>
+            <Grid MinWidth="200">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="16" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Text="Menu"
+                        VerticalAlignment="Center" />
+                <ToggleButton Grid.Row="0" Grid.Column="1" Style="{StaticResource MaterialDesignHamburgerToggleButton}" HorizontalAlignment="Right" Margin="16"
+                        IsChecked="{Binding ElementName=ToggleButtonMenu, Path=IsChecked}" />
+                <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ListBoxMenu" VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling" SelectionChanged="listBoxMenu_SelectionChanged">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel Height="40">
+                                <Image DockPanel.Dock="Left" Source="{Binding MenuImage}" />
+                                <TextBlock DockPanel.Dock="Right" Padding="10 0" Text="{Binding MenuName}" VerticalAlignment="Center" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.Triggers>
+                        <EventTrigger RoutedEvent="ListBox.PreviewMouseUp" SourceName="ListBoxMenu">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <BooleanAnimationUsingKeyFrames Storyboard.Target="{Binding ElementName=ToggleButtonMenu}"
+                                            Storyboard.TargetProperty="(ToggleButton.IsChecked)">
+                                        <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                                    </BooleanAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ListBox.Triggers>
+                </ListBox>
+            </Grid>
+        </materialDesign:DrawerHost.LeftDrawerContent>
+
+        <materialDesign:DialogHost x:Name="DialogHostPrompt">
+            <materialDesign:DialogHost.DialogContent>
+                <Grid>
+                    <Grid x:Name="GridUserAccountSignInOut" />
+                </Grid>
+            </materialDesign:DialogHost.DialogContent>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <!--<ColumnDefinition Width="Auto" />-->
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7" Background="{DynamicResource PrimaryHueMidBrush}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:ColorZone Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="6">
+                        <DockPanel>
+                            <ToggleButton DockPanel.Dock="Left" x:Name="ToggleButtonMenu" Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+
+                            <materialDesign:PopupBox DockPanel.Dock="Right">
+                                <StackPanel Margin="6">
+                                    <pentaUserAccount:UserAccountSignInOutView>
+                                        <pentaUserAccount:UserAccountSignInOutView.DataContext>
+                                            <pentaUserAccount:UserAccountSignInOutViewModel />
+                                        </pentaUserAccount:UserAccountSignInOutView.DataContext>
+                                    </pentaUserAccount:UserAccountSignInOutView>
+                                    <TextBlock x:Name="TextBlockUserAccountUserLevel" Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                            HorizontalAlignment="Center" />
+                                    <Separator />
+                                    <TextBlock x:Name="TextBlockAssemblyVersion" Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                            HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </materialDesign:PopupBox>
+
+                            <!--<Border DockPanel.Dock="Right" Margin="0 0 40 0" CornerRadius="5" Background="White">
+                                <DockPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Icon/Redesign.png" />
+                                    <TextBlock Text="Language :" VerticalAlignment="Center" />
+                                    <ComboBox HorizontalContentAlignment="Center"
+                                              x:Name="ComboBoxLanguage" Width="150" SelectionChanged="comboBoxLanguage_SelectionChanged" />
+                                </DockPanel>
+                            </Border>-->
+
+                            <TextBlock DockPanel.Dock="Left" x:Name="TextBlockMachineName" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </DockPanel>
+                    </materialDesign:ColorZone>
+                </Grid>
+
+                <GroupBox x:Name="GroupBoxMachineStatus" Grid.Row="1" Grid.Column="0" Header="{DynamicResource MachineStatus}">
+                    <Viewbox>
+                        <TextBlock x:Name="TextBlockMachineStatus" FontWeight="Bold" Uid="{Binding MachineStatusNode}" Style="{DynamicResource CenterTextBlock}" />
+                    </Viewbox>
+                </GroupBox>
+
+                <GroupBox Grid.Row="2" Grid.Column="0" x:Name="GroupBoxMachineMode" Header="{DynamicResource MachineMode}">
+                    <Viewbox>
+                        <TextBlock x:Name="TextBlockMachineMode" Uid="{Binding MachineModeNode}" Style="{DynamicResource CenterTextBlock}" />
+                    </Viewbox>
+                </GroupBox>
+
+                <GroupBox Header="{DynamicResource Error}" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
+                    <Viewbox Height="150" HorizontalAlignment="Left">
+                        <local:AlarmModule DockPanel.Dock="Right" x:Name="AlarmBox" />
+                    </Viewbox>
+                </GroupBox>
+
+                <GroupBox Header="{DynamicResource Warning}" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2">
+                    <Viewbox Height="150" HorizontalAlignment="Left">
+                        <local:AlarmModule DockPanel.Dock="Right" x:Name="WarningBox" />
+                    </Viewbox>
+                </GroupBox>
+
+                <UniformGrid Rows="1" Grid.Row="1" Grid.RowSpan="2" Grid.Column="3">
+                    <!--this one dont know either prod uph or other uph, need confirm with plc-->
+                    <GroupBox Header="{DynamicResource MachineUph}">
+                        <liveCharts:Gauge x:Name="GaugeMachineUPH" From="0" />
+                    </GroupBox>
+                </UniformGrid>
+
+                <GroupBox x:Name="GroupBoxWorkOrderID" Grid.Row="1" Grid.Column="4" Header="Work Order ID">
+                    <Viewbox>
+                        <TextBlock x:Name="TextBlockWorkOrderID" FontWeight="Bold" Uid="{Binding WorkOrderIDNode}" Style="{DynamicResource CenterTextBlock}" />
+                    </Viewbox>
+                </GroupBox>
+
+                <GroupBox x:Name="GroupBoxRecipe" Grid.Row="2" Grid.Column="4" Header="Recipe">
+                    <Viewbox>
+                        <TextBlock x:Name="TextBlockRecipe" FontWeight="Bold" Uid="{Binding RecipeNode}" Style="{DynamicResource CenterTextBlock}" />
+                    </Viewbox>
+                </GroupBox>
+
+                <!--<UniformGrid Rows="1" Grid.Row="1" Grid.RowSpan="2" Grid.Column="4">
+                    <GroupBox>
+                        <ItemsControl x:Name="ItemsControlTaktUPH" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <UniformGrid Rows="2" Margin="5 5">
+                                        <TextBlock Text="{Binding TaktUPH_Name}" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" />
+                                        <Border CornerRadius="7" BorderBrush="Black" BorderThickness="1.5">
+                                            <TextBlock HorizontalAlignment="Center" Uid="{Binding Node}" Text="{Binding NodeValue}" />
+                                        </Border>
+                                    </UniformGrid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </GroupBox>
+
+                    <GroupBox>
+                        <local:LanguageView HorizontalAlignment="Center" />
+                    </GroupBox>
+                </UniformGrid>-->
+
+                <!--<GroupBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="5">
+                    <Image Source="pack://application:,,,/Pentamaster;component/HMI/Icons/PentamasterLogo.ico" />
+                </GroupBox>-->
+
+                <!--<GroupBox x:Name="GroupBox12mmScrewAmount" Grid.Row="1" Grid.Column="5" Header="Bowl 1">
+                    <Viewbox>
+                        <TextBlock x:Name="TextBlock12mmScrewAmount" FontWeight="Bold" Style="{DynamicResource CenterTextBlock}" />
+                    </Viewbox>
+                </GroupBox>
+
+                <GroupBox x:Name="GroupBox22mmScrewAmount" Grid.Row="2" Grid.Column="5" Header="Bowl 2">
+                    <Viewbox>
+                        <TextBlock x:Name="TextBlock22mmScrewAmount" FontWeight="Bold" Style="{DynamicResource CenterTextBlock}" />
+                    </Viewbox>
+                </GroupBox>-->
+
+                <!--<GroupBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="6">
+                    <StackPanel x:Name="SideColumnStackPanel" Visibility="Collapsed">
+                        <TextBox x:Name="SideColumnTextBox"></TextBox>
+                        <Button Click="SideColumnStartClick">Start</Button>
+                    </StackPanel>
+                </GroupBox>-->
+
+                <GroupBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="6">
+                    <!--<Image Source="pack://application:,,,/Pentamaster;component/HMI/Icons/PentamasterLogo.ico" />-->
+                    <!--<StackPanel>-->
+                        <Image Source="/Modules/Frame/Entegris_Corp_Logo.jpg" Height="100"/>
+                        <!--<Button Content="Test" Click="btnTest_Click"/>
+                    </StackPanel>-->
+                </GroupBox>
+
+                <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Header="{Binding ElementName=ListBoxMenu, Path=SelectedItem.MenuName}">
+                    <ContentControl Content="{Binding ElementName=ListBoxMenu, Path=SelectedItem.MenuContent}" />
+                </GroupBox>
+
+                <GroupBox Grid.Row="3" Grid.Column="6">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <ItemsControl x:Name="ItemsControl_ControlPanel" VirtualizingPanel.VirtualizationMode="Recycling"
+                                    VirtualizingPanel.IsVirtualizing="True">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+
+                                            <ItemsControl x:Name="ItemsControlButton" ItemsSource="{Binding ButtonModelList}"
+                                                    VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.IsVirtualizing="True">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <VirtualizingStackPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+
+                                                        <Button Uid="{Binding ButtonNode}" Tag="{Binding }" Click="buttonControlPanelClick"
+                                                                Style="{DynamicResource MaterialDesignFlatButton}" Height="100">
+                                                            <DockPanel>
+                                                                <TextBlock DockPanel.Dock="Bottom" Style="{DynamicResource CenterTextBlock}"
+                                                                        Text="{Binding ButtonName}" />
+                                                                <Image DockPanel.Dock="Top" Source="{Binding ButtonImage}" />
+                                                            </DockPanel>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                            <ItemsControl x:Name="ItemsControlToggle" ItemsSource="{Binding ToggleModelList}"
+                                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <VirtualizingStackPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <ToggleButton x:Name="ToggleButtonEngineeringMode" Uid="{Binding ToggleNode}" Tag="{Binding }"
+                                                                IsChecked="{Binding ToggleValue}" Click="toggleControlPanelClick"
+                                                                IsEnabled="{Binding ToggleIsEnabled}">
+                                                            <DockPanel>
+                                                                <TextBlock DockPanel.Dock="Bottom" Style="{DynamicResource CenterTextBlock}"
+                                                                        Text="{Binding ToggleName}" />
+
+                                                                <Image DockPanel.Dock="Top" Source="{Binding ToggleImage}" />
+                                                            </DockPanel>
+                                                            <ToggleButton.Style>
+                                                                <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                                                    <Setter Property="Height" Value="100" />
+                                                                    <Style.Triggers>
+                                                                        <Trigger Property="IsChecked" Value="True">
+                                                                            <Setter Property="Background" Value="Green" />
+                                                                        </Trigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </ToggleButton.Style>
+                                                        </ToggleButton>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                            <Button Content="Test" Click="btnTest_Click" Visibility="Collapsed"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <GroupBox x:Name="GroupBoxWarrantyDate" Header="Warranty Due Date" VerticalAlignment="Bottom">
+                                <Viewbox>
+                                    <TextBlock x:Name="TextBlockWarrantyDate" Style="{DynamicResource CenterTextBlock}" Text="7-12-2023"/>
+                                </Viewbox>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </GroupBox>
+            </Grid>
+        </materialDesign:DialogHost>
+    </materialDesign:DrawerHost>
+</Window>

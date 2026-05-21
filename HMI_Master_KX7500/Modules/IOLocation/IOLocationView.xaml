@@ -1,0 +1,533 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.Modules.IOLocation.IOLocationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HMI_Master_KX7500.Modules.IOLocation"
+             mc:Ignorable="d" 
+             d:DesignHeight="0" d:DesignWidth="0">
+
+    <TabControl x:Name="TabControl_IOLocation">
+        <TabItem Tag="0">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Viewbox HorizontalAlignment="Left">
+                    <UniformGrid Columns="1">
+
+                        <!--#region Row1st-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="1">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A1.jpg" Height="300"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="2">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A2.jpg" Height="300"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="3" Width="507">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A3.jpg" Height="300"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                        <!--#region Row2nd-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="4">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A4.jpg" Height="300"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="5">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A5.jpg" Height="300"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="6">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A6.jpg" Height="300"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                        <!--#region Row3rd-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="7">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A7.jpg" Height="300"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="8">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A8.jpg" Height="300"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="9">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A9.jpg" Height="300" Width="504"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                        <!--#region Row4th-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="10">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AA.png" Height="300" Width="571"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="11">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AB.png" Height="300"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="12">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AC.png" Height="265"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                        <!--#region Row5th-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="13">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AD.png" Height="265" Width="541"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="14">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AE.png" Height="300" Width="510"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="15">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AF.png" Height="318" Width="595"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                        <!--#region Row6th-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="16">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AG.png" Height="265" Width="505"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="17">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AH.png" Height="300" Width="576"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="18">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AJ.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                        <!--#region Row7th-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="19">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AK.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="20">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AL.png" Height="300" Width="510"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="21">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AM.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                        <!--#region Row8th-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="22">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AN.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="23">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B1.png" Height="300" Width="510"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="24">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B2.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+
+                        <!--#region Row9th-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="25">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B3.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button> 
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="26">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B4.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button> 
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="27">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B5.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button>
+                        </DockPanel>
+                        <!--#endregion-->
+                        <!--#region Row10th-->
+                        <DockPanel>
+                            <Button Background="Transparent" BorderBrush="Transparent"
+                                    Click="ioLocation_Click" Tag="28">
+                                <StackPanel>
+                                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B6.png" Height="265" Width="581"/>
+                                </StackPanel>
+                            </Button> 
+                           
+                        </DockPanel>
+                        <!--#endregion-->
+                    </UniformGrid>
+                </Viewbox>
+            </ScrollViewer>
+        </TabItem>
+
+        <TabItem Tag="1">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A1.jpg"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="2">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A2.jpg"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="3">
+            <DockPanel>
+                <Button Content="{DynamicResource Back}" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A3.jpg"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="4">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A4.jpg"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="5">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A5.jpg" Width="1180"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="6">
+            <DockPanel>
+                <Button Content="{DynamicResource Back}" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A6.jpg"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="7">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A7.jpg"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="8">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A8.jpg"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="9">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/A9.jpg"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="10">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AA.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="11">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AB.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="12">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AC.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="13">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AD.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="14">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AE.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="15">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AF.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="16">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AG.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="17">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AH.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="18">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AJ.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="19">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AK.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="20">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AL.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="21">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AM.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="22">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/AN.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="23">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B1.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="24">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B2.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="25">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B3.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+
+        <TabItem Tag="26">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B4.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+        <TabItem Tag="27">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B5.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+        <TabItem Tag="28">
+            <DockPanel>
+                <Button Content="Back" HorizontalAlignment="Right" DockPanel.Dock="Top" Tag="0" Click="ioLocation_Click"/>
+
+                <Viewbox>
+                    <Image Source="/HMI_Master_KX7500;component/Images/IOLocation/B6.png"/>
+                </Viewbox>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
+</UserControl>
+

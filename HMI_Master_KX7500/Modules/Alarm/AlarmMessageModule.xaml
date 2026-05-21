@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.AlarmMessageModule"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:HMI_Master_KX7500"
+             mc:Ignorable="d"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Grid HorizontalAlignment="Stretch" MinHeight="150" VerticalAlignment="Center" Width="700">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel  x:Name="SPMessage">
+
+            <StackPanel  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Orientation="Horizontal">
+                <TextBlock  TextWrapping="Wrap" FontWeight="Bold" FontSize="30" Padding="0 0 5 0" Text="{DynamicResource Message:}"></TextBlock>
+                <TextBlock  MaxWidth="495" FontSize="30" TextWrapping="Wrap" Text="{Binding Message}" />
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2" Orientation="Horizontal">
+                <TextBlock TextWrapping="Wrap" FontWeight="Bold" FontSize="30" Padding="0 0 5 0" Text="{DynamicResource Action:}"></TextBlock>
+                <TextBlock  MaxWidth="505" FontSize="30" TextWrapping="Wrap" Text="{Binding Action}" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="3" Orientation="Horizontal">
+            <!--<TextBlock TextWrapping="Wrap" FontSize="18" FontWeight="Bold" Padding="0 0 2 0" Text="{Binding Type}" />-->
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="4" Orientation="Horizontal">
+            <TextBlock FontSize="30" FontWeight="Bold" TextWrapping="Wrap" Text="{DynamicResource Code:}"></TextBlock>
+            <TextBlock FontSize="30" TextWrapping="Wrap" Text="{Binding Code}" />
+            <TextBlock FontSize="30" TextWrapping="Wrap" Padding="20 0 0 0" Text="{Binding Time}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.RowSpan="2" HorizontalAlignment="Right"  Margin="2">
+            <Button Style="{DynamicResource MaterialDesignFloatingActionMiniButton}"
+                            Command="{x:Static materialDesign:Transitioner.MovePreviousCommand}">
+                <materialDesign:PackIcon Kind="StepBackward" />
+            </Button>
+            <Button Name="NextItem" Margin="10 0 0 0" Style="{DynamicResource MaterialDesignFloatingActionMiniButton}"
+                            Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" Click="NextItem_Click">
+                <materialDesign:PackIcon Kind="StepForward" />
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

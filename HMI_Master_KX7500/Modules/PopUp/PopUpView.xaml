@@ -1,0 +1,76 @@
+﻿<Window x:Class="HMI_Master_KX7500.Modules.PopUp.PopUpView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HMI_Master_KX7500.Modules.PopUp"
+        xmlns:cmd="http://www.galasoft.ch/mvvmlight"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:mahApps="http://metro.mahapps.com/winfx/xaml/controls"
+        x:Name="PopUpWindow" MaxHeight="{DynamicResource DefaultWindowHeight}"
+        MaxWidth="{DynamicResource DefaultWindowWidth}" ResizeMode="CanMinimize"  ShowInTaskbar="True"
+        Width="800" Height="450" TextElement.FontSize="{DynamicResource DefaultFontSize}"
+        TextElement.FontWeight="Regular" TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto" Topmost="True" WindowStartupLocation="CenterScreen">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding PopUpViewLoadedCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <cmd:EventToCommand Command="{Binding PopUpViewClosingCommand}" PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <ScrollViewer>
+        <ItemsControl DataContext="{Binding PopUpInterfaceModel}" ItemsSource="{Binding PopUpList}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Visibility="{Binding PopUp, Converter={StaticResource BooleanToVisibilityConverter}}" Text="{Binding PopUpMessage}" FontSize="30" MaxWidth="600" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center"/>
+                        <WrapPanel Grid.Row="1" Visibility="{Binding PopUp, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center">
+                            <ItemsControl ItemsSource="{Binding PopUpActionList}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Rows="1"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding PopUpActionCommand}"
+                                            Content="{Binding PopUpActionName}"
+                                            CommandParameter="{Binding}" FontSize="20" Height="60"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </WrapPanel>
+
+                        <WrapPanel Grid.Row="2" Visibility="{Binding PopUp, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center">
+                            <ItemsControl ItemsSource="{Binding PopUpActionList}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Rows="1"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <mahApps:NumericUpDown x:Name="NumericUpDownLotQuantity" Value="{Binding PopUpInputQuantity}" Minimum="0" Visibility="{Binding PopUpEnableInput, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </WrapPanel>
+                    </Grid>                    
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</Window>

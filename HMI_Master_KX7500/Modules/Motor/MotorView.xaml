@@ -1,0 +1,814 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.MotorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HMI_Master_KX7500"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mahApps="http://metro.mahapps.com/winfx/xaml/controls">
+    
+    <UserControl.Resources>
+        <Style x:Key="ValueTextBlockStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Padding" Value="4 2"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.23"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="KeyTextBlockStyle" TargetType="{x:Type TextBlock}"
+           BasedOn="{StaticResource ValueTextBlockStyle}">
+            <Setter Property="FontWeight" Value="Black"/>
+        </Style>
+
+        <Style x:Key="TitleTextBlockStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource ValueTextBlockStyle}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+    </UserControl.Resources>
+
+
+    <GroupBox DataContext="{Binding MotorInterfaceModel}" HorizontalAlignment="Left">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <WrapPanel Grid.Row="0">
+                <Button Grid.Column="2" Command="{Binding ImportMotorAxisTeachingPositionCommand}"
+                        Visibility="{Binding AllowImportMotorAxisTeachingPosition, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0"
+                               Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Import.png"/>
+
+                        <TextBlock Grid.Column="1" Style="{StaticResource ValueTextBlockStyle}"
+                                   Text="{DynamicResource ImportMotorAxisTeachingPosition}"/>
+                    </Grid>
+                </Button>
+
+                <Button Grid.Column="3" Command="{Binding ExportMotorAxisTeachingPositionCommand}"
+                        Visibility="{Binding AllowExportMotorAxisTeachingPosition, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0"
+                               Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Export.png"/>
+
+                        <TextBlock Grid.Column="1" Style="{StaticResource ValueTextBlockStyle}"
+                                   Text="{DynamicResource ExportMotorAxisTeachingPosition}"/>
+                    </Grid>
+                </Button>
+            </WrapPanel>
+
+            <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" DataContext="{Binding MotorModel}">
+                <DockPanel>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center"
+                           FontWeight="Bold" Text="{DynamicResource Axis}" FontSize="20"/>
+
+                    <ComboBox Grid.Column="1" x:Name="AxisComboBox" DisplayMemberPath="AxisName"
+                              ItemsSource="{Binding AxisListView}" HorizontalContentAlignment="Center">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding AxisSelectionChangedCommand}"
+                                                       CommandParameter="{Binding ElementName=AxisComboBox}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </DockPanel>
+            </GroupBox>
+
+            <ScrollViewer Grid.Row="2" Grid.Column="0"
+                          DataContext="{Binding ElementName=AxisComboBox, Path=SelectedItem}"
+                          Visibility="{Binding ElementName=AxisComboBox, Path=SelectedItem, Converter={StaticResource NullToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="90"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                              DataContext="{Binding AxisGeneralModel}" Header="{DynamicResource General}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ItemsControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" IsHitTestVisible="False"
+                                          ItemsSource="{Binding AxisGeneralStatusListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                  Content="{Binding AxisGeneralStatusName}"
+                                                  IsChecked="{Binding AxisGeneralStatus}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="0" Grid.Column="1"
+                                          ItemsSource="{Binding AxisGeneralNumericListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}"
+                                                       Text="{Binding AxisGeneralNumericName}"/>
+
+                                            <mahApps:NumericUpDown Grid.Column="1" Tag="{Binding}"
+                                                                   x:Name="AxisGeneralNumericUpDown"
+
+                                                                   HasDecimals="True"
+                                                                   HideUpDownButtons="True"
+                                                                   IsReadOnly="True"
+                                                                   Value="{Binding AxisGeneralNumeric}"/>
+
+                                            <!--<Button Grid.Column="2" Command="{Binding SetAxisGeneralNumericCommand}"
+                                                    CommandParameter="{Binding ElementName=AxisGeneralNumericUpDown}"
+                                                    IsEnabled="{Binding ElementName=AxisGeneralNumericUpDown, Path=Value, Converter={StaticResource NullToBooleanConverter}}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Image Grid.Column="0"
+                                                           Width="50" Height="50"
+                                                           Source="pack://application:,,,/HMI;component/Icons/Flash.png"/>
+
+                                                    <TextBlock Grid.Column="1" Text="{DynamicResource Set}"
+                                                               Style="{StaticResource ValueTextBlockStyle}"/>
+                                                </Grid>
+                                            </Button>-->
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="1" Grid.Column="1"
+                                          ItemsSource="{Binding AxisGeneralActionListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding AxisGeneralActionCommand}"
+                                                CommandParameter="{Binding}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Image Grid.Column="0" Source="{Binding AxisGeneralActionIcon}"
+                                                       Width="50" Height="50"/>
+
+                                                <TextBlock Grid.Column="1" Text="{Binding AxisGeneralActionName}"
+                                                           Style="{StaticResource ValueTextBlockStyle}"/>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="2" Grid.Column="0" DataContext="{Binding AxisHomingModel}"
+                              Header="{DynamicResource Homing}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <ItemsControl Grid.Row="0" IsHitTestVisible="False"
+                                          ItemsSource="{Binding AxisHomingStatusListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="2"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                  Content="{Binding AxisHomingStatusName}"
+                                                  IsChecked="{Binding AxisHomingStatus}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding AxisHomingActionListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding AxisHomingActionCommand}"
+                                                CommandParameter="{Binding}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Image Grid.Column="0" Source="{Binding AxisHomingActionIcon}"
+                                                       Width="50" Height="50"/>
+
+                                                <TextBlock Grid.Column="1" Text="{Binding AxisHomingActionName}"
+                                                           Style="{StaticResource ValueTextBlockStyle}"/>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </GroupBox>
+
+                    <!--<GroupBox Grid.Row="3" Grid.Column="0" DataContext="{Binding AxisTeachingModel}"
+                              Header="{DynamicResource Teaching}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="130"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}"
+                                       Text="{DynamicResource Position}"/>
+
+                            <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+                                      x:Name="AxisTeachingPositionComboBox"
+                                      HorizontalContentAlignment="Center"
+                                      DisplayMemberPath="AxisTeachingPositionName"
+                                      ItemsSource="{Binding AxisTeachingPositionListView}"/>
+
+                            <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                          ItemsSource="{Binding ElementName=AxisTeachingPositionComboBox, Path=SelectedItem.AxisTeachingPositionNumericStatusListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" MinWidth="130"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}"
+                                                       Text="{Binding AxisTeachingPositionNumericStatusName}"/>
+
+                                            <mahApps:NumericUpDown Grid.Column="1" HideUpDownButtons="True"
+                                                                   IsReadOnly="True"
+                                                                   HasDecimals="True"
+                                                                   Value="{Binding AxisTeachingPositionNumericStatus}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                          ItemsSource="{Binding ElementName=AxisTeachingPositionComboBox, Path=SelectedItem.AxisTeachingPositionNumericListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" MinWidth="130"/>
+                                                <ColumnDefinition Width="Auto" MinWidth="130"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}"
+                                                       Text="{Binding AxisTeachingPositionNumericName}"/>
+
+                                            <mahApps:NumericUpDown Grid.Column="1" Tag="{Binding}"
+                                                                   x:Name="AxisTeachingPositionNumericUpDown"
+                                                                   Maximum="{Binding AxisTeachingPositionNumericMaximum}"
+                                                                   Minimum="{Binding AxisTeachingPositionNumericMinimum}"
+                                                                   HasDecimals="True"
+                                                                   Value="{Binding AxisTeachingPositionNumeric}"/>
+
+                                            <Button Grid.Column="2"
+                                                    Command="{Binding SetAxisTeachingPositionNumericCommand}"
+                                                    CommandParameter="{Binding ElementName=AxisTeachingPositionNumericUpDown}"
+                                                    IsEnabled="{Binding ElementName=AxisTeachingPositionNumericUpDown, Path=Value, Converter={StaticResource NullToBooleanConverter}}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Image Grid.Column="0"
+                                                           Width="50" Height="50"
+                                                           Source="pack://application:,,,/HMI;component/Icons/Flash.png"/>
+
+                                                    <TextBlock Grid.Column="1" Text="{DynamicResource Set}"
+                                                               Style="{StaticResource ValueTextBlockStyle}"/>
+                                                </Grid>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" IsHitTestVisible="False"
+                                          ItemsSource="{Binding ElementName=AxisTeachingPositionComboBox, Path=SelectedItem.AxisTeachingPositionStatusListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                  Content="{Binding AxisTeachingPositionStatusName}"
+                                                  IsChecked="{Binding AxisTeachingPositionStatus}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="1" Grid.RowSpan="3" Grid.Column="3"
+                                          ItemsSource="{Binding ElementName=AxisTeachingPositionComboBox, Path=SelectedItem.AxisTeachingPositionActionListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding AxisTeachingPositionActionCommand}"
+                                                CommandParameter="{Binding}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Image Grid.Column="0"
+                                                       Width="50" Height="50"
+                                                       Source="{Binding AxisTeachingPositionActionIcon}"/>
+
+                                                <TextBlock Grid.Column="1"
+                                                           Style="{StaticResource ValueTextBlockStyle}"
+                                                           Text="{Binding AxisTeachingPositionActionName}"/>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </GroupBox>-->
+
+                    <GroupBox Grid.Row="0" Grid.Column="1" DataContext="{Binding AxisPositionModel}"
+                              Header="{DynamicResource Position}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ItemsControl Grid.Column="0" IsHitTestVisible="False"
+                                          ItemsSource="{Binding AxisPositionStatusListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                  Content="{Binding AxisPositionStatusName}"
+                                                  IsChecked="{Binding AxisPositionStatus}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Column="1" VerticalAlignment="Center"
+                                          ItemsSource="{Binding AxisPositionNumericStatusListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}"
+                                                       Text="{Binding AxisPositionNumericStatusName}"/>
+
+                                            <mahApps:NumericUpDown Grid.Column="1" HideUpDownButtons="True"
+                                                                   IsReadOnly="True"
+                                                                   Value="{Binding AxisPositionNumericStatus}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"
+                              DataContext="{Binding AxisManualJogModel}" Header="{DynamicResource ManualJog}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto" MinWidth="130"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!--<Button Grid.Column="0" Background="Red" 
+                                    IsHitTestVisible="{Binding AxisManualJog}"
+                                        Opacity="{Binding AxisManualJog, Converter={StaticResource InverseOpacityBooleanConverter}}"
+                                        Command="{Binding AxisManualJogOffCommand}"
+                                        CommandParameter="{Binding}">
+                                    IsEnabled="{Binding AxisManualJog, Converter={StaticResource InverseBooleanConverter}}"
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Image Grid.Column="0"
+                                               Width="50" Height="50"
+                                               Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/LightBulbOff.png"/>
+
+                                        <TextBlock Grid.Column="1" Style="{StaticResource ValueTextBlockStyle}"
+                                                   Text="{DynamicResource Off}"/>
+                                    </Grid>
+                                </Button>
+
+                                <Button Grid.Column="1" Background="LimeGreen"
+                                        Command="{Binding AxisManualJogOnCommand}" CommandParameter="{Binding}"
+                                        IsHitTestVisible="{Binding AxisManualJog, Converter={StaticResource InverseBooleanConverter}}"
+                                        Opacity="{Binding AxisManualJog, Converter={StaticResource OpacityBooleanConverter}}"
+                                                                        >
+                                    --><!--IsEnabled="{Binding AxisManualJog}">--><!--
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Image Grid.Column="0"
+                                               Width="50" Height="50"
+                                               Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/LightBulbOn.png"/>
+
+                                        <TextBlock Grid.Column="1" Style="{StaticResource ValueTextBlockStyle}"
+                                                   Text="{DynamicResource On}"/>
+                                    </Grid>
+                                </Button>-->
+                            </Grid>
+
+                            <!--<TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource KeyTextBlockStyle}"
+                                       IsEnabled="{Binding AxisManualJog}" Text="{DynamicResource JogInterval}"/>
+                            <ComboBox Grid.Row="1" Grid.Column="2" x:Name="AxisManualJogIntervalComboBox"
+                                      DisplayMemberPath="AxisManualJogIntervalName"
+                                      IsEnabled="{Binding AxisManualJog}" Tag="{Binding}"
+                                      ItemsSource="{Binding AxisManualJogIntervalListView}"
+                                      SelectedIndex="{Binding AxisManualJogIntervalSelectedIndex}"/>
+                            <Button Grid.Row="1" Grid.Column="3" IsEnabled="{Binding AxisManualJog}"
+                                    Command="{Binding SetAxisManualJogIntervalCommand}"
+                                    CommandParameter="{Binding ElementName=AxisManualJogIntervalComboBox}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Image Grid.Column="0"
+                                           Width="50" Height="50"
+                                           Source="/HMI_Master_KX7500;component/Icon/Flash.png"/>
+
+                                    <TextBlock Grid.Column="1" Style="{StaticResource ValueTextBlockStyle}"
+                                               Text="{DynamicResource Set}"/>
+                                </Grid>
+                            </Button>-->
+
+                            <ItemsControl Grid.Row="1" Grid.RowSpan="2" Grid.Column="0"
+                                          IsEnabled="{Binding AxisManualJog}" IsHitTestVisible="False"
+                                          ItemsSource="{Binding AxisManualJogStatusListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                  Content="{Binding AxisManualJogStatusName}"
+                                                  IsChecked="{Binding AxisManualJogStatus}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
+                                          IsEnabled="{Binding AxisManualJog}"
+                                          ItemsSource="{Binding AxisManualJogNumericListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" MinWidth="130"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}"
+                                                       Text="{Binding AxisManualJogNumericName}"/>
+
+                                            <mahApps:NumericUpDown Grid.Column="1" Tag="{Binding}"
+                                                                   x:Name="AxisManualJogNumericUpDown"
+                                                                   HasDecimals="True"
+                                                                   Value="{Binding AxisManualJogNumeric}"/>
+
+                                            <Button Grid.Column="2"
+                                                    Command="{Binding SetAxisManualJogNumericCommand}"
+                                                    CommandParameter="{Binding ElementName=AxisManualJogNumericUpDown}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Image Grid.Column="0"
+                                                           Width="50" Height="50"
+                                                           Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Flash.png"/>
+
+                                                    <TextBlock Grid.Column="1" Text="{DynamicResource Set}"
+                                                               Style="{StaticResource ValueTextBlockStyle}"/>
+                                                </Grid>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="3" Grid.Column="1" DataContext="{Binding AxisMoveAbsoluteModel}"
+                              Header="{DynamicResource MoveAbsolute}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ItemsControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" IsHitTestVisible="False"
+                                          ItemsSource="{Binding AxisMoveAbsoluteStatusListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                  Content="{Binding AxisMoveAbsoluteStatusName}"
+                                                  IsChecked="{Binding AxisMoveAbsoluteStatus}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="0" Grid.Column="1"
+                                          ItemsSource="{Binding AxisMoveAbsoluteNumericListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" MinWidth="150"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}"
+                                                       Text="{Binding AxisMoveAbsoluteNumericName}"/>
+
+                                            <mahApps:NumericUpDown Grid.Column="1" Tag="{Binding}"
+                                                                   x:Name="AxisMoveAbsoluteNumericUpDown"
+                                                                   HasDecimals="True"
+                                                                   Value="{Binding AxisMoveAbsoluteNumeric}"/>
+
+                                            <Button Grid.Column="2"
+                                                    Command="{Binding SetAxisMoveAbsoluteNumericCommand}"
+                                                    CommandParameter="{Binding ElementName=AxisMoveAbsoluteNumericUpDown}"
+                                                    IsEnabled="{Binding ElementName=AxisMoveAbsoluteNumericUpDown, Path=Value, Converter={StaticResource NullToBooleanConverter}}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Image Grid.Column="0"
+                                                           Width="50" Height="50"
+                                                           Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Flash.png"/>
+
+                                                    <TextBlock Grid.Column="1" Text="{DynamicResource Set}"
+                                                               Style="{StaticResource ValueTextBlockStyle}"/>
+                                                </Grid>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl Grid.Row="1" Grid.Column="1"
+                                          ItemsSource="{Binding AxisMoveAbsoluteActionListView}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding AxisMoveAbsoluteActionCommand}"
+                                                CommandParameter="{Binding}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Image Grid.Column="0"
+                                                       Width="50" Height="50"
+                                                       Source="{Binding AxisMoveAbsoluteActionIcon}"/>
+
+                                                <TextBlock Grid.Column="1"
+                                                           Style="{StaticResource ValueTextBlockStyle}"
+                                                           Text="{Binding AxisMoveAbsoluteActionName}"/>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </GroupBox>
+
+                    <!--<GroupBox Grid.Column="3" Grid.RowSpan="4" DataContext="{Binding MotorIOModel}" Header="{DynamicResource MotorIO}" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="200"/>
+                                <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            </Grid.ColumnDefinitions>
+                            <GroupBox Grid.Column="0" Header="{DynamicResource Input}">
+                                <ItemsControl ItemsSource="{Binding MotorIOInputList}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                  Content="{Binding MotorIOInputName}"
+                                                IsHitTestVisible="false"
+                                                  IsChecked="{Binding MotorIOInputValue}">
+                                                <CheckBox.LayoutTransform>
+                                                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                                                </CheckBox.LayoutTransform>
+                                            </CheckBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                            <GroupBox Grid.Column="1" Header="{DynamicResource Output}">
+                                <ItemsControl ItemsSource="{Binding MotorIOOutputList}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                    Content="{Binding MotorIOOutputName}"
+                                                    Tag="{Binding}"
+                                                    CommandParameter="{Binding}"
+                                                    Command="{Binding MotorIOOutputCommand}"
+                                                    IsChecked="{Binding MotorIOOutputValue}">
+                                                <CheckBox.LayoutTransform>
+                                                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                                                </CheckBox.LayoutTransform>
+                                            </CheckBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                        </Grid>
+                    </GroupBox>-->
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </GroupBox>
+</UserControl>

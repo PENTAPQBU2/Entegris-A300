@@ -1,0 +1,146 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.Modules.DryRun.DryRunView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HMI_Master_KX7500.Modules.DryRun">
+
+    <GroupBox DataContext="{Binding DryRunInterfaceModel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.2*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Grid.Column="0" Header="{DynamicResource Mode}">
+                <ListBox x:Name="DryRunListBox" DisplayMemberPath="DryRunName" ItemsSource="{Binding DryRunView}"/>
+            </GroupBox>
+
+            <ItemsControl Grid.Column="1"
+                          ItemsSource="{Binding ElementName=DryRunListBox, Path=SelectedItem.DryRunTimeList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="1"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <GroupBox Header="{Binding DryRunTimeKey}">
+                            <UniformGrid Rows="1">
+                                <GroupBox Header="{DynamicResource Days}">
+                                    <Viewbox>
+                                        <TextBlock Text="{Binding DryRunTime, Converter={StaticResource SecondsToDaysConverter}}"/>
+                                    </Viewbox>
+                                </GroupBox>
+                                <GroupBox Header="{DynamicResource Hours}">
+                                    <Viewbox>
+                                        <TextBlock Text="{Binding DryRunTime, Converter={StaticResource SecondsToHoursConverter}}"/>
+                                    </Viewbox>
+                                </GroupBox>
+                                <GroupBox Header="{DynamicResource Minutes}">
+                                    <Viewbox>
+                                        <TextBlock Text="{Binding DryRunTime, Converter={StaticResource SecondsToMinutesConverter}}"/>
+                                    </Viewbox>
+                                </GroupBox>
+                                <GroupBox Header="{DynamicResource Seconds}">
+                                    <Viewbox>
+                                        <TextBlock Text="{Binding DryRunTime, Converter={StaticResource SecondsToSecondsConverter}}"/>
+                                    </Viewbox>
+                                </GroupBox>
+                            </UniformGrid>
+                        </GroupBox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ItemsControl Grid.Column="2"
+                          ItemsSource="{Binding ElementName=DryRunListBox, Path=SelectedItem.DryRunCountList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="1"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <GroupBox Header="{Binding DryRunCountName}">
+                            <Viewbox>
+                                <TextBlock Text="{Binding DryRunCount}"/>
+                            </Viewbox>
+                        </GroupBox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <GroupBox Grid.Column="3"
+                      Visibility="{Binding ElementName=DryRunListBox, Path=SelectedItem, Converter={StaticResource NullToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Style="{DynamicResource AutoHeightButtonBaseStyle}"
+                            Command="{Binding DryRunStartCommand}"
+                            CommandParameter="{Binding ElementName=DryRunListBox, Path=SelectedItem}"
+                            IsEnabled="{Binding ElementName=DryRunListBox, Path=SelectedItem.DryRunStart, Converter={StaticResource InverseBooleanConverter}}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Image Grid.Row="0" Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/CheckMark.png"/>
+                            <TextBlock Grid.Row="1" Style="{DynamicResource CenterTextBlock}"
+                                       Text="Enable"/>
+                        </Grid>
+                    </Button>
+
+                    <Button Grid.Row="1" Style="{DynamicResource AutoHeightButtonBaseStyle}"
+                            Command="{Binding DryRunStopCommand}"
+                            CommandParameter="{Binding ElementName=DryRunListBox, Path=SelectedItem}"
+                            IsEnabled="{Binding ElementName=DryRunListBox, Path=SelectedItem.DryRunStart}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Image Grid.Row="0" Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Close.png"/>
+                            <TextBlock Grid.Row="1" Style="{DynamicResource CenterTextBlock}"
+                                       Text="{DynamicResource Disable}"/>
+                        </Grid>
+                    </Button>
+
+                    <ItemsControl Grid.Row="2"
+                                  ItemsSource="{Binding ElementName=DryRunListBox, Path=SelectedItem.DryRunActionList}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{DynamicResource AutoHeightButtonBaseStyle}"
+                                        Command="{Binding DryRunActionCommand}" CommandParameter="{Binding}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Image Grid.Row="0" Source="{Binding DryRunActionIcon}"/>
+                                        <TextBlock Grid.Row="1" Style="{StaticResource CenterTextBlock}"
+                                                   Text="{Binding DryRunActionName}"/>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </GroupBox>
+</UserControl>

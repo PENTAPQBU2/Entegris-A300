@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.ConfigurationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HMI_Master_KX7500"
+             xmlns:hmi="clr-namespace:PQ.HMI;assembly=PQ.HMI">
+
+    <TabControl>
+        <TabItem Header="Alarm Configuration">
+            <WrapPanel>
+                <!--<hmi:AlarmConfigurationV1View>
+                <hmi:AlarmConfigurationV1View.DataContext>
+                    <hmi:AlarmConfigurationV1ViewModel/>
+                </hmi:AlarmConfigurationV1View.DataContext>
+            </hmi:AlarmConfigurationV1View>-->
+            <Button HorizontalAlignment="Left" VerticalAlignment="Top" 
+                        Height="100" Background="Transparent" BorderBrush="Black"
+                        Click="AlarmListImport_Click">
+                <DockPanel>
+                    <TextBlock Text="Import" Style="{StaticResource CenterTextBlock}"
+                               DockPanel.Dock="Bottom" FontWeight="Bold"/>
+                        <Image Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Import.png"/>
+                </DockPanel>
+            </Button>
+
+                <Image Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Info.png" 
+                       Height="25" VerticalAlignment="Top"
+                       Margin="10 0 0 0">
+                <Image.ToolTip>
+                    <TextBlock Text="Click The Import Button And Choose The Alarm File (make sure the file is in xlxs format) To Create Alarm List"
+                                   TextWrapping="Wrap"/>
+                </Image.ToolTip>
+            </Image>
+                </WrapPanel> 
+        </TabItem>
+        <TabItem Header="IO Configuration">
+            <WrapPanel>
+                <Button HorizontalAlignment="Left" VerticalAlignment="Top" 
+                        Height="100" Background="Transparent" BorderBrush="Black"
+                        Click="ioListImport_Click">
+                    <DockPanel>
+                        <TextBlock Text="Import" Style="{StaticResource CenterTextBlock}"
+                               DockPanel.Dock="Bottom" FontWeight="Bold"/>
+                        <Image Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Import.png"/>
+                    </DockPanel>
+                </Button>
+
+                <Image Source="pack://application:,,,/HMI_SSDC_PIM;component/Icon/Info.png" 
+                       Height="25" VerticalAlignment="Top"
+                       Margin="10 0 0 0">
+                    <Image.ToolTip>
+                        <TextBlock Text="Click The Import Button And Choose The IO File (make sure the file is in xlxs format) To Create IO List"
+                                   TextWrapping="Wrap"/>
+                    </Image.ToolTip>
+                </Image>
+            </WrapPanel>
+        </TabItem>
+    </TabControl>
+</UserControl>

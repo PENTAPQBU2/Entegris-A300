@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.Modules.IO.IOView_"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HMI_Master_KX7500.Modules.IO"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+
+    <Grid DataContext="{Binding IOInterfaceModel}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel DataContext="{Binding IOModel}">
+            <TextBlock Text="{DynamicResource IOList}" VerticalAlignment="Center"/>
+            <ComboBox x:Name="IOComboBox" DisplayMemberPath="IOModule" HorizontalAlignment="Left" MinWidth="200" HorizontalContentAlignment="Center"
+                          ItemsSource="{Binding IOListView}" FontSize="20" SelectedIndex="{Binding IOSelectedIndex}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding IOSelectionChangedCommand}"
+                                                   CommandParameter="{Binding ElementName=IOComboBox}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+        </DockPanel>
+
+        <ScrollViewer  Grid.Row="1" 
+                           DataContext="{Binding ElementName=IOComboBox, Path=SelectedItem}"
+                           Visibility="{Binding ElementName=IOComboBox, Path=SelectedItem, Converter={StaticResource NullToVisibilityConverter}}">
+            <UniformGrid Margin="0 10 0 0" Columns="2" DataContext="{Binding}">
+                <GroupBox Header="{DynamicResource Input}">
+                    <ItemsControl ItemsSource="{Binding IOInputList}" HorizontalContentAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <VirtualizingStackPanel>
+                                    <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                              Content="{Binding IO_InputName}"
+                                                              IsChecked="{Binding IO_InputValue}"
+                                                              IsHitTestVisible="False">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </VirtualizingStackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+
+                <GroupBox Header="{DynamicResource Output}">
+                    <ItemsControl ItemsSource="{Binding IOOutputList}" HorizontalContentAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <VirtualizingStackPanel>
+                                    <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                                  Content="{Binding IOOutputName}"
+                                                  Tag="{Binding}"
+                                                  CommandParameter="{Binding}"
+                                                  Command="{Binding IOOutputCommand}"
+                                                  IsChecked="{Binding IO_OutputValue}">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </VirtualizingStackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+            </UniformGrid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

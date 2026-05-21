@@ -1,0 +1,159 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.Modules.TrackingStatus.TrackingStatusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HMI_Master_KX7500.Modules.TrackingStatus"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <DockPanel DataContext="{Binding TrackingStatusInterfaceModel}">
+
+        <!--Placed first to get priority over left region-->
+        <ScrollViewer DataContext="{Binding TrackingStatusModel}" DockPanel.Dock = "Bottom">
+            <ItemsControl ItemsSource="{Binding TrackingStatusReadOnlyGroupList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <GroupBox Header="{Binding TrackingStatusReadOnlyGroupName}">
+                            <ItemsControl ItemsSource="{Binding TrackingStatusReadOnlyList}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Rows="4"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto" MinWidth="125"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Text="{Binding TrackingStatusReadOnlyName}"
+                                                               Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding TrackingStatusReadOnlyValue}"
+                                                               Style="{StaticResource CenterTextBlock}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </GroupBox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!--Status List-->
+        <!--<ScrollViewer DockPanel.Dock = "Left">
+            <DockPanel VerticalAlignment="Top" DataContext="{Binding TrackingStatusModel}">
+                <GroupBox Header="{DynamicResource Legend}" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                    <ItemsControl IsHitTestVisible="False" ItemsSource="{Binding TrackingStatusModuleStatusListView}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                    BorderBrush="{Binding TrackingStatusModuleStatusColor}"
+                                    Content="{Binding TrackingStatusModuleStatusName}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+            </DockPanel>
+        </ScrollViewer>-->
+
+        <!--Tab control-->
+        <Grid DataContext="{Binding TrackingStatusModel}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TabControl ItemsSource="{Binding TrackingStatusModuleListView}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding TrackingStatusModuleName}" />
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                        <ScrollViewer DockPanel.Dock = "Left">
+                            <DockPanel VerticalAlignment="Top" >
+                                <GroupBox Header="{DynamicResource Legend}" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                    <ItemsControl IsHitTestVisible="False" ItemsSource="{Binding TrackingStatusModuleStatusListView}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Style="{StaticResource IndicatorCheckBox}"
+                                    BorderBrush="{Binding TrackingStatusModuleStatusColor}"
+                                    Content="{Binding TrackingStatusModuleStatusName}"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </GroupBox>
+                            </DockPanel>
+                        </ScrollViewer>
+                        <ScrollViewer >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!--<TextBlock Grid.Row="0" Style="{StaticResource MaterialDesignHeadlineCenterTextBlock}"
+                                       Text="{Binding TrackingStatusModuleName}"/>-->
+
+                                <WrapPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Image Height="520" Source="{Binding TrackingStatusModuleImage}"/>
+
+                                    <ItemsControl ItemsSource="{Binding TrackingStatusModuleStatusIndicatorListView}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Canvas>
+                                                    <Line Style="{StaticResource PentamasterLine}"
+                                                      X1="{Binding TrackingStatusModuleStatusIndicatorLineX1}"
+                                                      X2="{Binding TrackingStatusModuleStatusIndicatorLineX2}"
+                                                      Y1="{Binding TrackingStatusModuleStatusIndicatorLineY1}"
+                                                      Y2="{Binding TrackingStatusModuleStatusIndicatorLineY2}"/>
+
+                                                    <Button Style="{StaticResource IndicatorButtonBaseStyle}"
+                                                        Canvas.Right="{Binding TrackingStatusModuleStatusIndicatorRightPosition}"
+                                                        Canvas.Top="{Binding TrackingStatusModuleStatusIndicatorTopPosition}"
+                                                        BorderBrush="{Binding TrackingStatusModuleStatusIndicatorColor}"
+                                                        Command="{Binding trackingStatusTriggerCommand}"
+                                                        Tag="{Binding}"
+                                                        CommandParameter="{Binding}"
+                                                        Content="{Binding TrackingStatusModuleStatusIndicatorName}"/>
+                                                </Canvas>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </WrapPanel>
+                            </Grid>
+                        </ScrollViewer>
+                        </DockPanel>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
+        </Grid>
+        
+    </DockPanel>
+</UserControl>

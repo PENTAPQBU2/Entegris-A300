@@ -1,0 +1,913 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B71D49A5-0148-44D9-ACFA-7023B495496F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>HMI_SSDC_PIM</RootNamespace>
+    <AssemblyName>HMI_SSDC_PIM</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Pentamaster.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>9</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>9</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AxInterop.XGXLib">
+      <HintPath>..\Libraries\AxInterop.XGXLib.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.9.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonServiceLocator, Version=2.0.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.5\lib\net45\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
+    </Reference>
+    <Reference Include="CsvHelper, Version=13.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.13.0.0\lib\net45\CsvHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="HMI, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\HMI.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.DATABUILDERAXLibLB">
+      <HintPath>..\Libraries\Interop.DATABUILDERAXLibLB.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.6.0.362, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.6.0\lib\net45\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignColors, Version=1.2.0.325, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.1.2.0\lib\net45\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.MahApps, Version=0.1.0.325, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.MahApps.0.1.0\lib\net45\MaterialDesignThemes.MahApps.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=2.6.0.325, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.2.6.0\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Connections.Abstractions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Connections.Abstractions.2.1.3\lib\netstandard2.0\Microsoft.AspNetCore.Connections.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Hosting, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Hosting.2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Hosting.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Hosting.Server.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Server.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http, Version=2.1.22.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.2.1.22\lib\netstandard2.0\Microsoft.AspNetCore.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Extensions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.Extensions.2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Features, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.Features.2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Http.Features.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Server.Kestrel, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Server.Kestrel.2.1.3\lib\netstandard2.0\Microsoft.AspNetCore.Server.Kestrel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Core, Version=2.1.25.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Server.Kestrel.Core.2.1.25\lib\netstandard2.0\Microsoft.AspNetCore.Server.Kestrel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Https, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Server.Kestrel.Https.2.1.3\lib\netstandard2.0\Microsoft.AspNetCore.Server.Kestrel.Https.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.2.1.3\lib\netstandard2.0\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.2.1.3\lib\netstandard2.0\Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.WebUtilities, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.WebUtilities.2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.WebUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.1.10.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.1.10\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.EnvironmentVariables, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.EnvironmentVariables.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.EnvironmentVariables.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.FileExtensions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.FileExtensions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.2.1.1\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileProviders.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileProviders.Physical, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Physical.2.1.1\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Physical.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileSystemGlobbing, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileSystemGlobbing.2.1.1\lib\netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Hosting.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Hosting.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=3.1.23.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.3.1.23\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.ObjectPool, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.ObjectPool.2.1.1\lib\netstandard2.0\Microsoft.Extensions.ObjectPool.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Net.Http.Headers, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.Headers.2.1.1\lib\netstandard2.0\Microsoft.Net.Http.Headers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.8\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Bindings.Https, Version=1.4.368.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Bindings.Https.1.4.368.53\lib\net462\Opc.Ua.Bindings.Https.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Client, Version=1.4.368.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Client.1.4.368.53\lib\net462\Opc.Ua.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Configuration, Version=1.4.368.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Configuration.1.4.368.53\lib\net462\Opc.Ua.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Core, Version=1.4.368.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Core.1.4.368.53\lib\net462\Opc.Ua.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Gds.Client.Common, Version=1.4.368.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Gds.Client.Common.1.4.368.53\lib\net462\Opc.Ua.Gds.Client.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Gds.Server.Common, Version=1.4.368.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Gds.Server.Common.1.4.368.53\lib\net462\Opc.Ua.Gds.Server.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Security.Certificates, Version=1.4.368.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Security.Certificates.1.4.368.53\lib\net462\Opc.Ua.Security.Certificates.dll</HintPath>
+    </Reference>
+    <Reference Include="Opc.Ua.Server, Version=1.4.368.0, Culture=neutral, PublicKeyToken=bfa7a73c5cf4b6e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OPCFoundation.NetStandard.Opc.Ua.Server.1.4.368.53\lib\net462\Opc.Ua.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="opcrcw.comn, Version=1.10.2.0, Culture=neutral, PublicKeyToken=9a40e993cbface53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\Libraries\opcrcw.comn.dll</HintPath>
+    </Reference>
+    <Reference Include="opcrcw.da, Version=3.0.3.0, Culture=neutral, PublicKeyToken=9a40e993cbface53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\Libraries\opcrcw.da.dll</HintPath>
+    </Reference>
+    <Reference Include="Pentamaster, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\Pentamaster.dll</HintPath>
+    </Reference>
+    <Reference Include="PQ.HMI, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\PQ.HMI.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Formats.Asn1, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Formats.Asn1.6.0.0\lib\net461\System.Formats.Asn1.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Pipelines, Version=6.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Pipelines.6.0.2\lib\net461\System.IO.Pipelines.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata, Version=1.4.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.Metadata.1.6.0\lib\netstandard2.0\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security.Cryptography.Cng, Version=4.3.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Cng.4.5.2\lib\net47\System.Security.Cryptography.Cng.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Text.Encodings.Web, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.6.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="CommunicationProtocols\COMPort\COMPortSettingModel.cs" />
+    <Compile Include="CommunicationProtocols\COMPort\LoadCOMPortService.cs" />
+    <Compile Include="CommunicationProtocols\Entergris_TcpCommService.cs" />
+    <Compile Include="CommunicationProtocols\FileLogger_Utilities.cs" />
+    <Compile Include="CommunicationProtocols\KeyenceDll.cs" />
+    <Compile Include="CommunicationProtocols\LoadSettingService.cs" />
+    <Compile Include="CommunicationProtocols\SerialListener.cs" />
+    <Compile Include="CommunicationProtocols\SetupSettingModel.cs" />
+    <Compile Include="CommunicationProtocols\TcpIpClient.cs" />
+    <Compile Include="Converter\StringToBooleanConverter.cs" />
+    <Compile Include="Globals\Event.cs" />
+    <Compile Include="Globals\PLCTag.cs" />
+    <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Helpers\MessageBoxHelper.cs" />
+    <Compile Include="Helpers\MessageHelper.cs" />
+    <Compile Include="Helpers\MethodHelper.cs" />
+    <Compile Include="Helpers\PunctuationHelper.cs" />
+    <Compile Include="Interface\DryRunInterfaceModel.cs" />
+    <Compile Include="Interface\EngineeringInterfaceModel.cs" />
+    <Compile Include="Interface\ILog.cs" />
+    <Compile Include="Interface\IOInterfaceModel.cs" />
+    <Compile Include="Interface\LotEntryInterfaceModel.cs" />
+    <Compile Include="Interface\MachineLayoutInterfaceModel.cs" />
+    <Compile Include="Interface\MotorInterfaceModel.cs" />
+    <Compile Include="Interface\OEEInterfaceModel.cs" />
+    <Compile Include="Interface\SettingsGeneralInterfaceModel.cs" />
+    <Compile Include="Interface\PopUpInterfaceModel.cs" />
+    <Compile Include="Model\Alarm\AlarmV1Model.cs" />
+    <Compile Include="Model\CycleTime\CycleTimeInitializeModel.cs" />
+    <Compile Include="Model\CycleTime\CycleTimeInterfaceModel.cs" />
+    <Compile Include="Model\CycleTime\CycleTimeMainModel.cs" />
+    <Compile Include="Model\CycleTime\CycleTimeModel.cs" />
+    <Compile Include="Model\CycleTime\CycleTimeTagModel.cs" />
+    <Compile Include="Model\CycleTime\History\CycleTimeHistoryModel.cs" />
+    <Compile Include="Model\CycleTime\History\Label\CycleTimeHistoryLabelModel.cs" />
+    <Compile Include="Model\CycleTime\History\Type\CycleTimeHistoryTypeModel.cs" />
+    <Compile Include="Model\CycleTime\History\Type\Timer\CycleTimeHistoryTypeTimerModel.cs" />
+    <Compile Include="Model\CycleTime\History\Type\Timer\CycleTimeHistoryTypeTimerTagModel.cs" />
+    <Compile Include="Model\CycleTime\NumericStatus\CycleTimeNumericStatusModel.cs" />
+    <Compile Include="Model\CycleTime\NumericStatus\CycleTimeNumericStatusTagModel.cs" />
+    <Compile Include="Model\DryRun\Action\DryRunActionModel.cs" />
+    <Compile Include="Model\DryRun\Action\DryRunActionTagModel.cs" />
+    <Compile Include="Model\DryRun\Count\DryRunCountModel.cs" />
+    <Compile Include="Model\DryRun\Count\DryRunCountTagModel.cs" />
+    <Compile Include="Model\DryRun\DryRunModel.cs" />
+    <Compile Include="Model\DryRun\DryRunTagModel.cs" />
+    <Compile Include="Model\DryRun\Time\DryRunTimeModel.cs" />
+    <Compile Include="Model\DryRun\Time\DryRunTimeTagModel.cs" />
+    <Compile Include="Model\EngMode\EngineeringMainModel.cs" />
+    <Compile Include="Model\EngMode\Group\EngineeringGroupModel.cs" />
+    <Compile Include="Model\EngMode\Group\Numeric\EngineeringGroupNumericModel.cs" />
+    <Compile Include="Model\EngMode\Group\Numeric\EngineeringGroupNumericTagModel.cs" />
+    <Compile Include="Model\EngMode\Group\ReadOnly\EngineeringGroupReadOnlyModel.cs" />
+    <Compile Include="Model\EngMode\Group\ReadOnly\EngineeringGroupReadOnlyTagModel.cs" />
+    <Compile Include="Model\EngMode\Group\Text\EngineeringGroupTextModel.cs" />
+    <Compile Include="Model\EngMode\Group\Text\EngineeringGroupTextTagModel.cs" />
+    <Compile Include="Model\EngMode\Group\Toggle\EngineeringGroupToggleModel.cs" />
+    <Compile Include="Model\EngMode\Group\Toggle\EngineeringGroupToggleTagModel.cs" />
+    <Compile Include="Model\Frame\MenuModel_.cs" />
+    <Compile Include="Model\IO\Input\IOInputModel.cs" />
+    <Compile Include="Model\IO\Input\IOInputTagModel.cs" />
+    <Compile Include="Model\IO\IOItemsModel.cs" />
+    <Compile Include="Model\IO\IOModel.cs" />
+    <Compile Include="Model\IO\Output\IOOutputModel.cs" />
+    <Compile Include="Model\IO\Output\IOOutputTagModel.cs" />
+    <Compile Include="Model\KeyencePLC\HMI_KeyenceGlobal.cs" />
+    <Compile Include="Model\KeyencePLC\KeyencePLCModel.cs" />
+    <Compile Include="Model\KeyencePLC\KeyencePLCTagModel.cs" />
+    <Compile Include="Model\KeyencePLC\YaskawaMEMOBUS.cs" />
+    <Compile Include="Model\LotEntry\LotEntryModel.cs" />
+    <Compile Include="Model\LotEntry\LotEntryTagModel.cs" />
+    <Compile Include="Model\Main\EventArgsModel.cs" />
+    <Compile Include="Model\Main\MainModel.cs" />
+    <Compile Include="Model\Motor\General\Action\MotorAxisGeneralActionModel.cs" />
+    <Compile Include="Model\Motor\General\Action\MotorAxisGeneralActionTagModel.cs" />
+    <Compile Include="Model\Motor\General\MotorAxisGeneralModel.cs" />
+    <Compile Include="Model\Motor\General\Numeric\MotorAxisGeneralNumericModel.cs" />
+    <Compile Include="Model\Motor\General\Numeric\MotorAxisGeneralNumericTagModel.cs" />
+    <Compile Include="Model\Motor\General\Status\MotorAxisGeneralStatusModel.cs" />
+    <Compile Include="Model\Motor\General\Status\MotorAxisGeneralStatusTagModel.cs" />
+    <Compile Include="Model\Motor\Homing\Action\MotorAxisHomingActionModel.cs" />
+    <Compile Include="Model\Motor\Homing\Action\MotorAxisHomingActionTagModel.cs" />
+    <Compile Include="Model\Motor\Homing\MotorAxisHomingModel.cs" />
+    <Compile Include="Model\Motor\Homing\Status\MotorAxisHomingStatusModel.cs" />
+    <Compile Include="Model\Motor\Homing\Status\MotorAxisHomingStatusTagModel.cs" />
+    <Compile Include="Model\Motor\IO\Input\MotorIOInputModel.cs" />
+    <Compile Include="Model\Motor\IO\Input\MotorIOInputTagModel.cs" />
+    <Compile Include="Model\Motor\IO\MotorIOModel.cs" />
+    <Compile Include="Model\Motor\IO\Output\MotorIOOutputModel.cs" />
+    <Compile Include="Model\Motor\IO\Output\MotorIOOutputTagModel.cs" />
+    <Compile Include="Model\Motor\ManualJog\Interval\MotorAxisManualJogIntervalModel.cs" />
+    <Compile Include="Model\Motor\ManualJog\Interval\MotorAxisManualJogIntervalTagModel.cs" />
+    <Compile Include="Model\Motor\ManualJog\MotorAxisManualJogModel.cs" />
+    <Compile Include="Model\Motor\ManualJog\MotorAxisManualJogTagModel.cs" />
+    <Compile Include="Model\Motor\ManualJog\Numeric\MotorAxisManualJogNumericModel.cs" />
+    <Compile Include="Model\Motor\ManualJog\Numeric\MotorAxisManualJogNumericTagModel.cs" />
+    <Compile Include="Model\Motor\ManualJog\Status\MotorAxisManualJogStatusModel.cs" />
+    <Compile Include="Model\Motor\ManualJog\Status\MotorAxisManualJogStatusTagModel.cs" />
+    <Compile Include="Model\Motor\MotorAxisModel.cs" />
+    <Compile Include="Model\Motor\MotorModel.cs" />
+    <Compile Include="Model\Motor\MoveAbsolute\Action\MotorAxisMoveAbsoluteActionModel.cs" />
+    <Compile Include="Model\Motor\MoveAbsolute\Action\MotorAxisMoveAbsoluteActionTagModel.cs" />
+    <Compile Include="Model\Motor\MoveAbsolute\MotorAxisMoveAbsoluteModel.cs" />
+    <Compile Include="Model\Motor\MoveAbsolute\Numeric\MotorAxisMoveAbsoluteNumericModel.cs" />
+    <Compile Include="Model\Motor\MoveAbsolute\Numeric\MotorAxisMoveAbsoluteNumericTagModel.cs" />
+    <Compile Include="Model\Motor\MoveAbsolute\Status\MotorAxisMoveAbsoluteStatusModel.cs" />
+    <Compile Include="Model\Motor\MoveAbsolute\Status\MotorAxisMoveAbsoluteStatusTagModel.cs" />
+    <Compile Include="Model\Motor\Position\MotorAxisPositionModel.cs" />
+    <Compile Include="Model\Motor\Position\NumericStatus\MotorAxisPositionNumericStatusModel.cs" />
+    <Compile Include="Model\Motor\Position\NumericStatus\MotorAxisPositionNumericStatusTagModel.cs" />
+    <Compile Include="Model\Motor\Position\Status\MotorAxisPositionStatusModel.cs" />
+    <Compile Include="Model\Motor\Position\Status\MotorAxisPositionStatusTagModel.cs" />
+    <Compile Include="Model\Motor\Teaching\MotorAxisTeachingModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\Action\MotorAxisTeachingPositionActionModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\Action\MotorAxisTeachingPositionActionTagModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\MotorAxisTeachingPositionModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\NumericStatus\MotorAxisTeachingPositionNumericStatusModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\NumericStatus\MotorAxisTeachingPositionNumericStatusTagModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\Numeric\MotorAxisTeachingPositionNumericModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\Numeric\MotorAxisTeachingPositionNumericTagModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\Status\MotorAxisTeachingPositionStatusModel.cs" />
+    <Compile Include="Model\Motor\Teaching\Position\Status\MotorAxisTeachingPositionStatusTagModel.cs" />
+    <Compile Include="Model\AlarmHistory\AlarmHistoryModel.cs" />
+    <Compile Include="Model\OEE\Data\Count\OEECountModel.cs" />
+    <Compile Include="Model\OEE\Data\Count\OEECountTagModel.cs" />
+    <Compile Include="Model\OEE\Data\OEEDataModel.cs" />
+    <Compile Include="Model\OEE\Data\OEEDataTagModel.cs" />
+    <Compile Include="Model\OEE\Data\ReadOnly\OEEReadOnlyModel.cs" />
+    <Compile Include="Model\OEE\Data\ReadOnly\OEEReadOnlyTagModel.cs" />
+    <Compile Include="Model\OEE\Data\Time\OEETimeModel.cs" />
+    <Compile Include="Model\OEE\Data\Time\OEETimeTagModel.cs" />
+    <Compile Include="Model\OEE\HourlyUPH\OEEHourlyUphModel.cs" />
+    <Compile Include="Model\OEE\HourlyUPH\OEEHourlyUphTagModel.cs" />
+    <Compile Include="Model\OEE\OEEModel.cs" />
+    <Compile Include="Model\Settings\Group\Numeric\SettingsGeneralGroupNumericModel.cs" />
+    <Compile Include="Model\Settings\Group\Numeric\SettingsGeneralGroupNumericTagModel.cs" />
+    <Compile Include="Model\Settings\Group\ReadOnly\SettingsGeneralGroupReadOnlyModel.cs" />
+    <Compile Include="Model\Settings\Group\ReadOnly\SettingsGeneralGroupReadOnlyTagModel.cs" />
+    <Compile Include="Model\Settings\Group\SettingsGeneralGroupModel.cs" />
+    <Compile Include="Model\Settings\Group\Toggle\SettingsGeneralGroupToggleModel.cs" />
+    <Compile Include="Model\Settings\Group\Toggle\SettingsGeneralGroupToggleTagModel.cs" />
+    <Compile Include="Model\Settings\SettingsGeneralModel.cs" />
+    <Compile Include="Model\PopUp\Action\PopUpActionModel.cs" />
+    <Compile Include="Model\PopUp\Action\PopUpActionTagModel.cs" />
+    <Compile Include="Model\PopUp\PopUpModel.cs" />
+    <Compile Include="Model\PopUp\PopUpTagModel.cs" />
+    <Compile Include="ModulesView\CycleTime\CycleTime_OPCUA_ViewModel.cs" />
+    <Compile Include="ModulesView\Dry Run\DryRunViewModel.cs" />
+    <Compile Include="ModulesView\EngMode\EngMode_OPCUA_ViewModel.cs" />
+    <Compile Include="ModulesView\IO\IO_OPCUA_ViewModel.cs" />
+    <Compile Include="ModulesView\LotEntry\LotEntry_OPCUA_ViewModel.cs" />
+    <Compile Include="ModulesView\Main\MainViewModel.cs" />
+    <Compile Include="ModulesView\Motor\Motor_OPCUA_ViewModel.cs" />
+    <Compile Include="ModulesView\AlarmHistory\AlarmHistory_ViewModel.cs" />
+    <Compile Include="ModulesView\OEE\OEE_ViewModel.cs" />
+    <Compile Include="ModulesView\PopUp\PopUp_OPCUA_ViewModel.cs" />
+    <Compile Include="Modules\AlarmHistory\AlarmHistorySearchResultDialog.xaml.cs">
+      <DependentUpon>AlarmHistorySearchResultDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\Configuration\ConfigurationView.xaml.cs">
+      <DependentUpon>ConfigurationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\CycleTime\CycleTimeView.xaml.cs">
+      <DependentUpon>CycleTimeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\DryRun\DryRunView.xaml.cs">
+      <DependentUpon>DryRunView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\EngMode\EngModeView.xaml.cs">
+      <DependentUpon>EngModeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\IO\IOView_.xaml.cs">
+      <DependentUpon>IOView_.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\Lot Entry\LotEntryView.xaml.cs">
+      <DependentUpon>LotEntryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ModulesView\Settings\Settings_OPCUA_ViewModel.cs" />
+    <Compile Include="Modules\Motor\MotorView.xaml.cs">
+      <DependentUpon>MotorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\AlarmHistory\AlarmHistoryView.xaml.cs">
+      <DependentUpon>AlarmHistoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\OEE\OEEView.xaml.cs">
+      <DependentUpon>OEEView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\Settings\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\PopUp\PopUpView.xaml.cs">
+      <DependentUpon>PopUpView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Service\Alarm\AlarmV1Service.cs" />
+    <Compile Include="Service\CycleTime\CycleTimeService.cs" />
+    <Compile Include="Service\Dry Run\DryRunService.cs" />
+    <Compile Include="Service\EngMode\EngineeringService.cs" />
+    <Compile Include="Service\IO\IOService.cs" />
+    <Compile Include="Service\LotEntry\LotEntryService.cs" />
+    <Compile Include="Service\Main\MachineLayoutService.cs" />
+    <Compile Include="Service\Motor\MotorService.cs" />
+    <Compile Include="Service\NLogService.cs" />
+    <Compile Include="Service\OEE\OEEService.cs" />
+    <Compile Include="Service\PopUp\PopUpService.cs" />
+    <Compile Include="Service\Settings\SettingsGeneralService.cs" />
+    <Compile Include="Utilities\Enumeration.cs" />
+    <Compile Include="Utilities\HmiHelper.cs" />
+    <Compile Include="Initialize\DBCLogInitializeModel.cs" />
+    <Compile Include="Initialize\LanguageInitializeModel.cs" />
+    <Compile Include="Initialize\LFLegDrawingPosInitializeModel.cs" />
+    <Compile Include="Initialize\LFLegSettingsInitializeModel.cs" />
+    <Compile Include="Initialize\PopUpInitializeModel.cs" />
+    <Compile Include="Initialize\RecipeInitializeModel.cs" />
+    <Compile Include="Initialize\SettingsInitializeModel.cs" />
+    <Compile Include="Initialize\TrackingStatusInitializeModel.cs" />
+    <Compile Include="Initialize\VisionSetupInitializeModel.cs" />
+    <Compile Include="Initialize\WelderLogInitializeModel.cs" />
+    <Compile Include="Initialize\WelderSetupInitializeModel.cs" />
+    <Compile Include="Model\Frame\ModuleStatusModel.cs" />
+    <Compile Include="Model\Language\LanguageModel.cs" />
+    <Compile Include="Model\Language\Translation\LanguageTranslationEditModel.cs" />
+    <Compile Include="Model\Language\Translation\LanguageTranslationModel.cs" />
+    <Compile Include="Model\Main\MachineLayoutModel.cs" />
+    <Compile Include="Model\Main\Module\Indicator\MachineLayoutModuleStatusIndicatorModel.cs" />
+    <Compile Include="Model\Main\Module\Indicator\MachineLayoutModuleStatusIndicatorTagModel.cs" />
+    <Compile Include="Model\Main\Module\MachineLayoutModuleModel.cs" />
+    <Compile Include="Model\Main\Status\MachineLayoutModuleStatusModel.cs" />
+    <Compile Include="ModulesView\Language\LanguageEditorViewModel.cs" />
+    <Compile Include="ModulesView\Language\LanguageTranslationEditorViewModel.cs" />
+    <Compile Include="ModulesView\Language\Language_OPCUA_ViewModel.cs" />
+    <Compile Include="Initialize\EngineeringInitializeModel.cs" />
+    <Compile Include="Initialize\ComponentLifeCycleInitializeModel.cs" />
+    <Compile Include="Initialize\IOInitializeModel.cs" />
+    <Compile Include="Modules\Language\LanguageEditorView.xaml.cs">
+      <DependentUpon>LanguageEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\Language\LanguageTranslationEditorView.xaml.cs">
+      <DependentUpon>LanguageTranslationEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\Language\LanguageView.xaml.cs">
+      <DependentUpon>LanguageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Alarm\AlarmNodeModel.cs" />
+    <Compile Include="Modules\Alarm\AlarmModule.xaml.cs">
+      <DependentUpon>AlarmModule.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\Alarm\AlarmLogger.cs" />
+    <Compile Include="Modules\Alarm\AlarmMessageModule.xaml.cs">
+      <DependentUpon>AlarmMessageModule.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Converter\EventArgsConverter.cs" />
+    <Compile Include="Utilities\Global.cs" />
+    <Compile Include="Converter\InverseOpacityBooleanConverter.cs" />
+    <Compile Include="Converter\InverseBooleanConverter.cs" />
+    <Compile Include="Initialize\MotorInitializeModel.cs" />
+    <Compile Include="Service\Language\LanguageService.cs" />
+    <Compile Include="Modules\Alarm\AlarmMessageModel.cs" />
+    <Compile Include="MachinePath\FilePath.cs" />
+    <Compile Include="MachinePath\FolderPath.cs" />
+    <Compile Include="Initialize\DryRunInitializeModel.cs" />
+    <Compile Include="Model\Frame\ButtonModel.cs" />
+    <Compile Include="Model\Frame\ControlPanelModel.cs" />
+    <Compile Include="Model\Frame\MachineModeModel.cs" />
+    <Compile Include="Model\Frame\MachineSpeedModel.cs" />
+    <Compile Include="Model\Frame\TaktTime_UPH_Model.cs" />
+    <Compile Include="Model\Frame\ToggleModel.cs" />
+    <Compile Include="Model\MachineConfig\MachineConfig.cs" />
+    <Compile Include="Model\Frame\MachineStatusModel.cs" />
+    <Compile Include="Initialize\OEEInitializeModel.cs" />
+    <Compile Include="Modules\MainView\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\SecondsToTimeConverter.cs" />
+    <Compile Include="Converter\SecondsToDaysConverter.cs" />
+    <Compile Include="Converter\SecondsToHoursConverter.cs" />
+    <Compile Include="Converter\SecondsToMinutesConverter.cs" />
+    <Compile Include="Converter\SecondsToSecondsConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Modules\Frame\FrameView.xaml.cs">
+      <DependentUpon>FrameView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\NullToVisibilityConverter.cs" />
+    <Compile Include="Converter\OpacityBooleanConverter.cs" />
+    <Compile Include="Converter\NullToBooleanConverter.cs" />
+    <Compile Include="Modules\UserAccount\UserAccountAccessView.xaml.cs">
+      <DependentUpon>UserAccountAccessView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Resource Include="VersionHistory.txt" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Resource Include="Icon\Add.png" />
+    <Resource Include="Icon\Alarm.png" />
+    <Resource Include="Icon\AttendanceList.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icon\Blueprint.png" />
+    <Resource Include="Icon\CheckMark.png" />
+    <Resource Include="Icon\Clipboard.png" />
+    <Resource Include="Icon\Close.png" />
+    <Resource Include="Icon\Diskette.png" />
+    <Resource Include="Icon\Document.png" />
+    <Resource Include="Icon\Download.png" />
+    <Resource Include="Icon\ElectricEngineer.png" />
+    <Resource Include="Icon\Engineering.png" />
+    <Resource Include="Icon\Equipment.png" />
+    <Resource Include="Icon\Export.png" />
+    <Resource Include="Icon\Flash.png" />
+    <Resource Include="Icon\Gear.png" />
+    <Resource Include="Icon\Graph.png" />
+    <Resource Include="Icon\Group.png" />
+    <Resource Include="Icon\Home.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icon\Hourglass.png" />
+    <Resource Include="Icon\Import.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icon\LightBulbOff.png" />
+    <Resource Include="Icon\LightBulbOn.png" />
+    <Resource Include="Icon\Papers.png" />
+    <Resource Include="Icon\Pencil.png" />
+    <Resource Include="Icon\Pentamaster.png" />
+    <Resource Include="Icon\Play.png" />
+    <Resource Include="Icon\Preview.png" />
+    <Resource Include="Icon\Redesign.png" />
+    <Resource Include="Icon\Refresh.png" />
+    <Resource Include="Icon\Reload.png" />
+    <Resource Include="Icon\SignIn.png" />
+    <Resource Include="Icon\SignOut.png" />
+    <Resource Include="Icon\Spreadsheet.png" />
+    <Resource Include="Icon\StatsHistogram.png" />
+    <Resource Include="Icon\Stop.png" />
+    <Resource Include="Icon\Stopwatch.png" />
+    <Resource Include="Icon\TimeCycles.png" />
+    <Resource Include="Icon\TrashCan.png" />
+    <Resource Include="Icon\Upload.png" />
+    <Resource Include="Icon\User.png" />
+    <Resource Include="Icon\Wrench.png" />
+    <Resource Include="Images\MachineTopView.png" />
+    <Resource Include="Icon\info.png" />
+    <Resource Include="Icon\Camera.png" />
+    <Resource Include="Images\IOLocation\A1.png" />
+    <Resource Include="Images\IOLocation\A2.png" />
+    <Resource Include="Images\IOLocation\A3.png" />
+    <Resource Include="Images\IOLocation\A4.png" />
+    <Resource Include="Images\IOLocation\A5.png" />
+    <Resource Include="Images\IOLocation\B1.png" />
+    <Resource Include="Images\IOLocation\B2.png" />
+    <Resource Include="Images\IOLocation\B3.png" />
+    <Resource Include="Images\IOLocation\B4.png" />
+    <Resource Include="Images\IOLocation\A1.jpg" />
+    <Resource Include="Images\IOLocation\A2.jpg" />
+    <Resource Include="Images\IOLocation\A3.jpg" />
+    <Resource Include="Images\IOLocation\A4.jpg" />
+    <Resource Include="Images\IOLocation\A5.jpg" />
+    <Resource Include="Images\IOLocation\B1.jpg" />
+    <Resource Include="Images\IOLocation\B2.jpg" />
+    <Resource Include="Images\IOLocation\B3.jpg" />
+    <Resource Include="Images\IOLocation\B4.jpg" />
+    <Resource Include="Images\MachineTopView.jpg" />
+    <SplashScreen Include="Images\PentamasterSplashScreen.png" />
+    <Resource Include="Icon\LFLegSettings.png" />
+    <Resource Include="Icon\LFLegDrawingPos.png" />
+    <Resource Include="Images\TrackingStatus.png" />
+    <Resource Include="Images\Turret.jpg" />
+    <Resource Include="Images\IOLocation\A6.jpg" />
+    <Resource Include="Images\IOLocation\A6.PNG" />
+    <Resource Include="Images\IOLocation\A7.JPG" />
+    <Resource Include="Images\IOLocation\A7.PNG" />
+    <Resource Include="Images\IOLocation\A8.JPG" />
+    <Resource Include="Images\IOLocation\A8.PNG" />
+    <Resource Include="Images\IOLocation\A9.JPG" />
+    <Resource Include="Images\IOLocation\A9.PNG" />
+    <Resource Include="Images\IOLocation\AA.JPG" />
+    <Resource Include="Images\IOLocation\AA.PNG" />
+    <Resource Include="Images\IOLocation\AB.JPG" />
+    <Resource Include="Images\IOLocation\AB.PNG" />
+    <Resource Include="Images\IOLocation\AC.JPG" />
+    <Resource Include="Images\IOLocation\AC.PNG" />
+    <Resource Include="Images\IOLocation\AD.JPG" />
+    <Resource Include="Images\IOLocation\AD.PNG" />
+    <Resource Include="Images\IOLocation\AE.JPG" />
+    <Resource Include="Images\IOLocation\AE.PNG" />
+    <Resource Include="Images\IOLocation\AF.JPG" />
+    <Resource Include="Images\IOLocation\AF.PNG" />
+    <Resource Include="Images\IOLocation\AG.JPG" />
+    <Resource Include="Images\IOLocation\AG.PNG" />
+    <Resource Include="Images\IOLocation\AH.JPG" />
+    <Resource Include="Images\IOLocation\AH.PNG" />
+    <Resource Include="Images\IOLocation\AJ.JPG" />
+    <Resource Include="Images\IOLocation\AJ.PNG" />
+    <Resource Include="Images\IOLocation\AK.JPG" />
+    <Resource Include="Images\IOLocation\AK.PNG" />
+    <Resource Include="Images\IOLocation\AL.JPG" />
+    <Resource Include="Images\IOLocation\AL.PNG" />
+    <Resource Include="Images\IOLocation\AM.JPG" />
+    <Resource Include="Images\IOLocation\AM.PNG" />
+    <Resource Include="Images\IOLocation\AN.JPG" />
+    <Resource Include="Images\IOLocation\AN.PNG" />
+    <Resource Include="Images\IOLocation\B5.JPG" />
+    <Resource Include="Images\IOLocation\B5.PNG" />
+    <Resource Include="Images\IOLocation\B6.JPG" />
+    <Resource Include="Images\IOLocation\B6.PNG" />
+    <Resource Include="Images\MainStatus.png" />
+    <Resource Include="Modules\Frame\Entegris_Corp_Logo.jpg" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Pentamaster.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Languages\ChineseSimplified.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Languages\English.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\AlarmHistory\AlarmHistorySearchResultDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Configuration\ConfigurationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\CycleTime\CycleTimeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\DryRun\DryRunView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\EngMode\EngModeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\IO\IOView_.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\Language\LanguageEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Language\LanguageTranslationEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Language\LanguageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Alarm\AlarmModule.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Alarm\AlarmMessageModule.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Lot Entry\LotEntryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\MainView\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Motor\MotorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\AlarmHistory\AlarmHistoryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\OEE\OEEView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\PopUp\PopUpView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Modules\Settings\SettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\UserAccount\UserAccountAccessView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Frame\FrameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

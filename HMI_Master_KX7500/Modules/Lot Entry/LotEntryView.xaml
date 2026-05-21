@@ -1,0 +1,205 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.LotEntryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HMI_Master_KX7500"
+             xmlns:mahApps="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Grid DataContext="{Binding LotEntryInterfaceModel.LotEntryModel}" Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="100"/>
+            <ColumnDefinition Width="Auto" MinWidth="150"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
+                       Text="{DynamicResource Work_Order_ID}"/>
+        <TextBox Grid.Row="0" Grid.Column="1" x:Name="LotIDTextBox" Text="{Binding LotID}"
+                 IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
+                       Text="{DynamicResource OPERATOR_ID}"/>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="OPIDTextBox" Text="{Binding OperatorID}"
+                 IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
+        
+        <!--<TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
+                       Text="{DynamicResource Customer_ID}"/>
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="CustIDTextBox" Text="{Binding Customer_ID}"
+                 IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>-->
+
+        
+        <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
+                       Text="{DynamicResource LOT_QUANTITY}"/>
+        <mahApps:NumericUpDown Grid.Row="2" Grid.Column="1" x:Name="NumericUpDownLotQuantity" Value="{Binding Lot_Quantity}" Minimum="0"
+                               IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
+                       Text="{DynamicResource RECIPE_NAME}"/>
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="RECIPEIDTextBox" Text="{Binding Recipe}"
+                 IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
+
+        
+        <!--<TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
+                       Text="{DynamicResource LOT_CREATED}"/>
+        <mahApps:NumericUpDown Grid.Row="3" Grid.Column="1" x:Name="NumericUpDownLotCreated" Value="{Binding LotCreated}" Minimum="0"/>-->
+
+        <!--<Button Grid.Row="1" Grid.Column="2" Command="{Binding StopLotCommand}"
+                    Content="{DynamicResource StopLot}" IsEnabled="{Binding OkToStopLot}"/>-->
+
+        <Button Grid.Row="1" Grid.Column="2" Command="{Binding NewLotCommand}"
+                    CommandParameter="{Binding ElementName=LotIDTextBox, Path=Text}"
+                    Content="{DynamicResource NEW_LOT}">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonBaseStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding LotCreated}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=LotIDTextBox, Path=Text}"
+                                               Value=""/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=OPIDTextBox, Path=Text}"
+                                               Value=""/>
+                                <Condition Binding="{Binding ElementName=CustIDTextBox, Path=Text}"
+                                               Value=""/>
+                                <Condition Binding="{Binding ElementName=RECIPEIDTextBox, Path=Text}"
+                                               Value=""/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=LotIDTextBox, Path=Text}"
+                                               Value="{x:Null}"/>
+                            </MultiDataTrigger.Conditions>
+
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=OPIDTextBox, Path=Text}"
+                                               Value="{x:Null}"/>
+                                <Condition Binding="{Binding ElementName=CustIDTextBox, Path=Text}"
+                                               Value="{x:Null}"/>
+                                <Condition Binding="{Binding ElementName=RECIPEIDTextBox, Path=Text}"
+                                                Value="{x:Null}"/>
+                            </MultiDataTrigger.Conditions>
+
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding LotQty}"
+                                               Value=""/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <Button Grid.Row="2" Grid.Column="2" Command="{Binding EndLotCommand}"
+                    Content="{DynamicResource END_LOT}">
+            <!--<Button.Style>
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonBaseStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding LotCreated}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=LotIDTextBox, Path=Text}"
+                                               Value=""/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=OPIDTextBox, Path=Text}"
+                                               Value=""/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=LotIDTextBox, Path=Text}"
+                                               Value="{x:Null}"/>
+                            </MultiDataTrigger.Conditions>
+
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding ElementName=OPIDTextBox, Path=Text}"
+                                               Value="{x:Null}"/>
+                            </MultiDataTrigger.Conditions>
+
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
+                                <Condition Binding="{Binding LotQty}"
+                                               Value=""/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>-->
+        </Button>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Shell Colour"/>
+
+        <!--<ComboBox Grid.Row="4" Grid.Column="1" x:Name="ShellColourComboBox" IsEditable = "True" SelectedValue="{Binding Shell_Colour}">
+            <ComboBoxItem Content = "Shell Colour Black"/>
+            <ComboBoxItem Content = "Transparent"/>
+        </ComboBox>-->
+
+        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="Shell_Colour" Text="{Binding Shell_Colour}"/>
+
+        <TextBlock Grid.Row="5"/>
+        
+        <Button Grid.Row="6" Grid.Column="0" Command="{Binding ShellColourBlackCommand}"
+                    Content="Black" Background="Gray">
+        </Button>
+        <Button Grid.Row="6" Grid.Column="1" Command="{Binding TransparentCommand}"
+                    Content="Transparent" Background="Wheat">
+        </Button>
+
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="TSO Column" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <UniformGrid Rows="1" Grid.Row="7" Grid.Column="1">
+            <TextBlock Text="{DynamicResource Off}" Style="{StaticResource RightTextBlock}"/>
+            <mahApps:ToggleSwitch x:Name="GeneralToggleSwitch" IsChecked="{Binding TSOColumnValue}" CheckChangedCommand="{Binding TSOColumnCommand}" CheckChangedCommandParameter="{Binding }" VerticalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource On}" Style="{StaticResource LeftTextBlock}"/>
+        </UniformGrid>
+    </Grid>
+</UserControl>

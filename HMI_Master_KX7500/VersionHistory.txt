@@ -1,0 +1,114 @@
+Version			: V1.3.12.0
+Date Updated	: 26/03/2026
+Updated By		: Wan Yen
+Changes			:
+1. Due to FIAM firmware version change, data format from serial COM change
+
+Version			: V1.3.11.0
+Date Updated	: 12/08/2025
+Updated By		: Joshua Chan (chan.jun.jie@pentamaster.com.my)
+Changes			:
+1. Add two pop up dialog (content only dialog)
+
+Version			: V1.3.10.0
+Date Updated	: 20/06/2025
+Updated By		: Joshua Chan (chan.jun.jie@pentamaster.com.my)
+Changes			:
+1. Remove "AutoGenerateColumns" on Alarm HistoryView datagrid to solve the HMI lagging
+2. Check for duplicates alarm in the same timeframe, skip those duplicates item only add new error.
+3. Add DatePicker & Checkbox to allow user search alarm logs for Error/Warning.
+
+Version			: V1.3.9.0
+Date Updated	: 19/06/2025
+Updated By		: Joshua Chan (chan.jun.jie@pentamaster.com.my)
+Changes			:
+1. Add Alarm HistoryView to show all current Alarm and Warning
+2. Shows only last 20items of active alarm 
+
+Version			: V1.3.8.0
+Date Updated	: 21/01/2024
+Updated By		: Wan Yen
+Changes			:
+1. Add ce=sv log for individual foup 
+
+Version			: V1.3.7.0
+Date Updated	: 01/04/2024
+Updated By		: Adib
+Changes			:
+1. Add toggle in Lot Entry Page
+
+Version			: V1.3.6.0
+Date Updated	: 26/08/2022
+Updated By		: Ikhmal
+Changes			:
+1. Update language for all page except IO
+2. Add alarm list with Chinese translation
+
+Version			: V1.3.5.0
+Date Updated	: 17/08/2022
+Updated By		: Ikhmal
+Changes			:
+1. Add exception when application crash.
+2. Change Message Box position in Vision Setup page and Welder Setup page to top section.
+3. Make all text box with Real and Float data type can show 3 decimals places.
+4. Fix Recipe page not responding when save and load recipe.
+
+Version			: V1.3.4.0
+Date Updated	: 03/08/2022
+Updated By		: Ikhmal
+Changes			:
+1. Add 2 new sessions for Welder Log, DBC Log and Recipe page
+2. Change some address for certain pages
+3. Fix Recipe page, LF Leg Settings page and LF Leg Drawing Position page
+4. Add condition to check modules before get PLC address in every modules initializeopc function
+
+Version			: V1.3.3.0
+Date Updated	: 27/07/2022
+Updated By		: Ikhmal
+Changes			:
+1. Divide some modules into 4 OPCUA session
+2. Add Machine Layout
+3. Implement Lot Entry using MVVM
+4. Remove Initialize Model for some modules
+
+Version			: V1.2.3.0
+Date Updated	: 22/07/2022
+Updated By		: Ikhmal
+Changes			:
+1. Add Welder Log
+2. Add Recipe Page
+3. Update Recipe Parameter
+
+Version			: V1.1.3.0
+Date Updated	: 21/07/2022
+Updated By		: Ikhmal
+Changes			:
+1. Update Lot Entry Page
+2. Add LF Leg Setting Page
+3. Add LF Leg Drawing Position Page
+4. Add Tracking Status Page
+4. Add DBC Log Page
+
+Version			: V1.0.3.0
+Date Updated	: 17/06/2022
+Updated By		: Ikhmal
+Changes			:
+1. Fix Popup and settings page
+2. Add machine top view image on main page
+3. Add StringToBooleanConverter
+
+Version			: V1.0.2.0
+Date Updated	: 16/06/2022
+Updated By		: Ikhmal
+Changes			:
+1. Add Popup and settings page
+2. Update PLC address for settings page.
+
+Version			: V1.0.1.0
+Date Updated	: 12/06/2022
+Updated By		: Ikhmal
+Changes			:
+1. Update IO location images
+2. Update PLC address for main page, lot entry, oee, cycle time and component life cycle.
+3. Update IO list
+4. Change Alarm.mdb file path

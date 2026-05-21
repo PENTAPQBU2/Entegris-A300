@@ -1,0 +1,35 @@
+﻿<Window x:Class="HMI_SSDC_PIM.Modules.AlarmHistory.AlarmHistorySearchResultDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HMI_SSDC_PIM.Modules.AlarmHistory"
+        mc:Ignorable="d"
+        Title="AlarmHistorySearchResultDialog" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <CheckBox Content="Error" VerticalAlignment="Center" IsChecked="{Binding IsErrorChecked}" IsEnabled="False"/>
+            <CheckBox Content="Warning" VerticalAlignment="Center" IsChecked="{Binding IsWarningChecked}" IsEnabled="False"/>
+            <TextBlock x:Name="tbStartDate" Text="StartDate: " VerticalAlignment="Center"  Margin="5"/>
+            <TextBlock x:Name="tbStartDateInfo" MinWidth="150" Text="{Binding StartDate}" VerticalAlignment="Center" Margin="5"/>
+            <TextBlock x:Name="tbEndDate" Text="EndDate: " VerticalAlignment="Center"  Margin="5"/>
+            <TextBlock x:Name="tbEndDateInfo" MinWidth="150" Text="{Binding EndDate}" VerticalAlignment="Center" Margin="5"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" MinHeight="250" Name="dgAlarmHistoryErr" ItemsSource="{Binding AlarmHistoryCollection, Mode=OneWay}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Time" Binding="{Binding Time}"/>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+                <DataGridTextColumn Header="Message" Binding="{Binding Message}"/>
+                <DataGridTextColumn Header="Action" Binding="{Binding Action}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</Window>
