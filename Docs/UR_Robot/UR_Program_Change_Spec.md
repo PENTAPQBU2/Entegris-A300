@@ -66,8 +66,8 @@ Notes:
 | Register | New name | Written by | Purpose |
 |---|---|---|---|
 | Bool input 16 | `HMI_TeachMode` | PLC (EtherNet/IP, W0FD bit 0) | PLC allows HMI teach mode |
-| Bool output 9 | `InTeachMode` | Robot | Robot is in the HMI teach branch |
-| Int output 1 | `Rcp_ID_Out` | Robot | Recipe ID whose points are loaded |
+| Bool output 9 | `InTeachMode` | Robot (EtherNet/IP, W08C bit 9) | Robot is in the HMI teach branch |
+| Int output 1 | `Rcp_ID_Out` | Robot (EtherNet/IP, W092–W093) | Recipe ID whose points are loaded |
 
 Register input action for bool input 16: **NONE**.
 
@@ -195,15 +195,20 @@ Speeds above are starting values for teaching; they are limited further by the s
 | Teach request | MR6001 (HMI→PLC) | Operator wants HMI teach |
 | Teach allowed | MR6002 (PLC→HMI) | ON when no lot is running, machine not in auto, doors/safety OK |
 | Teach mode to robot | W0FD bit 0 (PLC→robot `HMI_TeachMode`) | = MR6001 AND MR6002 |
-| Robot in teach | MR6003 (PLC→HMI) | = robot bool output 9 `InTeachMode` (W address to be confirmed) |
+| Robot in teach | MR6003 (PLC→HMI) | = robot bool output 9 `InTeachMode` = **W08C bit 9** |
 | Robot start / stop / pause / reset | MR6004 / MR6005 / MR6006 / MR6007 (HMI→PLC) | Map to existing robot bits: Start_Prog (W0FC.11), Stop_Program (W0FC.2), Pause_Program (W0FC.3); reset = existing init/home sequence |
-| Robot recipe ID | EM4200 (2 words, PLC) | = robot int output 1 `Rcp_ID_Out` (W address to be confirmed) |
+| Robot recipe ID | EM4200 (2 words, PLC) | = robot int output 1 `Rcp_ID_Out` = **W092–W093** (int output 0 `current_Pos` is W090–W091) |
 | Robot recipe OK | MR6008 (PLC→HMI) | ON when EM4200 = lot recipe ID EM1559; **Run interlock**: no Start while OFF |
 | Teach lost | – | If W0FD.0 goes OFF while robot `InTeachMode` is ON for > 0.5 s → pulse Stop_Program |
 | Hard reset prompt (MT_006) | MR6010 (PLC→HMI), EM4210 string[100] (EM4210–EM4259) | Reset held 5 s → MR6010 ON + message |
 | Hard reset reply | MR6011 Proceed, MR6012 Cancel (HMI→PLC) | PLC acts on Proceed only, clears MR6010 |
 
-Please confirm in KV Studio that MR6000–MR6015 and EM4200–EM4259 are free.
+MR6000–MR6015 and EM4200–EM4259 confirmed free in KV Studio (14/10/2026).
+
+EtherNet/IP words used (robot unit [0-1] Universal Robot): W0FC/W0FD bit input registers 0–15/16–31,
+W08C bit output registers 0–15, W090–W091 int output 0, W092–W093 int output 1 (new),
+W0100–W0103 int input 0–1. After this change the robot no longer reads `shell_int`
+(int input 1, W0102–W0103); the PLC may keep writing it.
 
 ## 6. Test procedure (robot at reduced speed, doors closed)
 
