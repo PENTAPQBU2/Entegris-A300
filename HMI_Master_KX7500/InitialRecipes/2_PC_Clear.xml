@@ -2,6 +2,6 @@
 <LotRecipeModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <RecipeID>2</RecipeID>
   <RecipeName>PC Clear</RecipeName>
-  <Description>Today's Transparent shell (robot point set shell_int 1).</Description>
-  <ShellColour>Transparent</ShellColour>
+  <Description>Today's Transparent points (robot shell_int 1).</Description>
+  <RobotPointSet>1</RobotPointSet>
 </LotRecipeModel>

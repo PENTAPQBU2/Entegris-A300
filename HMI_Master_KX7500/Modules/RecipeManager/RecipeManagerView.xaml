@@ -29,7 +29,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding RecipeID}" Width="50"/>
                     <DataGridTextColumn Header="Recipe" Binding="{Binding RecipeName}" Width="*"/>
-                    <DataGridTextColumn Header="Shell colour" Binding="{Binding ShellColour}" Width="130"/>
+                    <DataGridTextColumn Header="Robot point set" Binding="{Binding RobotPointSet}" Width="140"/>
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
@@ -38,7 +38,7 @@
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="260"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -48,8 +48,8 @@
                     </Grid.RowDefinitions>
                     <TextBlock Text="Name" Style="{StaticResource KeyText}"/>
                     <TextBox Grid.Column="1" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" MaxLength="20" Margin="4" FontSize="15"/>
-                    <TextBlock Grid.Row="1" Text="Shell colour" Style="{StaticResource KeyText}"/>
-                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ShellColours}" SelectedItem="{Binding NewShellColour}" Margin="4" FontSize="15"/>
+                    <TextBlock Grid.Row="1" Text="Robot point set" Style="{StaticResource KeyText}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewPointSet, UpdateSourceTrigger=PropertyChanged}" Margin="4" FontSize="15"/>
                     <TextBlock Grid.Row="2" Text="New ID (copy)" Style="{StaticResource KeyText}"/>
                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NewId, UpdateSourceTrigger=PropertyChanged}" Margin="4" FontSize="15"/>
                 </Grid>
@@ -60,7 +60,7 @@
                     <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="4" Height="40" MinWidth="90"/>
                 </WrapPanel>
                 <TextBlock TextWrapping="Wrap" Margin="4" FontSize="12" MaxWidth="600" HorizontalAlignment="Left"
-                           Text="Save: name and shell colour of the selected recipe. Create copy: new recipe with the name, shell colour and new ID above. Delete moves the file to Recipe\Deleted. The shell colour selects the robot point set (taught on the robot pendant); it is sent to the PLC at New Lot."/>
+                           Text="Save: name and robot point set of the selected recipe. Create copy: new recipe with the name, point set and new ID above. Delete moves the file to Recipe\Deleted. The robot point set (0 = Black, 1 = Transparent, 2.. = new sets) is the robot shell_int case whose points are taught on the pendant; it is sent to the PLC at New Lot."/>
             </StackPanel>
         </GroupBox>
 

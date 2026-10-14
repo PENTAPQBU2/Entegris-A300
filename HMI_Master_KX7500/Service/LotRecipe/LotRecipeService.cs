@@ -115,6 +115,18 @@ namespace HMI_Master_KX7500.Service.LotRecipe
             return all.Count == 0 ? 1 : all.Max(x => x.RecipeID) + 1;
         }
 
+        public const int MaxRobotPointSet = 99;
+
+        //Returns null when the point set number can be used, otherwise the reason
+        public static string ValidatePointSet(int robotPointSet)
+        {
+            if(robotPointSet < 0 || robotPointSet > MaxRobotPointSet)
+            {
+                return $"Robot point set must be 0 to {MaxRobotPointSet}.";
+            }
+            return null;
+        }
+
         //Returns null when the name/ID can be used, otherwise the reason
         public static string Validate(string name, int recipeId, LotRecipeModel ignore = null)
         {
@@ -149,15 +161,15 @@ namespace HMI_Master_KX7500.Service.LotRecipe
             return null;
         }
 
-        //New recipe copied from an existing one, with the chosen shell colour (robot point set)
-        public static LotRecipeModel CreateCopy(LotRecipeModel source, string name, int recipeId, ShellColour shellColour)
+        //New recipe copied from an existing one, with the chosen robot point set
+        public static LotRecipeModel CreateCopy(LotRecipeModel source, string name, int recipeId, int robotPointSet)
         {
             LotRecipeModel copy = new LotRecipeModel
             {
                 RecipeID = recipeId,
                 RecipeName = name.Trim(),
                 Description = $"Copied from {source.RecipeName} on {DateTime.Now:yyyy-MM-dd HH:mm}",
-                ShellColour = shellColour
+                RobotPointSet = robotPointSet
             };
             Save(copy);
             return copy;

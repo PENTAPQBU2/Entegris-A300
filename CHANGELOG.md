@@ -17,16 +17,16 @@ cancelled by the customer; its code is kept in `Archive/MT_002_RobotPage/`. Item
 - `UseKVStudioSimulator` setting (value passed to KV DataBuilder `KVSimulator`, default `true` as before).
 - `FoupCsvFolder` setting for the torque CSV log folder.
 - `Docs/Offline_Simulation.md` – how to run the HMI on an office PC.
-- **Recipe page (MT_001)** – menu "Recipe", not for Operator: list of recipes (ID, name, shell colour),
-  save name and shell colour, create a copy, delete (moved to `Recipe\Deleted`, blocked for the current
+- **Recipe page (MT_001)** – menu "Recipe", not for Operator: list of recipes (ID, name, robot point set),
+  save name and robot point set, create a copy, delete (moved to `Recipe\Deleted`, blocked for the current
   lot recipe). Recipe files in `<HMI folder>\Recipe\`; five starting recipes (EBM, PC Clear, PC Amber,
   PC Red, PC Green) are copied there on first start.
 - **Lot Entry recipe drop-down (MT_001)** – recipe chosen from the recipe files instead of typing a number.
-  New Lot writes the recipe ID (EM1559), name (EM1623) and sets the recipe's shell colour bit
-  (MR4500–MR4504). The PLC turns the bit into `shell_int` (W0102) and the robot uses that recipe's
-  points (taught on the pendant). The Black/Transparent buttons are replaced by the recipe.
+  New Lot writes the recipe ID (EM1559), name (EM1623) and the recipe's robot point set to the new
+  address `HMI_Robot_PointSet` EM4200. The PLC moves it to `shell_int` (W0102) and the robot uses that
+  point set (taught on the pendant). The Black/Transparent buttons (MR4500/MR4501) are no longer used.
 - `Docs/UR_Robot/UR_Program_Change_Spec.md` – robot and PLC changes for the five recipes
-  (`Switch shell_int` Case 2–4, three new PLC rungs).
+  (`Switch shell_int` Case 2–4, PLC rung EM4200 → W0102).
 
 ### Changed
 - Torque CSV log falls back to `<HMI folder>\FOUP CSV\` when the `D:` drive does not exist

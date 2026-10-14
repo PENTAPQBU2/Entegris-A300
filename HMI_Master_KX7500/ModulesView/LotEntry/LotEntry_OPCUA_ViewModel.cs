@@ -161,7 +161,7 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
         #endregion
 
         #region PrivateCommandMethods
-        //New Lot (MT_001): the recipe gives the recipe ID/name and the shell colour bit (= robot point set)
+        //New Lot (MT_001): the recipe gives the recipe ID/name and the robot point set
         private void newLotCommand(string lotID)
         {
             LotEntryModel model = LotEntryInterfaceModel.LotEntryModel;
@@ -173,7 +173,7 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
             }
 
             writeNewLot(lotID, recipe);
-            model.LotMessage = $"Lot {lotID} created with recipe {recipe.RecipeName} (shell colour {recipe.ShellColour}).";
+            model.LotMessage = $"Lot {lotID} created with recipe {recipe.RecipeName} (robot point set {recipe.RobotPointSet}).";
         }
 
         private void writeNewLot(string lotID, LotRecipeModel recipe)
@@ -187,10 +187,9 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                 keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Lot_Quantity_Tag, LotEntryInterfaceModel.LotEntryModel.Lot_Quantity);
                 keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Current_Quantity_Tag, LotEntryInterfaceModel.LotEntryModel.Current_Quantity);
 
-                //Same as the old Black/Transparent buttons: set the colour bit; on its rising edge the PLC
-                //resets the other colour bits and moves the robot point set number to W0102 (shell_int)
-                keyenceDll.Write<bool>(PLCTag.ShellColourTag(recipe.ShellColour), true);
-                LotEntryInterfaceModel.LotEntryModel.Shell_Colour = recipe.ShellColour.ToString();
+                //Replaces the old Black/Transparent bits: the PLC moves this number to W0102 (robot shell_int)
+                keyenceDll.Write<int>(PLCTag.HMI_Robot_PointSet, recipe.RobotPointSet);
+                LotEntryInterfaceModel.LotEntryModel.Shell_Colour = recipe.RecipeName;
             }
             catch (Exception ex) { logger.Error(ex); }
         }

@@ -14,8 +14,8 @@ using System.Windows;
 
 namespace HMI_Master_KX7500.ModulesView.RecipeManager
 {
-    //Recipe page (MT_001): create, copy, edit and delete recipes. Each recipe uses one shell colour bit (= robot
-    //point set, taught on the robot pendant).
+    //Recipe page (MT_001): create, copy, edit and delete recipes. Each recipe uses one robot point set
+    //(waypoints taught on the robot pendant).
     public class RecipeManagerViewModel : ViewModelBase
     {
         public const string PageName = "Recipe";
@@ -44,8 +44,6 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
         public RelayCommand RefreshCommand { get; }
 
         public ObservableCollection<LotRecipeModel> Recipes { get; } = new ObservableCollection<LotRecipeModel>();
-        public ShellColour[] ShellColours { get; } = (ShellColour[])Enum.GetValues(typeof(ShellColour));
-
         private LotRecipeModel selectedRecipe;
         public LotRecipeModel SelectedRecipe
         {
@@ -56,13 +54,13 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
                 if(value != null)
                 {
                     NewName = value.RecipeName;
-                    NewShellColour = value.ShellColour;
+                    NewPointSet = value.RobotPointSet.ToString();
                 }
             }
         }
 
-        private ShellColour newShellColour = ShellColour.Black;
-        public ShellColour NewShellColour { get => newShellColour; set => Set(ref newShellColour, value); }
+        private string newPointSet = "0";
+        public string NewPointSet { get => newPointSet; set => Set(ref newPointSet, value); }
 
         private string newName = string.Empty;
         public string NewName { get => newName; set => Set(ref newName, value); }
@@ -94,7 +92,8 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
                 return;
             }
 
-            string problem = LotRecipeService.Validate(NewName, id);
+            int pointSet;
+            string problem = parsePointSet(out pointSet) ?? LotRecipeService.Validate(NewName, id);
             if(problem != null)
             {
                 show(problem);
@@ -103,10 +102,10 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
 
             try
             {
-                LotRecipeModel copy = LotRecipeService.CreateCopy(SelectedRecipe, NewName, id, NewShellColour);
+                LotRecipeModel copy = LotRecipeService.CreateCopy(SelectedRecipe, NewName, id, pointSet);
                 reload();
                 SelectedRecipe = Recipes.FirstOrDefault(x => x.RecipeID == copy.RecipeID);
-                show($"Recipe {copy.RecipeName} (ID {copy.RecipeID}) created with shell colour {copy.ShellColour}.");
+                show($"Recipe {copy.RecipeName} (ID {copy.RecipeID}) created with robot point set {copy.RobotPointSet}.");
             }
             catch(Exception ex)
             {
@@ -115,10 +114,20 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
             }
         }
 
-        //Saves the name and shell colour of the selected recipe
+        private string parsePointSet(out int pointSet)
+        {
+            if(!int.TryParse((NewPointSet ?? string.Empty).Trim(), out pointSet))
+            {
+                return "Robot point set must be a number.";
+            }
+            return LotRecipeService.ValidatePointSet(pointSet);
+        }
+
+        //Saves the name and robot point set of the selected recipe
         private void save()
         {
-            string problem = LotRecipeService.Validate(NewName, SelectedRecipe.RecipeID, SelectedRecipe);
+            int pointSet;
+            string problem = parsePointSet(out pointSet) ?? LotRecipeService.Validate(NewName, SelectedRecipe.RecipeID, SelectedRecipe);
             if(problem != null)
             {
                 show(problem);
@@ -128,10 +137,10 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
             try
             {
                 string oldName = SelectedRecipe.RecipeName;
-                SelectedRecipe.ShellColour = NewShellColour;
+                SelectedRecipe.RobotPointSet = pointSet;
                 LotRecipeService.Rename(SelectedRecipe, NewName);
                 reload();
-                show($"Recipe {oldName} saved as {NewName.Trim()}, shell colour {NewShellColour}.");
+                show($"Recipe {oldName} saved as {NewName.Trim()}, robot point set {pointSet}.");
             }
             catch(Exception ex)
             {

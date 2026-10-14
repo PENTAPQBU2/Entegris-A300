@@ -7,31 +7,34 @@ Purpose: MT_001 recipes EBM, PC Clear, PC Amber, PC Red, PC Green, each with its
 MT_002 (HMI Robot page) is cancelled. Points are taught on the pendant, the same way as today.
 The earlier design (HMI-taught general variables) is kept in `Archive/MT_002_RobotPage/`.
 
-## 1. How the recipe reaches the robot (unchanged method)
+## 1. How the recipe reaches the robot
 
 1. Operator selects the recipe on Lot Entry and presses New Lot.
-2. HMI writes the recipe ID (EM1559), recipe name (EM1623) and sets the recipe's shell colour bit.
-3. PLC, on the rising edge of the bit, resets the other colour bits and moves the point set number
-   to W0102 (`shell_int`, robot int input 1).
-4. Robot `Switch shell_int` builds `screwHeightList` / `screwEntryList` from that recipe's points.
+2. HMI writes the recipe ID (EM1559), recipe name (EM1623) and the recipe's **robot point set**
+   number to the new address `HMI_Robot_PointSet` **EM4200** (2W, EM4200–EM4201).
+3. PLC moves EM4200 to W0102 (`shell_int`, robot int input 1).
+4. Robot `Switch shell_int` builds `screwHeightList` / `screwEntryList` from that point set.
 
-| Recipe (HMI default) | Colour bit set by HMI | W0102 / `shell_int` | PLC rung |
-|---|---|---|---|
-| EBM | MR4500 Shell_Colour_Black | 0 | exists (057) |
-| PC Clear | MR4501 Shell_Colour_Transparent | 1 | exists (058) |
-| PC Amber | MR4502 Shell_Colour_Orange | 2 | **new** |
-| PC Red | MR4504 Shell_Colour_Red | 3 | **new** |
-| PC Green | MR4503 Shell_Colour_Clear | 4 | **new** |
+The recipe ID and the point set are separate numbers, so recipe IDs can grow (copies get 6, 7 …)
+and two recipes can share one point set. The point set of each recipe is set on the HMI Recipe page.
 
-The colour bit of each recipe can be changed on the HMI Recipe page.
+| Recipe (HMI default) | Robot point set = `shell_int` | Robot waypoints |
+|---|---|---|
+| EBM | 0 | `Point_*b` (today's black, unchanged) |
+| PC Clear | 1 | `Point_t*` (today's transparent, unchanged) |
+| PC Amber | 2 | `Point_a*` (new) |
+| PC Red | 3 | `Point_r*` (new) |
+| PC Green | 4 | `Point_g*` (new) |
 
 ## 2. PLC change
 
-If rungs for Orange, Red and Clear do not exist yet, copy rung 058 three times:
-
-- Contact: rising edge of `Shell_Colour_Orange` / `Shell_Colour_Red` / `Shell_Colour_Clear`.
-- RES the other four colour bits.
-- `MOV.D #2` / `#3` / `#4` → `W0102`.
+1. New label `HMI_Robot_PointSet`, 2W signed integer, **EM4200**.
+2. New rung: `MOV.D EM4200 → W0102`, always on (e.g. contact CR2002). The HMI writes EM4200 only at
+   New Lot, so W0102 changes only then.
+3. Rungs 057/058 (Shell_Colour_Black / _Transparent → W0102) are no longer triggered: the HMI does not
+   set MR4500/MR4501 any more. Delete or disable them so only one rung writes W0102.
+4. After a PLC restart EM4200 keeps its value if EM is latched; otherwise the robot gets 0 (black)
+   until the next New Lot. Check the EM latch setting.
 
 ## 3. Robot program change
 

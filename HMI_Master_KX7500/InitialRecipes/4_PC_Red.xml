@@ -2,6 +2,6 @@
 <LotRecipeModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <RecipeID>4</RecipeID>
   <RecipeName>PC Red</RecipeName>
-  <Description>New robot point set, start from the Black points.</Description>
-  <ShellColour>Red</ShellColour>
+  <Description>New robot point set 3, start from the Black points.</Description>
+  <RobotPointSet>3</RobotPointSet>
 </LotRecipeModel>

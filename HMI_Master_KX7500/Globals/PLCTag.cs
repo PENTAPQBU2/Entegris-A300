@@ -146,25 +146,8 @@ namespace HMI_Master_KX7500.Globals
         public const string Lot_Recipe_ID = "EM1559";        //Lot_Info_DB_Recipe_ID, 2W
         public const string Lot_Recipe_Name = "EM1623";      //Lot_Info_DB_Curr_Recipe_Name, string[20]
 
-        //Shell colour bits. Rising edge: PLC resets the other colour bits and moves the robot point set
-        //number (shell_int) to W0102: Black 0, Transparent 1 (Orange/Red/Clear: see UR_Program_Change_Spec.md)
-        public const string Shell_Colour_Black = "MR4500";
-        public const string Shell_Colour_Transparent = "MR4501";
-        public const string Shell_Colour_Orange = "MR4502";
-        public const string Shell_Colour_Clear = "MR4503";
-        public const string Shell_Colour_Red = "MR4504";
-
-        public static string ShellColourTag(HMI_Master_KX7500.Model.LotRecipe.ShellColour colour)
-        {
-            switch (colour)
-            {
-                case HMI_Master_KX7500.Model.LotRecipe.ShellColour.Transparent: return Shell_Colour_Transparent;
-                case HMI_Master_KX7500.Model.LotRecipe.ShellColour.Orange: return Shell_Colour_Orange;
-                case HMI_Master_KX7500.Model.LotRecipe.ShellColour.Clear: return Shell_Colour_Clear;
-                case HMI_Master_KX7500.Model.LotRecipe.ShellColour.Red: return Shell_Colour_Red;
-                default: return Shell_Colour_Black;
-            }
-        }
+        //Robot point set of the lot recipe. PLC moves it to W0102 (robot int input 1, shell_int)
+        public const string HMI_Robot_PointSet = "EM4200";   //2W
         #endregion
 
     }

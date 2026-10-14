@@ -1,23 +1,14 @@
 namespace HMI_Master_KX7500.Model.LotRecipe
 {
-    //PLC shell colour bits (MR4500-MR4504). The PLC turns the bit into shell_int for the robot,
-    //and the robot program picks that recipe's taught point set (Switch shell_int).
-    public enum ShellColour
-    {
-        Black,
-        Transparent,
-        Orange,
-        Clear,
-        Red
-    }
-
-    //One recipe file: recipe identity + which shell colour bit (= robot point set) it uses.
-    //The robot points themselves are taught on the robot pendant.
+    //One recipe file: recipe identity + which robot point set it uses.
+    //RobotPointSet goes to the PLC (HMI_Robot_PointSet), the PLC moves it to W0102 (robot shell_int) and the
+    //robot program "Switch shell_int" picks that set's waypoints, taught on the robot pendant.
+    //0 = Black set, 1 = Transparent set (as before V1.4.0.0), 2.. = new sets.
     public class LotRecipeModel
     {
         public int RecipeID { get; set; }
         public string RecipeName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public ShellColour ShellColour { get; set; } = ShellColour.Black;
+        public int RobotPointSet { get; set; }
     }
 }
