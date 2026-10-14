@@ -27,6 +27,12 @@ hard reset, start button). Items are added here as they are completed.
   Used by the Robot page (in progress).
 - Robot recipe model and file service (`<HMI folder>\Recipe\<ID>_<Name>.xml`); the five starting
   recipes are copied there on first start.
+- **Robot page (MT_002, first version)** – menu "Robot", Technician and Pentamaster only. Robot IP setting,
+  connect, status (mode, safety, program, current point, speed, recipe on robot), tool position and joints,
+  Start (power on), Run, Pause, Stop, Reset (unlocks a protective stop), speed. Teach mode request to the PLC;
+  in teach mode: jog X/Y/Z/Rx/Ry/Rz in Base or Tool frame, step 0.01–10.00 mm/deg; hold-to-move to a
+  recipe or shared point; teach point; load recipe points to the robot; save recipe. Offline mode uses a
+  simulated robot. New PLC tags MR6000–MR6008, EM4200.
 
 ### Changed
 - Torque CSV log falls back to `<HMI folder>\FOUP CSV\` when the `D:` drive does not exist

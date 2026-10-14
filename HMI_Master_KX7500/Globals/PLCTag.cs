@@ -140,6 +140,20 @@ namespace HMI_Master_KX7500.Globals
 
         //ScrewNumber
         public const string Screw_Number = "EM10";
-        #endregion     
+        #endregion
+
+        #region Robot page (V1.4.0.0, see Docs/UR_Robot/UR_Program_Change_Spec.md section 5)
+        public const string Robot_Page_Open = "MR6000";      //HMI -> PLC
+        public const string Robot_Teach_Req = "MR6001";      //HMI -> PLC
+        public const string Robot_Teach_Allowed = "MR6002";  //PLC -> HMI
+        public const string Robot_In_Teach = "MR6003";       //PLC -> HMI (robot InTeachMode, W08C bit 9)
+        public const string Robot_Run = "MR6004";            //HMI -> PLC, PLC pulses robot Start_Prog
+        public const string Robot_Stop = "MR6005";           //HMI -> PLC, PLC pulses robot Stop_Program
+        public const string Robot_Pause = "MR6006";          //HMI -> PLC, PLC pulses robot Pause_Program
+        public const string Robot_Reset = "MR6007";          //HMI -> PLC, PLC runs robot init/home sequence
+        public const string Robot_Recipe_OK = "MR6008";      //PLC -> HMI, robot recipe ID = lot recipe ID
+        public const string Robot_Recipe_ID = "EM4200";      //PLC copy of robot Rcp_ID_Out (W092-W093)
+        #endregion
+
     }
 }

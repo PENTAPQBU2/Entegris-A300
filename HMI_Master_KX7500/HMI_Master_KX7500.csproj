@@ -366,6 +366,17 @@
     <Compile Include="CommunicationProtocols\UR\UrRtdeClient.cs" />
     <Compile Include="Model\Robot\RobotRecipeModel.cs" />
     <Compile Include="Service\Robot\RobotRecipeService.cs" />
+    <Compile Include="Model\Robot\RobotSettingsModel.cs" />
+    <Compile Include="Service\Robot\IUrRobot.cs" />
+    <Compile Include="Service\Robot\RobotSettingsService.cs" />
+    <Compile Include="Service\Robot\RobotStatements.cs" />
+    <Compile Include="Service\Robot\UrRobot.cs" />
+    <Compile Include="Service\Robot\UrRobotSimulator.cs" />
+    <Compile Include="ModulesView\Robot\RobotPointItem.cs" />
+    <Compile Include="ModulesView\Robot\RobotViewModel.cs" />
+    <Compile Include="Modules\Robot\RobotView.xaml.cs">
+      <DependentUpon>RobotView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converter\StringToBooleanConverter.cs" />
     <Compile Include="Globals\Event.cs" />
     <Compile Include="Globals\PLCTag.cs" />
@@ -904,6 +915,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Modules\MainView\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\Robot\RobotView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
