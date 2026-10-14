@@ -60,6 +60,9 @@ Screws 4, 5, 6, 9, 11, 12, 13, 14, 15 have no entry point today (the screw point
 
 ### 3.3 Main_PLC – `Switch shell_int`
 
+Only the point lists change per case. The screw sequence stays one set for all recipes: it already
+moves to `screwEntryList[ScrewNum]` and `screwHeightList[ScrewNum]`, so it is **not** changed or copied.
+
 Keep Case 0 (black) and Case 1 (transparent) as they are. Add, with the same two lines as Case 0:
 
 ```
