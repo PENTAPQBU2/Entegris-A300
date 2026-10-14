@@ -130,7 +130,6 @@ namespace HMI_Master_KX7500.Modules.Frame
 
         private DryRun.DryRunView dryRunView = null;
         private MotorView motorView = null;
-        private HMI_Master_KX7500.Modules.Robot.RobotView robotView = null;
         private HMI_Master_KX7500.Modules.RecipeManager.RecipeManagerView recipeView = null;
 
         private EngModeView engModeView = null;
@@ -1143,8 +1142,6 @@ namespace HMI_Master_KX7500.Modules.Frame
                     if (debugMode || addDryRunView) { addMenuModel(dryRunView, "pack://application:,,,/Pentamaster;component/HMI/Icons/Stopwatch.png", "Dry Run"); }
                     if (debugMode || addSettingView) { addMenuModel(settingsView, "pack://application:,,,/Pentamaster;component/HMI/Icons/Gear.png", "Setting"); }
                     if (debugMode || addMotorView) { addMenuModel(motorView, "pack://application:,,,/Pentamaster;component/HMI/Icons/Engineering.png", "Motor"); }
-                    //Robot page: same access as Motor (Technician and Pentamaster, not Operator)
-                    if (debugMode || addMotorView) { addMenuModel(robotView, "pack://application:,,,/HMI_SSDC_PIM;component/Icon/Wrench.png", "Robot"); }
                     if (debugMode || addIoView) { addMenuModel(ioView, "pack://application:,,,/HMI_SSDC_PIM;component/Icon/AttendanceList.png", "IO"); }
                     if (debugMode || addCycleTimeView) { addMenuModel(cycleTimeView, "pack://application:,,,/Pentamaster;component/HMI/Icons/TimeCycles.png", "Cycle Time"); }
                     if (debugMode || addUserAccessView) { addMenuModel(userAccountAccessView, "pack://application:,,,/HMI_SSDC_PIM;component/Icon/User.png", "User Access"); }
@@ -1240,9 +1237,7 @@ namespace HMI_Master_KX7500.Modules.Frame
                 alarmhistoryView = new AlarmHistoryView();
                 dryRunView = new DryRun.DryRunView();
                 motorView = new MotorView { DataContext = new Motor_OPCUA_ViewModel() };
-                robotView = new HMI_Master_KX7500.Modules.Robot.RobotView { DataContext = new HMI_Master_KX7500.ModulesView.Robot.RobotViewModel() };
                 recipeView = new HMI_Master_KX7500.Modules.RecipeManager.RecipeManagerView { DataContext = new HMI_Master_KX7500.ModulesView.RecipeManager.RecipeManagerViewModel() };
-                HMI_Master_KX7500.Service.Robot.RobotHub.AutoConnect();
                 ioView = new IOView_ { DataContext = new IO_OPCUA_ViewModel() };
                 cycleTimeView = new CycleTimeView { DataContext = new CycleTime_OPCUA_ViewModel() };
                 engModeView = new EngModeView { DataContext = new EngMode_OPCUA_ViewModel() };
@@ -1257,7 +1252,6 @@ namespace HMI_Master_KX7500.Modules.Frame
                 Global.PageList.Add("Alarm History", false);
                 Global.PageList.Add("Dry Run", false);
                 Global.PageList.Add("Motor", false);
-                Global.PageList.Add(HMI_Master_KX7500.ModulesView.Robot.RobotViewModel.PageName, false);
                 Global.PageList.Add(HMI_Master_KX7500.ModulesView.RecipeManager.RecipeManagerViewModel.PageName, false);
                 Global.PageList.Add("IO", false);
                 Global.PageList.Add("Cycle Time", false);
@@ -1336,10 +1330,6 @@ namespace HMI_Master_KX7500.Modules.Frame
                     else if (menuModel.MenuKey == "Recipe")
                     {
                         Global.ActivatePage(HMI_Master_KX7500.ModulesView.RecipeManager.RecipeManagerViewModel.PageName);
-                    }
-                    else if (menuModel.MenuKey == "Robot")
-                    {
-                        Global.ActivatePage(HMI_Master_KX7500.ModulesView.Robot.RobotViewModel.PageName);
                     }
                     else if (menuModel.MenuName == "IO")
                     {

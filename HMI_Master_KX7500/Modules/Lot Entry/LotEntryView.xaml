@@ -49,8 +49,7 @@
         <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
                        Text="{DynamicResource RECIPE_NAME}"/>
         <ComboBox Grid.Row="3" Grid.Column="1" x:Name="RECIPEComboBox" ItemsSource="{Binding Recipes}"
-                  SelectedItem="{Binding SelectedRecipe}" DisplayMemberPath="RecipeName" FontSize="16"
-                  IsEnabled="{Binding NewLotBusy, Converter={StaticResource InverseBooleanConverter}}"/>
+                  SelectedItem="{Binding SelectedRecipe}" DisplayMemberPath="RecipeName" FontSize="16"/>
 
         
         <!--<TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
@@ -67,9 +66,6 @@
                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonBaseStyle}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SelectedRecipe}" Value="{x:Null}">
-                            <Setter Property="IsEnabled" Value="False"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding NewLotBusy}" Value="True">
                             <Setter Property="IsEnabled" Value="False"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding LotCreated}" Value="True">
@@ -196,12 +192,13 @@
 
         <TextBlock Grid.Row="5"/>
         
-        <Button Grid.Row="6" Grid.Column="0" Command="{Binding ShellColourBlackCommand}"
+        <!--Shell colour now comes from the recipe (MT_001), written at New Lot-->
+        <!--<Button Grid.Row="6" Grid.Column="0" Command="{Binding ShellColourBlackCommand}"
                     Content="Black" Background="Gray">
         </Button>
         <Button Grid.Row="6" Grid.Column="1" Command="{Binding TransparentCommand}"
                     Content="Transparent" Background="Wheat">
-        </Button>
+        </Button>-->
 
         <TextBlock Grid.Row="7" Grid.Column="0" Text="TSO Column" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <UniformGrid Rows="1" Grid.Row="7" Grid.Column="1">

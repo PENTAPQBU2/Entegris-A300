@@ -142,22 +142,29 @@ namespace HMI_Master_KX7500.Globals
         public const string Screw_Number = "EM10";
         #endregion
 
-        #region Robot page (V1.4.0.0, see Docs/UR_Robot/UR_Program_Change_Spec.md section 5)
-        public const string Robot_Page_Open = "MR6000";      //HMI -> PLC
-        public const string Robot_Teach_Req = "MR6001";      //HMI -> PLC
-        public const string Robot_Teach_Allowed = "MR6002";  //PLC -> HMI
-        public const string Robot_In_Teach = "MR6003";       //PLC -> HMI (robot InTeachMode, W08C bit 9)
-        public const string Robot_Run = "MR6004";            //HMI -> PLC, PLC pulses robot Start_Prog
-        public const string Robot_Stop = "MR6005";           //HMI -> PLC, PLC pulses robot Stop_Program
-        public const string Robot_Pause = "MR6006";          //HMI -> PLC, PLC pulses robot Pause_Program
-        public const string Robot_Reset = "MR6007";          //HMI -> PLC, PLC runs robot init/home sequence
-        public const string Robot_Recipe_OK = "MR6008";      //PLC -> HMI, robot recipe ID = lot recipe ID
-        public const string Robot_Recipe_ID = "EM4200";      //PLC copy of robot Rcp_ID_Out (W092-W093)
-        #endregion
-
         #region Lot recipe (existing PLC labels)
         public const string Lot_Recipe_ID = "EM1559";        //Lot_Info_DB_Recipe_ID, 2W
         public const string Lot_Recipe_Name = "EM1623";      //Lot_Info_DB_Curr_Recipe_Name, string[20]
+
+        //Shell colour bits. Rising edge: PLC resets the other colour bits and moves the robot point set
+        //number (shell_int) to W0102: Black 0, Transparent 1 (Orange/Red/Clear: see UR_Program_Change_Spec.md)
+        public const string Shell_Colour_Black = "MR4500";
+        public const string Shell_Colour_Transparent = "MR4501";
+        public const string Shell_Colour_Orange = "MR4502";
+        public const string Shell_Colour_Clear = "MR4503";
+        public const string Shell_Colour_Red = "MR4504";
+
+        public static string ShellColourTag(HMI_Master_KX7500.Model.LotRecipe.ShellColour colour)
+        {
+            switch (colour)
+            {
+                case HMI_Master_KX7500.Model.LotRecipe.ShellColour.Transparent: return Shell_Colour_Transparent;
+                case HMI_Master_KX7500.Model.LotRecipe.ShellColour.Orange: return Shell_Colour_Orange;
+                case HMI_Master_KX7500.Model.LotRecipe.ShellColour.Clear: return Shell_Colour_Clear;
+                case HMI_Master_KX7500.Model.LotRecipe.ShellColour.Red: return Shell_Colour_Red;
+                default: return Shell_Colour_Black;
+            }
+        }
         #endregion
 
     }

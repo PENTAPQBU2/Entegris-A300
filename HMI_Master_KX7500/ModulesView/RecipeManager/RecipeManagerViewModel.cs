@@ -3,9 +3,8 @@ using GalaSoft.MvvmLight.CommandWpf;
 using HMI_Master_KX7500.CommunicationProtocols;
 using HMI_Master_KX7500.Globals;
 using HMI_Master_KX7500.Helpers;
-using HMI_Master_KX7500.Model.Robot;
-using HMI_Master_KX7500.ModulesView.Robot;
-using HMI_Master_KX7500.Service.Robot;
+using HMI_Master_KX7500.Model.LotRecipe;
+using HMI_Master_KX7500.Service.LotRecipe;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,8 @@ using System.Windows;
 
 namespace HMI_Master_KX7500.ModulesView.RecipeManager
 {
-    //Recipe page (MT_001): create, copy, rename and delete recipes. Robot points are taught on the Robot page.
+    //Recipe page (MT_001): create, copy, edit and delete recipes. Each recipe uses one shell colour bit (= robot
+    //point set, taught on the robot pendant).
     public class RecipeManagerViewModel : ViewModelBase
     {
         public const string PageName = "Recipe";
@@ -29,47 +29,40 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
                 DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
 
             CreateCopyCommand = new RelayCommand(createCopy, () => SelectedRecipe != null);
-            RenameCommand = new RelayCommand(rename, () => SelectedRecipe != null);
+            SaveCommand = new RelayCommand(save, () => SelectedRecipe != null);
             DeleteCommand = new RelayCommand(delete, () => SelectedRecipe != null && Recipes.Count > 1);
             RefreshCommand = new RelayCommand(reload);
 
-            RobotRecipeService.EnsureDefaultRecipes();
+            LotRecipeService.EnsureDefaultRecipes();
             reload();
-            RobotRecipeService.RecipesChanged += () => Application.Current?.Dispatcher.BeginInvoke(new Action(reload));
+            LotRecipeService.RecipesChanged += () => Application.Current?.Dispatcher.BeginInvoke(new Action(reload));
         }
 
         public RelayCommand CreateCopyCommand { get; }
-        public RelayCommand RenameCommand { get; }
+        public RelayCommand SaveCommand { get; }
         public RelayCommand DeleteCommand { get; }
         public RelayCommand RefreshCommand { get; }
 
-        public ObservableCollection<RobotRecipeModel> Recipes { get; } = new ObservableCollection<RobotRecipeModel>();
-        public ObservableCollection<RobotPointItem> Points { get; } = new ObservableCollection<RobotPointItem>();
+        public ObservableCollection<LotRecipeModel> Recipes { get; } = new ObservableCollection<LotRecipeModel>();
+        public ShellColour[] ShellColours { get; } = (ShellColour[])Enum.GetValues(typeof(ShellColour));
 
-        private RobotRecipeModel selectedRecipe;
-        public RobotRecipeModel SelectedRecipe
+        private LotRecipeModel selectedRecipe;
+        public LotRecipeModel SelectedRecipe
         {
             get => selectedRecipe;
             set
             {
                 Set(ref selectedRecipe, value);
-                Points.Clear();
                 if(value != null)
                 {
-                    foreach(RobotPointModel p in value.Points)
-                    {
-                        Points.Add(new RobotPointItem
-                        {
-                            Variable = p.Variable,
-                            Label = p.Label,
-                            Kind = p.Variable.EndsWith("_E") ? RobotPointKind.Entry : RobotPointKind.Screw,
-                            RecipePoint = p
-                        });
-                    }
                     NewName = value.RecipeName;
+                    NewShellColour = value.ShellColour;
                 }
             }
         }
+
+        private ShellColour newShellColour = ShellColour.Black;
+        public ShellColour NewShellColour { get => newShellColour; set => Set(ref newShellColour, value); }
 
         private string newName = string.Empty;
         public string NewName { get => newName; set => Set(ref newName, value); }
@@ -84,12 +77,12 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
         {
             int selectedId = SelectedRecipe?.RecipeID ?? 0;
             Recipes.Clear();
-            foreach(RobotRecipeModel recipe in RobotRecipeService.LoadAll())
+            foreach(LotRecipeModel recipe in LotRecipeService.LoadAll())
             {
                 Recipes.Add(recipe);
             }
             SelectedRecipe = Recipes.FirstOrDefault(x => x.RecipeID == selectedId) ?? Recipes.FirstOrDefault();
-            NewId = RobotRecipeService.NextRecipeId().ToString();
+            NewId = LotRecipeService.NextRecipeId().ToString();
         }
 
         private void createCopy()
@@ -101,7 +94,7 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
                 return;
             }
 
-            string problem = RobotRecipeService.Validate(NewName, id);
+            string problem = LotRecipeService.Validate(NewName, id);
             if(problem != null)
             {
                 show(problem);
@@ -110,10 +103,10 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
 
             try
             {
-                RobotRecipeModel copy = RobotRecipeService.CreateCopy(SelectedRecipe, NewName, id);
+                LotRecipeModel copy = LotRecipeService.CreateCopy(SelectedRecipe, NewName, id, NewShellColour);
                 reload();
                 SelectedRecipe = Recipes.FirstOrDefault(x => x.RecipeID == copy.RecipeID);
-                show($"Recipe {copy.RecipeName} (ID {copy.RecipeID}) created with the robot points of the copied recipe. Teach its points on the Robot page.");
+                show($"Recipe {copy.RecipeName} (ID {copy.RecipeID}) created with shell colour {copy.ShellColour}.");
             }
             catch(Exception ex)
             {
@@ -122,9 +115,10 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
             }
         }
 
-        private void rename()
+        //Saves the name and shell colour of the selected recipe
+        private void save()
         {
-            string problem = RobotRecipeService.Validate(NewName, SelectedRecipe.RecipeID, SelectedRecipe);
+            string problem = LotRecipeService.Validate(NewName, SelectedRecipe.RecipeID, SelectedRecipe);
             if(problem != null)
             {
                 show(problem);
@@ -134,20 +128,21 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
             try
             {
                 string oldName = SelectedRecipe.RecipeName;
-                RobotRecipeService.Rename(SelectedRecipe, NewName);
+                SelectedRecipe.ShellColour = NewShellColour;
+                LotRecipeService.Rename(SelectedRecipe, NewName);
                 reload();
-                show($"Recipe {oldName} renamed to {NewName.Trim()}.");
+                show($"Recipe {oldName} saved as {NewName.Trim()}, shell colour {NewShellColour}.");
             }
             catch(Exception ex)
             {
                 logger.Error(ex);
-                show("Rename failed: " + ex.Message);
+                show("Save failed: " + ex.Message);
             }
         }
 
         private void delete()
         {
-            RobotRecipeModel recipe = SelectedRecipe;
+            LotRecipeModel recipe = SelectedRecipe;
             int lotRecipe = keyenceDll.Read<int>(PLCTag.Lot_Recipe_ID);
             if(lotRecipe == recipe.RecipeID)
             {
@@ -163,7 +158,7 @@ namespace HMI_Master_KX7500.ModulesView.RecipeManager
 
             try
             {
-                RobotRecipeService.Delete(recipe);
+                LotRecipeService.Delete(recipe);
                 reload();
                 show($"Recipe {recipe.RecipeName} deleted.");
             }

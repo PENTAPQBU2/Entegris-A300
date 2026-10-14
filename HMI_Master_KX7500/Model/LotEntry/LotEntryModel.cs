@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
-using HMI_Master_KX7500.Model.Robot;
+using HMI_Master_KX7500.Model.LotRecipe;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Xml.Serialization;
@@ -180,11 +180,11 @@ namespace HMI_Master_KX7500.Model.LotEntry
 
         //Recipe list for the Lot Entry drop-down (MT_001); the selected recipe's ID goes to the PLC as Recipe
         [XmlIgnore]
-        public ObservableCollection<RobotRecipeModel> Recipes { get; } = new ObservableCollection<RobotRecipeModel>();
+        public ObservableCollection<LotRecipeModel> Recipes { get; } = new ObservableCollection<LotRecipeModel>();
 
-        private RobotRecipeModel selectedRecipe = null;
+        private LotRecipeModel selectedRecipe = null;
         [XmlIgnore]
-        public RobotRecipeModel SelectedRecipe
+        public LotRecipeModel SelectedRecipe
         {
             get { return selectedRecipe; }
             set
@@ -194,21 +194,6 @@ namespace HMI_Master_KX7500.Model.LotEntry
                     selectedRecipe = value;
                     Recipe = value?.RecipeID ?? 0;
                     RaisePropertyChanged(nameof(SelectedRecipe));
-                }
-            }
-        }
-
-        private bool newLotBusy = false;
-        [XmlIgnore]
-        public bool NewLotBusy
-        {
-            get { return newLotBusy; }
-            set
-            {
-                if (newLotBusy != value)
-                {
-                    newLotBusy = value;
-                    RaisePropertyChanged(nameof(NewLotBusy));
                 }
             }
         }

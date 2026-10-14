@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LotRecipeModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <RecipeID>3</RecipeID>
+  <RecipeName>PC Amber</RecipeName>
+  <Description>New robot point set, start from the Black points.</Description>
+  <ShellColour>Orange</ShellColour>
+</LotRecipeModel>

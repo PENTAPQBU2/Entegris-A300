@@ -10,7 +10,7 @@ Each version has its own branch, named after the version number.
 | Branch      | Content |
 |-------------|---------|
 | `V1.3.13.0` | Original program as delivered. Kept unchanged as a backup. |
-| `V1.4.0.0`  | Customer change request MT_001 – MT_010 (in development). |
+| `V1.4.0.0`  | Customer change request MT_001 + MT_003 (in development). |
 | `master`    | Default branch, same as `V1.3.13.0`. New work is not merged here. |
 
 ## Build and run
@@ -25,8 +25,8 @@ and in [CHANGELOG.md](CHANGELOG.md).
 
 ### V1.4.0.0 – in development (branch `V1.4.0.0`)
 
-Customer change request MT_001 – MT_010 (recipe, robot page, shell CSV log, lot/initialize,
-hard reset, start button). Items are added here as they are completed.
+Customer change request MT_001 (recipe) and MT_003 (shell log per lot). MT_002 (robot page) is
+cancelled by the customer; its code is kept in `Archive/MT_002_RobotPage/`. Items are added here as they are completed.
 
 **Added**
 - Offline / simulation mode (`OfflineMode` in `MachineConfig.xml`). The HMI runs without PLC,
@@ -36,30 +36,16 @@ hard reset, start button). Items are added here as they are completed.
 - `UseKVStudioSimulator` setting (value passed to KV DataBuilder `KVSimulator`, default `true` as before).
 - `FoupCsvFolder` setting for the torque CSV log folder.
 - `Docs/Offline_Simulation.md` – how to run the HMI on an office PC.
-- `Docs/UR_Robot/UR_Program_Change_Spec.md` – UR robot program changes for MT_001/MT_002: one general
-  set of point variables (`Scr01…Scr21`, `Scr01_E…Scr21_E`), HMI teach branch, recipe ID, watchdog,
-  and the new PLC addresses (MR6000–MR6012, EM4200–EM4259).
-- `Docs/UR_Robot/InitialRecipes/` – five starting robot recipes (EBM, PC Clear, PC Amber, PC Red,
-  PC Green), all copied from the current black point set.
-- UR robot communication layer (`CommunicationProtocols/UR/`): RTDE client (status, positions,
-  heartbeat, speed slider), Dashboard client, interpreter-mode client, jog pose math (Base/Tool frame).
-  Used by the Robot page (in progress).
-- Robot recipe model and file service (`<HMI folder>\Recipe\<ID>_<Name>.xml`); the five starting
-  recipes are copied there on first start.
-- **Robot page (MT_002, first version)** – menu "Robot", Technician and Pentamaster only. Robot IP setting,
-  connect, status (mode, safety, program, current point, speed, recipe on robot), tool position and joints,
-  Start (power on), Run, Pause, Stop, Reset (unlocks a protective stop), speed. Teach mode request to the PLC;
-  in teach mode: jog X/Y/Z/Rx/Ry/Rz in Base or Tool frame, step 0.01–10.00 mm/deg; hold-to-move to a
-  recipe or shared point; teach point; load recipe points to the robot; save recipe. Offline mode uses a
-  simulated robot. New PLC tags MR6000–MR6008, EM4200.
-- **Recipe page (MT_001)** – menu "Recipe", not for Operator: list of recipes, create a copy (new ID + name,
-  robot points copied), rename, delete (moved to `Recipe\Deleted`, blocked for the current lot recipe), view
-  the 42 robot points.
+- **Recipe page (MT_001)** – menu "Recipe", not for Operator: list of recipes (ID, name, shell colour),
+  save name and shell colour, create a copy, delete (moved to `Recipe\Deleted`, blocked for the current
+  lot recipe). Recipe files in `<HMI folder>\Recipe\`; five starting recipes (EBM, PC Clear, PC Amber,
+  PC Red, PC Green) are copied there on first start.
 - **Lot Entry recipe drop-down (MT_001)** – recipe chosen from the recipe files instead of typing a number.
-  New Lot first loads the recipe's robot points to the robot (short HMI teach session), then writes the lot
-  to the PLC with the recipe ID (EM1559) and name (EM1623). New Lot is refused when the robot load fails.
-  `LoadRecipeAtNewLot` in `RobotSettings.xml` can switch the robot load off during commissioning.
-- The robot connection is shared by all pages and connects at start-up when a robot IP is set.
+  New Lot writes the recipe ID (EM1559), name (EM1623) and sets the recipe's shell colour bit
+  (MR4500–MR4504). The PLC turns the bit into `shell_int` (W0102) and the robot uses that recipe's
+  points (taught on the pendant). The Black/Transparent buttons are replaced by the recipe.
+- `Docs/UR_Robot/UR_Program_Change_Spec.md` – robot and PLC changes for the five recipes
+  (`Switch shell_int` Case 2–4, three new PLC rungs).
 
 **Changed**
 - Torque CSV log falls back to `<HMI folder>\FOUP CSV\` when the `D:` drive does not exist

@@ -7,10 +7,9 @@ Changes			:
 3. Add UseKVStudioSimulator in MachineConfig.xml (value for KV DataBuilder KVSimulator, default true as before).
 4. FOUP CSV folder configurable (FoupCsvFolder). Falls back to <HMI folder>\FOUP CSV\ when D: drive does not exist.
 5. Fix Alarm.mdb path: now read from MachineSettings\Alarm.mdb of the running build (Debug read the Release folder before).
-6. Add Robot page (Technician/Pentamaster): robot status and position, power on/run/pause/stop/reset, speed,
-   teach mode, jog (Base/Tool, 0.01-10.00 mm/deg), hold-to-move, teach point, load/save robot recipe points.
-7. Add Recipe page (create copy, rename, delete, view robot points). Lot Entry: recipe drop-down; New Lot loads
-   the recipe's robot points to the robot before the lot is created.
+6. Add Recipe page (Technician/Pentamaster): recipe ID, name and shell colour; save, create copy, delete.
+7. Lot Entry: recipe drop-down replaces the Black/Transparent buttons. New Lot writes recipe ID/name and sets
+   the recipe's shell colour bit (MR4500-MR4504); the robot uses that recipe's taught points.
 8. Chinese menu names corrected (Recipe, Robot).
 
 Version			: V1.3.13.0

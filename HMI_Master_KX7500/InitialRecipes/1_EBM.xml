@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LotRecipeModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <RecipeID>1</RecipeID>
+  <RecipeName>EBM</RecipeName>
+  <Description>Today's Black shell (robot point set shell_int 0).</Description>
+  <ShellColour>Black</ShellColour>
+</LotRecipeModel>

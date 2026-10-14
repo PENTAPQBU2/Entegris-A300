@@ -19,59 +19,49 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="420"/>
+            <ColumnDefinition Width="520"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <GroupBox Header="Recipes" Margin="4">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <DataGrid ItemsSource="{Binding Recipes}" SelectedItem="{Binding SelectedRecipe}" AutoGenerateColumns="False"
-                          IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False" Margin="4" FontSize="15">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding RecipeID}" Width="50"/>
-                        <DataGridTextColumn Header="Recipe" Binding="{Binding RecipeName}" Width="*"/>
-                        <DataGridTextColumn Header="Points" Binding="{Binding Points.Count}" Width="70"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-
-                <StackPanel Grid.Row="1">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="70"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Name" Style="{StaticResource KeyText}"/>
-                        <TextBox Grid.Column="1" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" MaxLength="20" Margin="4" FontSize="15"/>
-                        <TextBlock Grid.Column="2" Text="New ID" Style="{StaticResource KeyText}"/>
-                        <TextBox Grid.Column="3" Text="{Binding NewId, UpdateSourceTrigger=PropertyChanged}" Margin="4" FontSize="15"/>
-                    </Grid>
-                    <WrapPanel>
-                        <Button Content="Create copy" Command="{Binding CreateCopyCommand}" Margin="4" Height="40" MinWidth="110"/>
-                        <Button Content="Rename" Command="{Binding RenameCommand}" Margin="4" Height="40" MinWidth="90"/>
-                        <Button Content="Delete" Command="{Binding DeleteCommand}" Margin="4" Height="40" MinWidth="90"/>
-                        <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="4" Height="40" MinWidth="90"/>
-                    </WrapPanel>
-                    <TextBlock TextWrapping="Wrap" Margin="4" FontSize="11"
-                               Text="Create copy: new recipe with the selected recipe's robot points, then fine-tune them on the Robot page. Delete moves the file to Recipe\Deleted."/>
-                </StackPanel>
-            </Grid>
-        </GroupBox>
-
-        <GroupBox Grid.Column="1" Header="Robot points of the selected recipe (teach on the Robot page)" Margin="4">
-            <DataGrid ItemsSource="{Binding Points}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Margin="4" FontSize="14">
+            <DataGrid ItemsSource="{Binding Recipes}" SelectedItem="{Binding SelectedRecipe}" AutoGenerateColumns="False"
+                      IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False" Margin="4" FontSize="15">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Point" Binding="{Binding Label}" Width="140"/>
-                    <DataGridTextColumn Header="Variable" Binding="{Binding Variable}" Width="90"/>
-                    <DataGridTextColumn Header="Value" Binding="{Binding ValueText}" Width="*"/>
-                    <DataGridTextColumn Header="Last change" Binding="{Binding RecipePoint.Source}" Width="200"/>
+                    <DataGridTextColumn Header="ID" Binding="{Binding RecipeID}" Width="50"/>
+                    <DataGridTextColumn Header="Recipe" Binding="{Binding RecipeName}" Width="*"/>
+                    <DataGridTextColumn Header="Shell colour" Binding="{Binding ShellColour}" Width="130"/>
                 </DataGrid.Columns>
             </DataGrid>
+        </GroupBox>
+
+        <GroupBox Grid.Column="1" Header="Selected recipe" Margin="4">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="260"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Name" Style="{StaticResource KeyText}"/>
+                    <TextBox Grid.Column="1" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" MaxLength="20" Margin="4" FontSize="15"/>
+                    <TextBlock Grid.Row="1" Text="Shell colour" Style="{StaticResource KeyText}"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ShellColours}" SelectedItem="{Binding NewShellColour}" Margin="4" FontSize="15"/>
+                    <TextBlock Grid.Row="2" Text="New ID (copy)" Style="{StaticResource KeyText}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NewId, UpdateSourceTrigger=PropertyChanged}" Margin="4" FontSize="15"/>
+                </Grid>
+                <WrapPanel>
+                    <Button Content="Save" Command="{Binding SaveCommand}" Margin="4" Height="40" MinWidth="90"/>
+                    <Button Content="Create copy" Command="{Binding CreateCopyCommand}" Margin="4" Height="40" MinWidth="110"/>
+                    <Button Content="Delete" Command="{Binding DeleteCommand}" Margin="4" Height="40" MinWidth="90"/>
+                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="4" Height="40" MinWidth="90"/>
+                </WrapPanel>
+                <TextBlock TextWrapping="Wrap" Margin="4" FontSize="12" MaxWidth="600" HorizontalAlignment="Left"
+                           Text="Save: name and shell colour of the selected recipe. Create copy: new recipe with the name, shell colour and new ID above. Delete moves the file to Recipe\Deleted. The shell colour selects the robot point set (taught on the robot pendant); it is sent to the PLC at New Lot."/>
+            </StackPanel>
         </GroupBox>
 
         <Border Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="Gray" Margin="4" Padding="6">
