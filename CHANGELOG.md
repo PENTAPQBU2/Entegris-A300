@@ -22,6 +22,11 @@ hard reset, start button). Items are added here as they are completed.
   and the new PLC addresses (MR6000–MR6012, EM4200–EM4259).
 - `Docs/UR_Robot/InitialRecipes/` – five starting robot recipes (EBM, PC Clear, PC Amber, PC Red,
   PC Green), all copied from the current black point set.
+- UR robot communication layer (`CommunicationProtocols/UR/`): RTDE client (status, positions,
+  heartbeat, speed slider), Dashboard client, interpreter-mode client, jog pose math (Base/Tool frame).
+  Used by the Robot page (in progress).
+- Robot recipe model and file service (`<HMI folder>\Recipe\<ID>_<Name>.xml`); the five starting
+  recipes are copied there on first start.
 
 ### Changed
 - Torque CSV log falls back to `<HMI folder>\FOUP CSV\` when the `D:` drive does not exist

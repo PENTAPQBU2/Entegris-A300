@@ -358,6 +358,14 @@
     <Compile Include="CommunicationProtocols\SerialListener.cs" />
     <Compile Include="CommunicationProtocols\SetupSettingModel.cs" />
     <Compile Include="CommunicationProtocols\TcpIpClient.cs" />
+    <Compile Include="CommunicationProtocols\UR\UrDashboardClient.cs" />
+    <Compile Include="CommunicationProtocols\UR\UrInterpreterClient.cs" />
+    <Compile Include="CommunicationProtocols\UR\UrLineClient.cs" />
+    <Compile Include="CommunicationProtocols\UR\UrPoseMath.cs" />
+    <Compile Include="CommunicationProtocols\UR\UrRobotState.cs" />
+    <Compile Include="CommunicationProtocols\UR\UrRtdeClient.cs" />
+    <Compile Include="Model\Robot\RobotRecipeModel.cs" />
+    <Compile Include="Service\Robot\RobotRecipeService.cs" />
     <Compile Include="Converter\StringToBooleanConverter.cs" />
     <Compile Include="Globals\Event.cs" />
     <Compile Include="Globals\PLCTag.cs" />
@@ -774,6 +782,26 @@
     <Resource Include="Images\IOLocation\B6.PNG" />
     <Resource Include="Images\MainStatus.png" />
     <Resource Include="Modules\Frame\Entegris_Corp_Logo.jpg" />
+    <Content Include="..\Docs\UR_Robot\InitialRecipes\1_EBM.xml">
+      <Link>InitialRecipes\1_EBM.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Docs\UR_Robot\InitialRecipes\2_PC_Clear.xml">
+      <Link>InitialRecipes\2_PC_Clear.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Docs\UR_Robot\InitialRecipes\3_PC_Amber.xml">
+      <Link>InitialRecipes\3_PC_Amber.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Docs\UR_Robot\InitialRecipes\4_PC_Red.xml">
+      <Link>InitialRecipes\4_PC_Red.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Docs\UR_Robot\InitialRecipes\5_PC_Green.xml">
+      <Link>InitialRecipes\5_PC_Green.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
