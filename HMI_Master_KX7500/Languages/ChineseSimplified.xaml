@@ -287,7 +287,7 @@
     <system:String x:Key="ReadOnly">只读</system:String>
     <system:String x:Key="ReadOnlyTag">只读标签</system:String>
     <system:String x:Key="Ready">已准备</system:String>
-    <system:String x:Key="Recipe">方剂</system:String>
+    <system:String x:Key="Recipe">配方</system:String>
     <system:String x:Key="RecipeEditor">方剂编辑</system:String>
     <system:String x:Key="RecipeName">方剂名称</system:String>
     <system:String x:Key="RecipeParameterEditor">方剂参数编辑</system:String>
@@ -1518,7 +1518,7 @@
     <system:String x:Key="InspectPinHolesEndPos">针孔查看结束位置</system:String>
     <system:String x:Key="FinalInspectionStartPos">最终检查开始位置</system:String>
     <system:String x:Key="FinalInspectionEndPos">最终查看结束位置</system:String>
-    <system:String x:Key="Robot">机械</system:String>
+    <system:String x:Key="Robot">机器人</system:String>
     <system:String x:Key="Conveyor">输送带</system:String>
     <system:String x:Key="VibratorBowl">震动碗</system:String>
     <system:String x:Key="Turret">Turret</system:String>

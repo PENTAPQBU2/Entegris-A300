@@ -1,4 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
+using HMI_Master_KX7500.Model.Robot;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Xml.Serialization;
 
@@ -172,6 +174,56 @@ namespace HMI_Master_KX7500.Model.LotEntry
                 {
                     recipe = value;
                     RaisePropertyChanged(nameof(Recipe));
+                }
+            }
+        }
+
+        //Recipe list for the Lot Entry drop-down (MT_001); the selected recipe's ID goes to the PLC as Recipe
+        [XmlIgnore]
+        public ObservableCollection<RobotRecipeModel> Recipes { get; } = new ObservableCollection<RobotRecipeModel>();
+
+        private RobotRecipeModel selectedRecipe = null;
+        [XmlIgnore]
+        public RobotRecipeModel SelectedRecipe
+        {
+            get { return selectedRecipe; }
+            set
+            {
+                if (selectedRecipe != value)
+                {
+                    selectedRecipe = value;
+                    Recipe = value?.RecipeID ?? 0;
+                    RaisePropertyChanged(nameof(SelectedRecipe));
+                }
+            }
+        }
+
+        private bool newLotBusy = false;
+        [XmlIgnore]
+        public bool NewLotBusy
+        {
+            get { return newLotBusy; }
+            set
+            {
+                if (newLotBusy != value)
+                {
+                    newLotBusy = value;
+                    RaisePropertyChanged(nameof(NewLotBusy));
+                }
+            }
+        }
+
+        private string lotMessage = string.Empty;
+        [XmlIgnore]
+        public string LotMessage
+        {
+            get { return lotMessage; }
+            set
+            {
+                if (lotMessage != value)
+                {
+                    lotMessage = value;
+                    RaisePropertyChanged(nameof(LotMessage));
                 }
             }
         }

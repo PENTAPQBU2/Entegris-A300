@@ -366,6 +366,11 @@
     <Compile Include="CommunicationProtocols\UR\UrRtdeClient.cs" />
     <Compile Include="Model\Robot\RobotRecipeModel.cs" />
     <Compile Include="Service\Robot\RobotRecipeService.cs" />
+    <Compile Include="Service\Robot\RobotHub.cs" />
+    <Compile Include="ModulesView\RecipeManager\RecipeManagerViewModel.cs" />
+    <Compile Include="Modules\RecipeManager\RecipeManagerView.xaml.cs">
+      <DependentUpon>RecipeManagerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\Robot\RobotSettingsModel.cs" />
     <Compile Include="Service\Robot\IUrRobot.cs" />
     <Compile Include="Service\Robot\RobotSettingsService.cs" />
@@ -915,6 +920,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Modules\MainView\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\RecipeManager\RecipeManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

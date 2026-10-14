@@ -52,10 +52,19 @@ hard reset, start button). Items are added here as they are completed.
   in teach mode: jog X/Y/Z/Rx/Ry/Rz in Base or Tool frame, step 0.01–10.00 mm/deg; hold-to-move to a
   recipe or shared point; teach point; load recipe points to the robot; save recipe. Offline mode uses a
   simulated robot. New PLC tags MR6000–MR6008, EM4200.
+- **Recipe page (MT_001)** – menu "Recipe", not for Operator: list of recipes, create a copy (new ID + name,
+  robot points copied), rename, delete (moved to `Recipe\Deleted`, blocked for the current lot recipe), view
+  the 42 robot points.
+- **Lot Entry recipe drop-down (MT_001)** – recipe chosen from the recipe files instead of typing a number.
+  New Lot first loads the recipe's robot points to the robot (short HMI teach session), then writes the lot
+  to the PLC with the recipe ID (EM1559) and name (EM1623). New Lot is refused when the robot load fails.
+  `LoadRecipeAtNewLot` in `RobotSettings.xml` can switch the robot load off during commissioning.
+- The robot connection is shared by all pages and connects at start-up when a robot IP is set.
 
 **Changed**
 - Torque CSV log falls back to `<HMI folder>\FOUP CSV\` when the `D:` drive does not exist
   (default on the machine is unchanged: `D:\HMI\FOUP CSV\`).
+- Chinese menu names: Recipe 方剂 → 配方, Robot 机械 → 机器人.
 - PLC connections created before `MachineConfig.xml` is loaded now connect on first use.
 
 **Fixed**

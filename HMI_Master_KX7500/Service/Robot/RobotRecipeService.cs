@@ -103,6 +103,93 @@ namespace HMI_Master_KX7500.Service.Robot
             {
                 File.Move(temp, file);
             }
+            RecipesChanged?.Invoke();
+        }
+
+        //Recipe files were added, changed, renamed or deleted (any page)
+        public static event Action RecipesChanged;
+
+        public static int NextRecipeId()
+        {
+            List<RobotRecipeModel> all = LoadAll();
+            return all.Count == 0 ? 1 : all.Max(x => x.RecipeID) + 1;
+        }
+
+        //Returns null when the name/ID can be used, otherwise the reason
+        public static string Validate(string name, int recipeId, RobotRecipeModel ignore = null)
+        {
+            if(string.IsNullOrWhiteSpace(name))
+            {
+                return "Enter a recipe name.";
+            }
+            if(name.Trim().Length > 20)
+            {
+                return "Recipe name can have at most 20 characters (PLC string length).";
+            }
+            if(recipeId <= 0)
+            {
+                return "Recipe ID must be 1 or more.";
+            }
+
+            foreach(RobotRecipeModel other in LoadAll())
+            {
+                if(ignore != null && other.RecipeID == ignore.RecipeID)
+                {
+                    continue;
+                }
+                if(other.RecipeID == recipeId)
+                {
+                    return $"Recipe ID {recipeId} is already used by {other.RecipeName}.";
+                }
+                if(string.Equals(other.RecipeName.Trim(), name.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    return $"Recipe name {name.Trim()} already exists.";
+                }
+            }
+            return null;
+        }
+
+        //New recipe with the robot points copied from an existing one
+        public static RobotRecipeModel CreateCopy(RobotRecipeModel source, string name, int recipeId)
+        {
+            RobotRecipeModel copy = new RobotRecipeModel
+            {
+                RecipeID = recipeId,
+                RecipeName = name.Trim(),
+                Description = $"Copied from {source.RecipeName} on {DateTime.Now:yyyy-MM-dd HH:mm}",
+                Points = source.Points.Select(p => new RobotPointModel
+                {
+                    Variable = p.Variable, Label = p.Label, Source = $"Copy of {source.RecipeName}",
+                    X = p.X, Y = p.Y, Z = p.Z, Rx = p.Rx, Ry = p.Ry, Rz = p.Rz
+                }).ToList()
+            };
+            Save(copy);
+            return copy;
+        }
+
+        public static void Rename(RobotRecipeModel recipe, string newName)
+        {
+            string oldFile = FileName(recipe);
+            recipe.RecipeName = newName.Trim();
+            Save(recipe);
+            if(!string.Equals(oldFile, FileName(recipe), StringComparison.OrdinalIgnoreCase) && File.Exists(oldFile))
+            {
+                File.Delete(oldFile);
+            }
+            RecipesChanged?.Invoke();
+        }
+
+        //Moves the file to Recipe\Deleted\ instead of erasing it
+        public static void Delete(RobotRecipeModel recipe)
+        {
+            string file = FileName(recipe);
+            if(File.Exists(file))
+            {
+                string deletedFolder = Path.Combine(RecipeFolder, "Deleted");
+                Directory.CreateDirectory(deletedFolder);
+                File.Move(file, Path.Combine(deletedFolder, $"{DateTime.Now:yyyyMMdd_HHmmss}_{Path.GetFileName(file)}"));
+            }
+            RecipesChanged?.Invoke();
         }
     }
 }

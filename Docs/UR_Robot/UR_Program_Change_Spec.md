@@ -219,6 +219,7 @@ the matching HMI function will fail with "Robot refused" or will not see the rob
 | Robot start / stop / pause / reset | MR6004 / MR6005 / MR6006 / MR6007 (HMI→PLC) | Map to existing robot bits: Start_Prog (W0FC.11), Stop_Program (W0FC.2), Pause_Program (W0FC.3); reset = existing init/home sequence |
 | Robot recipe ID | EM4200 (2 words, PLC) | = robot int output 1 `Rcp_ID_Out` = **W092–W093** (int output 0 `current_Pos` is W090–W091) |
 | Robot recipe OK | MR6008 (PLC→HMI) | ON when EM4200 = lot recipe ID EM1559; **Run interlock**: no Start while OFF |
+| Recipe load at New Lot | – | The HMI requests teach (MR6001) when the operator presses New Lot, loads the 42 points and `Rcp_ID`, ends teach, and only then writes the lot to the PLC. Teach must therefore be allowed while no lot is created yet, even with the doors open (no robot motion happens). |
 | Teach lost | – | If W0FD.0 goes OFF while robot `InTeachMode` is ON for > 0.5 s → pulse Stop_Program |
 | Hard reset prompt (MT_006) | MR6010 (PLC→HMI), EM4210 string[100] (EM4210–EM4259) | Reset held 5 s → MR6010 ON + message |
 | Hard reset reply | MR6011 Proceed, MR6012 Cancel (HMI→PLC) | PLC acts on Proceed only, clears MR6010 |

@@ -155,5 +155,10 @@ namespace HMI_Master_KX7500.Globals
         public const string Robot_Recipe_ID = "EM4200";      //PLC copy of robot Rcp_ID_Out (W092-W093)
         #endregion
 
+        #region Lot recipe (existing PLC labels)
+        public const string Lot_Recipe_ID = "EM1559";        //Lot_Info_DB_Recipe_ID, 2W
+        public const string Lot_Recipe_Name = "EM1623";      //Lot_Info_DB_Curr_Recipe_Name, string[20]
+        #endregion
+
     }
 }

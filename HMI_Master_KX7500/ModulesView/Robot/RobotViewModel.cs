@@ -44,11 +44,11 @@ namespace HMI_Master_KX7500.ModulesView.Robot
 
         public RobotViewModel()
         {
-            settings = RobotSettingsService.Load();
+            settings = RobotHub.Settings;
             ipAddress = settings.RobotIPAddress;
             jogStepText = settings.JogStepDefault.ToString("F2", CultureInfo.InvariantCulture);
 
-            robot = Global.IsOfflineMode ? (IUrRobot)new UrRobotSimulator() : new UrRobot();
+            robot = RobotHub.Robot;
             robot.StateChanged += onStateChanged;
 
             keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, Global.PLCPort,
@@ -70,6 +70,7 @@ namespace HMI_Master_KX7500.ModulesView.Robot
 
             RobotRecipeService.EnsureDefaultRecipes();
             reloadRecipes();
+            RobotRecipeService.RecipesChanged += () => ui(reloadRecipes);
 
             Event.UpdateEvent += update;
         }
@@ -480,14 +481,22 @@ namespace HMI_Master_KX7500.ModulesView.Robot
 
         #region Recipes and points
 
+        //Keeps the selected recipe (by ID) and its unsaved taught points when the list is reloaded
         private void reloadRecipes()
         {
+            if(RecipeDirty)
+            {
+                return;
+            }
+
+            int selectedId = SelectedRecipe?.RecipeID ?? 0;
             Recipes.Clear();
             foreach(RobotRecipeModel recipe in RobotRecipeService.LoadAll())
             {
                 Recipes.Add(recipe);
             }
-            SelectedRecipe = Recipes.FirstOrDefault();
+            selectedRecipe = null;
+            SelectedRecipe = Recipes.FirstOrDefault(x => x.RecipeID == selectedId) ?? Recipes.FirstOrDefault();
         }
 
         private void buildPointList()

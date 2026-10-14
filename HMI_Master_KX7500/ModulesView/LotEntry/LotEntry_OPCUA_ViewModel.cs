@@ -5,7 +5,10 @@ using GalaSoft.MvvmLight.Messaging;
 using HMI_Master_KX7500.CommunicationProtocols;
 using HMI_Master_KX7500.Globals;
 using HMI_Master_KX7500.Interface;
+using HMI_Master_KX7500.Model.LotEntry;
+using HMI_Master_KX7500.Model.Robot;
 using HMI_Master_KX7500.Service.LotEntry;
+using HMI_Master_KX7500.Service.Robot;
 using MahApps.Metro.Controls;
 using NLog;
 using System;
@@ -158,13 +161,56 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
         #endregion
 
         #region PrivateCommandMethods
+        //New Lot (MT_001): load the recipe's robot points to the robot first, then write the lot to the PLC
         private void newLotCommand(string lotID)
+        {
+            LotEntryModel model = LotEntryInterfaceModel.LotEntryModel;
+            RobotRecipeModel recipe = model.SelectedRecipe;
+            if (recipe == null)
+            {
+                model.LotMessage = "Select a recipe.";
+                return;
+            }
+            if (model.NewLotBusy)
+            {
+                return;
+            }
+
+            if (!RobotHub.Settings.LoadRecipeAtNewLot)
+            {
+                writeNewLot(lotID, recipe);
+                model.LotMessage = $"Lot {lotID} created with recipe {recipe.RecipeName} (robot recipe load is switched off).";
+                return;
+            }
+
+            model.NewLotBusy = true;
+            model.LotMessage = $"Loading robot points of recipe {recipe.RecipeName} ...";
+            Task.Run(() =>
+            {
+                string error = RobotHub.LoadRecipeForLot(recipe, keyenceDll);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    model.NewLotBusy = false;
+                    if (error != null)
+                    {
+                        model.LotMessage = "New Lot not created: " + error;
+                        MessageBox.Show(model.LotMessage, "New Lot", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+                    writeNewLot(lotID, recipe);
+                    model.LotMessage = $"Lot {lotID} created with recipe {recipe.RecipeName}. Robot points loaded.";
+                });
+            });
+        }
+
+        private void writeNewLot(string lotID, RobotRecipeModel recipe)
         {
             try
             {
                 keyenceDll.Write<string>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Work_Order_ID_Tag, lotID, 50);
                 keyenceDll.Write<string>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.OperatorID_Tag, LotEntryInterfaceModel.LotEntryModel.OperatorID, 10);
-                keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Recipe_Tag, LotEntryInterfaceModel.LotEntryModel.Recipe);
+                keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Recipe_Tag, recipe.RecipeID);
+                keyenceDll.Write<string>(PLCTag.Lot_Recipe_Name, recipe.RecipeName, 20);
                 keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Lot_Quantity_Tag, LotEntryInterfaceModel.LotEntryModel.Lot_Quantity);
                 keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Current_Quantity_Tag, LotEntryInterfaceModel.LotEntryModel.Current_Quantity);
 
@@ -181,6 +227,18 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                 //}
             }
             catch (Exception ex) { logger.Error(ex); }
+        }
+
+        private void loadRecipes()
+        {
+            LotEntryModel model = LotEntryInterfaceModel.LotEntryModel;
+            int selectedId = model.SelectedRecipe?.RecipeID ?? 0;
+            model.Recipes.Clear();
+            foreach (RobotRecipeModel recipe in RobotRecipeService.LoadAll())
+            {
+                model.Recipes.Add(recipe);
+            }
+            model.SelectedRecipe = model.Recipes.FirstOrDefault(x => x.RecipeID == selectedId);
         }
 
         private void endLotCommand()
@@ -225,6 +283,10 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
 
                 LotEntryInterfaceModel.LotEntryModel.ShellColourBlackCommand = new RelayCommand(shellColourBlackCommand);
                 LotEntryInterfaceModel.LotEntryModel.TransparentCommand = new RelayCommand(transparentCommand);
+
+                RobotRecipeService.EnsureDefaultRecipes();
+                loadRecipes();
+                RobotRecipeService.RecipesChanged += () => Application.Current?.Dispatcher.BeginInvoke(new Action(loadRecipes));
 
                 //Messenger.Default.Register<OPCUA_>(this, initializeOpcUa);
             }

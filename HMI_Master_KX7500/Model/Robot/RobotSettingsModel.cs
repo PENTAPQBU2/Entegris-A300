@@ -5,6 +5,10 @@ namespace HMI_Master_KX7500.Model.Robot
     {
         public string RobotIPAddress { get; set; } = string.Empty;
 
+        //New Lot loads the recipe's robot points to the robot first. Set false only during commissioning,
+        //before the robot program has the HMI teach branch (Docs/UR_Robot/UR_Program_Change_Spec.md).
+        public bool LoadRecipeAtNewLot { get; set; } = true;
+
         //Teach motion limits (UR units: m/s, m/s2, rad/s, rad/s2). The robot speed slider scales them further.
         public double LinearSpeed { get; set; } = 0.05;
         public double ApproachSpeed { get; set; } = 0.02;
