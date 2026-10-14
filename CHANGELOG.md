@@ -17,6 +17,11 @@ hard reset, start button). Items are added here as they are completed.
 - `UseKVStudioSimulator` setting (value passed to KV DataBuilder `KVSimulator`, default `true` as before).
 - `FoupCsvFolder` setting for the torque CSV log folder.
 - `Docs/Offline_Simulation.md` – how to run the HMI on an office PC.
+- `Docs/UR_Robot/UR_Program_Change_Spec.md` – UR robot program changes for MT_001/MT_002: one general
+  set of point variables (`Scr01…Scr21`, `Scr01_E…Scr21_E`), HMI teach branch, recipe ID, watchdog,
+  and the new PLC addresses (MR6000–MR6012, EM4200–EM4259).
+- `Docs/UR_Robot/InitialRecipes/` – five starting robot recipes (EBM, PC Clear, PC Amber, PC Red,
+  PC Green), all copied from the current black point set.
 
 ### Changed
 - Torque CSV log falls back to `<HMI folder>\FOUP CSV\` when the `D:` drive does not exist

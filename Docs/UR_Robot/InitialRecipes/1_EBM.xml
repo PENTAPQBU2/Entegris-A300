@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RobotRecipeModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <RecipeID>1</RecipeID>
+  <RecipeName>EBM</RecipeName>
+  <Description>Initial values copied from the black point set (Point_*b) of A300_Shell_05092022 default.installation</Description>
+  <Points>
+    <RobotPointModel>
+      <Variable>Scr01</Variable>
+      <Label>Screw 1</Label>
+      <Source>Point_1b</Source>
+      <X>0.3102020287533984</X>
+      <Y>-0.41579594418774213</Y>
+      <Z>0.49125651382172514</Z>
+      <Rx>2.378139242716429</Rx>
+      <Ry>2.040975709887805</Ry>
+      <Rz>-0.012338022030396512</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr02</Variable>
+      <Label>Screw 2</Label>
+      <Source>Point_2b</Source>
+      <X>0.31226197506918507</X>
+      <Y>-0.07137036351992002</Y>
+      <Z>0.49057141017197076</Z>
+      <Rx>2.379256388089315</Rx>
+      <Ry>2.040971677894565</Ry>
+      <Rz>-0.014855609424196729</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr03</Variable>
+      <Label>Screw 3</Label>
+      <Source>Point_3b</Source>
+      <X>0.2949068841224875</X>
+      <Y>-0.19775944326708828</Y>
+      <Z>0.5092943579785281</Z>
+      <Rx>2.379047238969418</Rx>
+      <Ry>2.041092744654505</Ry>
+      <Rz>-0.01304658036838487</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr04</Variable>
+      <Label>Screw 4</Label>
+      <Source>Point_4b</Source>
+      <X>0.2026039374593114</X>
+      <Y>-0.1993793873562231</Y>
+      <Z>0.5093711326064879</Z>
+      <Rx>2.378861425570679</Rx>
+      <Ry>2.040641934539057</Ry>
+      <Rz>-0.01283267055182351</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr05</Variable>
+      <Label>Screw 5</Label>
+      <Source>Point_5b</Source>
+      <X>0.20225253863070403</X>
+      <Y>-0.2870832463813387</Y>
+      <Z>0.5093675335037189</Z>
+      <Rx>2.3787766544845006</Rx>
+      <Ry>2.04066879982561</Ry>
+      <Rz>-0.012619876371953359</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr06</Variable>
+      <Label>Screw 6</Label>
+      <Source>Point_6b</Source>
+      <X>0.294245001172613</X>
+      <Y>-0.2896232548176357</Y>
+      <Z>0.5092987843785598</Z>
+      <Rx>2.379051659760718</Rx>
+      <Ry>2.040748596104324</Ry>
+      <Rz>-0.012780800455211508</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr07</Variable>
+      <Label>Screw 7</Label>
+      <Source>Point_7b</Source>
+      <X>0.24713733020626846</X>
+      <Y>-0.4141337998377256</Y>
+      <Z>0.48154</Z>
+      <Rx>2.3775860959462474</Rx>
+      <Ry>2.04428731079706</Ry>
+      <Rz>-0.005651767106350987</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr08</Variable>
+      <Label>Screw 8</Label>
+      <Source>Point_8b</Source>
+      <X>0.24813006961047407</X>
+      <Y>-0.0747875012494153</Y>
+      <Z>0.48154</Z>
+      <Rx>2.3772786713190457</Rx>
+      <Ry>2.044330087025657</Ry>
+      <Rz>-0.0038316111296363415</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr09</Variable>
+      <Label>Screw 9</Label>
+      <Source>Point_9b</Source>
+      <X>0.36273935633858656</X>
+      <Y>-0.3982139271276319</Y>
+      <Z>0.5038340685000784</Z>
+      <Rx>2.378530990604951</Rx>
+      <Ry>2.045687460395595</Ry>
+      <Rz>0.003487408524582058</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr10</Variable>
+      <Label>Screw 10</Label>
+      <Source>Point_10b</Source>
+      <X>0.26120441309484216</X>
+      <Y>-0.17604726282032715</Y>
+      <Z>0.5030407434476837</Z>
+      <Rx>0.16435830098877852</Rx>
+      <Ry>3.135131405075067</Ry>
+      <Rz>0.008177444095798183</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr11</Variable>
+      <Label>Screw 11</Label>
+      <Source>Point_11b</Source>
+      <X>0.18628508376487765</X>
+      <Y>-0.2457223270209148</Y>
+      <Z>0.5030816008653574</Z>
+      <Rx>2.1066046927143267</Rx>
+      <Ry>2.3245971655630124</Ry>
+      <Rz>0.004396348452546447</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr12</Variable>
+      <Label>Screw 12</Label>
+      <Source>Point_12b</Source>
+      <X>0.1693780466802473</X>
+      <Y>-0.3212280373738617</Y>
+      <Z>0.5030372512837692</Z>
+      <Rx>2.9820945082382373</Rx>
+      <Ry>0.979161751517514</Ry>
+      <Rz>-0.009076683460707117</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr13</Variable>
+      <Label>Screw 13</Label>
+      <Source>Point_13b</Source>
+      <X>0.17768797138062817</X>
+      <Y>-0.25320881994743416</Y>
+      <Z>0.502996470642675</Z>
+      <Rx>3.05618901315817</Rx>
+      <Ry>0.7194269943522883</Ry>
+      <Rz>-0.007291847920099408</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr14</Variable>
+      <Label>Screw 14</Label>
+      <Source>Point_14b</Source>
+      <X>0.28752126216746676</X>
+      <Y>-0.31383084249290083</Y>
+      <Z>0.5030270333809941</Z>
+      <Rx>2.40375593120609</Rx>
+      <Ry>2.0108837109533786</Ry>
+      <Rz>-0.005584965239214684</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr15</Variable>
+      <Label>Screw 15</Label>
+      <Source>Point_15b</Source>
+      <X>0.2856121125599592</X>
+      <Y>-0.1751153923971224</Y>
+      <Z>0.5030597025535807</Z>
+      <Rx>2.377211916793196</Rx>
+      <Ry>2.042128442312747</Ry>
+      <Rz>-0.006489270519305543</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr16</Variable>
+      <Label>Screw 16</Label>
+      <Source>Point_16b</Source>
+      <X>0.18077325341953424</X>
+      <Y>-0.4079578471296971</Y>
+      <Z>0.48748035434915943</Z>
+      <Rx>2.3771341323413657</Rx>
+      <Ry>2.0447651848074617</Ry>
+      <Rz>-0.004357495684962991</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr17</Variable>
+      <Label>Screw 17</Label>
+      <Source>Point_17b</Source>
+      <X>0.18094017345288527</X>
+      <Y>-0.08196075590260618</Y>
+      <Z>0.4815499622514623</Z>
+      <Rx>2.3783675799514032</Rx>
+      <Ry>2.0459768906119957</Ry>
+      <Rz>0.003363258722333799</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr18</Variable>
+      <Label>Screw 18</Label>
+      <Source>Point_18b</Source>
+      <X>0.32560385259361174</X>
+      <Y>-0.3959900839215132</Y>
+      <Z>0.5015</Z>
+      <Rx>2.380712444043523</Rx>
+      <Ry>2.048713293253585</Ry>
+      <Rz>0.010506615696147569</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr19</Variable>
+      <Label>Screw 19</Label>
+      <Source>Point_19b</Source>
+      <X>0.22404642708528777</X>
+      <Y>-0.19080445923014597</Y>
+      <Z>0.5014642637776864</Z>
+      <Rx>-0.011639981043221118</Rx>
+      <Ry>3.140029325313331</Ry>
+      <Rz>0.008458973416409216</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr20</Variable>
+      <Label>Screw 20</Label>
+      <Source>Point_20b</Source>
+      <X>0.17052499141614566</X>
+      <Y>-0.3768464053750955</Y>
+      <Z>0.4912542005732506</Z>
+      <Rx>2.368629308785327</Rx>
+      <Ry>2.0510193172681013</Ry>
+      <Rz>-0.00330284607496788</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr21</Variable>
+      <Label>Screw 21</Label>
+      <Source>Point_21b</Source>
+      <X>0.17114387512662046</X>
+      <Y>-0.1114300160555931</Y>
+      <Z>0.49125</Z>
+      <Rx>2.376057157977109</Rx>
+      <Ry>2.0434734899626044</Ry>
+      <Rz>-0.002985231162356096</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr01_E</Variable>
+      <Label>Screw 1 entry</Label>
+      <Source>Point_1bEntry</Source>
+      <X>0.31017461755055903</X>
+      <Y>-0.41614448377458196</Y>
+      <Z>0.6109901191685329</Z>
+      <Rx>2.3780269921798967</Rx>
+      <Ry>2.0411414345725856</Ry>
+      <Rz>-0.012284041109992493</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr02_E</Variable>
+      <Label>Screw 2 entry</Label>
+      <Source>Point_2bEntry</Source>
+      <X>0.3148454632035983</X>
+      <Y>-0.06962504433808399</Y>
+      <Z>0.5817599999999999</Z>
+      <Rx>2.3782329342280626</Rx>
+      <Ry>2.040828711639864</Ry>
+      <Rz>-0.012643884517810934</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr03_E</Variable>
+      <Label>Screw 3 entry</Label>
+      <Source>Point_3bEntry</Source>
+      <X>0.2945481912858085</X>
+      <Y>-0.19749644917146805</Y>
+      <Z>0.5300167420197728</Z>
+      <Rx>2.3788703493946564</Rx>
+      <Ry>2.0405128176814857</Ry>
+      <Rz>-0.012755006984735364</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr04_E</Variable>
+      <Label>Screw 4 entry</Label>
+      <Source>Point_4b</Source>
+      <X>0.2026039374593114</X>
+      <Y>-0.1993793873562231</Y>
+      <Z>0.5093711326064879</Z>
+      <Rx>2.378861425570679</Rx>
+      <Ry>2.040641934539057</Ry>
+      <Rz>-0.01283267055182351</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr05_E</Variable>
+      <Label>Screw 5 entry</Label>
+      <Source>Point_5b</Source>
+      <X>0.20225253863070403</X>
+      <Y>-0.2870832463813387</Y>
+      <Z>0.5093675335037189</Z>
+      <Rx>2.3787766544845006</Rx>
+      <Ry>2.04066879982561</Ry>
+      <Rz>-0.012619876371953359</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr06_E</Variable>
+      <Label>Screw 6 entry</Label>
+      <Source>Point_6b</Source>
+      <X>0.294245001172613</X>
+      <Y>-0.2896232548176357</Y>
+      <Z>0.5092987843785598</Z>
+      <Rx>2.379051659760718</Rx>
+      <Ry>2.040748596104324</Ry>
+      <Rz>-0.012780800455211508</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr07_E</Variable>
+      <Label>Screw 7 entry</Label>
+      <Source>Point_7bEntry</Source>
+      <X>0.24642668577759091</X>
+      <Y>-0.4141361548488607</Y>
+      <Z>0.5089841169698961</Z>
+      <Rx>2.3777763451884364</Rx>
+      <Ry>2.0443419687817124</Ry>
+      <Rz>-0.0057751305041305765</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr08_E</Variable>
+      <Label>Screw 8 entry</Label>
+      <Source>Point_8bEntry</Source>
+      <X>0.24877218613672603</X>
+      <Y>-0.07481101711165461</Y>
+      <Z>0.5089973451773606</Z>
+      <Rx>2.377332030214116</Rx>
+      <Ry>2.044168861355167</Ry>
+      <Rz>-0.003920400559836264</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr09_E</Variable>
+      <Label>Screw 9 entry</Label>
+      <Source>Point_9b</Source>
+      <X>0.36273935633858656</X>
+      <Y>-0.3982139271276319</Y>
+      <Z>0.5038340685000784</Z>
+      <Rx>2.378530990604951</Rx>
+      <Ry>2.045687460395595</Ry>
+      <Rz>0.003487408524582058</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr10_E</Variable>
+      <Label>Screw 10 entry</Label>
+      <Source>Point_10bEntry</Source>
+      <X>0.2627721229022554</X>
+      <Y>-0.18089759313807185</Y>
+      <Z>0.534</Z>
+      <Rx>0.07229445361733933</Rx>
+      <Ry>3.1387274529000493</Ry>
+      <Rz>0.008332641588905825</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr11_E</Variable>
+      <Label>Screw 11 entry</Label>
+      <Source>Point_11b</Source>
+      <X>0.18628508376487765</X>
+      <Y>-0.2457223270209148</Y>
+      <Z>0.5030816008653574</Z>
+      <Rx>2.1066046927143267</Rx>
+      <Ry>2.3245971655630124</Ry>
+      <Rz>0.004396348452546447</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr12_E</Variable>
+      <Label>Screw 12 entry</Label>
+      <Source>Point_12b</Source>
+      <X>0.1693780466802473</X>
+      <Y>-0.3212280373738617</Y>
+      <Z>0.5030372512837692</Z>
+      <Rx>2.9820945082382373</Rx>
+      <Ry>0.979161751517514</Ry>
+      <Rz>-0.009076683460707117</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr13_E</Variable>
+      <Label>Screw 13 entry</Label>
+      <Source>Point_13b</Source>
+      <X>0.17768797138062817</X>
+      <Y>-0.25320881994743416</Y>
+      <Z>0.502996470642675</Z>
+      <Rx>3.05618901315817</Rx>
+      <Ry>0.7194269943522883</Ry>
+      <Rz>-0.007291847920099408</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr14_E</Variable>
+      <Label>Screw 14 entry</Label>
+      <Source>Point_14b</Source>
+      <X>0.28752126216746676</X>
+      <Y>-0.31383084249290083</Y>
+      <Z>0.5030270333809941</Z>
+      <Rx>2.40375593120609</Rx>
+      <Ry>2.0108837109533786</Ry>
+      <Rz>-0.005584965239214684</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr15_E</Variable>
+      <Label>Screw 15 entry</Label>
+      <Source>Point_15b</Source>
+      <X>0.2856121125599592</X>
+      <Y>-0.1751153923971224</Y>
+      <Z>0.5030597025535807</Z>
+      <Rx>2.377211916793196</Rx>
+      <Ry>2.042128442312747</Ry>
+      <Rz>-0.006489270519305543</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr16_E</Variable>
+      <Label>Screw 16 entry</Label>
+      <Source>Point_16bEntry</Source>
+      <X>0.18053657510720406</X>
+      <Y>-0.4082670398364108</Y>
+      <Z>0.5084591299522443</Z>
+      <Rx>2.377441452987867</Rx>
+      <Ry>2.0443575079333978</Ry>
+      <Rz>-0.004590194208978037</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr17_E</Variable>
+      <Label>Screw 17 entry</Label>
+      <Source>Point_17bEntry</Source>
+      <X>0.18084483699649082</X>
+      <Y>-0.08226485397851202</Y>
+      <Z>0.5084754300379003</Z>
+      <Rx>2.3782959795251113</Rx>
+      <Ry>2.0461313185952044</Ry>
+      <Rz>0.0032347080399332175</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr18_E</Variable>
+      <Label>Screw 18 entry</Label>
+      <Source>Point_18bEntry</Source>
+      <X>0.3256192595594437</X>
+      <Y>-0.3959649772742134</Y>
+      <Z>0.5234</Z>
+      <Rx>2.380614356083143</Rx>
+      <Ry>2.048873754671534</Ry>
+      <Rz>0.010585550772309733</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr19_E</Variable>
+      <Label>Screw 19 entry</Label>
+      <Source>Point_19bEntry</Source>
+      <X>0.22403470631132041</X>
+      <Y>-0.19081433057994687</Y>
+      <Z>0.5234</Z>
+      <Rx>-0.01160047959566488</Rx>
+      <Ry>3.1400912952141</Ry>
+      <Rz>0.008528626999983184</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr20_E</Variable>
+      <Label>Screw 20 entry</Label>
+      <Source>Point_20bEntry</Source>
+      <X>0.1705200191562902</X>
+      <Y>-0.37683069719360673</Y>
+      <Z>0.5234</Z>
+      <Rx>2.36871818419969</Rx>
+      <Ry>2.051085680501402</Ry>
+      <Rz>-0.0033959507687199887</Rz>
+    </RobotPointModel>
+    <RobotPointModel>
+      <Variable>Scr21_E</Variable>
+      <Label>Screw 21 entry</Label>
+      <Source>Point_21bEntry</Source>
+      <X>0.17115478452314759</X>
+      <Y>-0.11142161732946619</Y>
+      <Z>0.512</Z>
+      <Rx>2.3760608961177803</Rx>
+      <Ry>2.043526617008512</Ry>
+      <Rz>-0.0029296608329900968</Rz>
+    </RobotPointModel>
+  </Points>
+</RobotRecipeModel>
