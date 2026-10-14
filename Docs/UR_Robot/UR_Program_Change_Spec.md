@@ -177,7 +177,8 @@ All statements go to port 30020 while `InTeachMode` = 1. Units are metres and ra
 |---|---|
 | Load recipe | `Scr01 := p[x, y, z, rx, ry, rz]` … for all 42 points, then `Rcp_ID := <id>` |
 | Jog one step | `movel(p[target], a=0.3, v=0.02)` – target computed by the HMI from the current pose and the step (Base or Tool frame, 0.01–10.00 mm or the same in degrees) |
-| Move to screw point (hold to move) | lift 25 mm: `movel(pose_add(get_actual_tcp_pose(), p[0,0,0.025,0,0,0]), a=0.3, v=0.05)`, then `movel(Scr05_E, a=0.3, v=0.05)`, then `movel(Scr05, a=0.3, v=0.02)` |
+| Move to screw point (hold to move) | lift 25 mm: `movel(pose_add(get_actual_tcp_pose(), p[0, 0, 0.025, 0, 0, 0]), a=0.3, v=0.02)`, then `movel(Scr05_E, a=0.3, v=0.05)`, then `movel(Scr05, a=0.3, v=0.02)` |
+| Move to entry point (hold to move) | lift 25 mm (as above), then `movel(Scr05_E, a=0.3, v=0.05)` |
 | Move to Home / Safe / Calibration (hold to move) | `movej(get_inverse_kin(P_Home), a=0.5, v=0.3)` |
 | Button released / Stop | `abort` (own line), then `skipbuffer` |
 | Teach (save current position) | `Scr05 := p[…]` with the pose the HMI read from RTDE; the HMI saves the same value in the recipe file |
@@ -185,7 +186,26 @@ All statements go to port 30020 while `InTeachMode` = 1. Units are metres and ra
 | Speed | RTDE speed slider (not an interpreter statement) |
 | Unlock protective stop | Dashboard server port 29999: `close safety popup`, `unlock protective stop` |
 
-Speeds above are starting values for teaching; they are limited further by the speed slider.
+Speeds above are the HMI defaults; they can be changed in `<HMI folder>\MachineSettings\RobotSettings.xml`
+and are limited further by the speed slider. Moving to or teaching a recipe point is only allowed when the
+robot reports the same recipe ID as the recipe shown on the HMI.
+
+### 4.1 Checklist – what the HMI expects in the robot program
+
+The HMI code (V1.4.0.0) depends on these names and numbers. If any is spelled differently on the robot,
+the matching HMI function will fail with "Robot refused" or will not see the robot state.
+
+| HMI function | Robot program must have |
+|---|---|
+| Teach mode | Branch `If HMI_TeachMode` (bool input 16) that sets bool output 9 (`InTeachMode`) and runs `interpreter_mode()` |
+| Teach mode ends | `interpreter_mode()` returns on `end_interpreter()`; bool output 9 set back to 0 |
+| Recipe points | Installation variables `Scr01`…`Scr21` and `Scr01_E`…`Scr21_E` (pose), spelled exactly so |
+| Shared points | Installation variables `P_Home`, `P_Safe`, `P_CalReady`, `P_CalStart`, `P_Cal85Nm`, `P_Cal14Nm` (pose) |
+| Recipe on robot | Installation variable `Rcp_ID` (int), copied every loop to int output 1 (`Rcp_ID_Out`) |
+| Production uses taught points | `screwHeightList` / `screwEntryList` rebuilt from `Scr..` every loop (section 3.2) |
+| Watchdog | Thread reading RTDE input int register 24; stops the program after 1 s without change in teach |
+| Status on the Robot page | Bool outputs 0–8 as today (`AtHome` … `AtCalDonePos`), int output 0 `current_Pos` |
+| Network | Remote mode; Dashboard (29999), RTDE (30004) and interpreter (30020) enabled; robot IP entered on the Robot page |
 
 ## 5. PLC changes that go with this (for the PLC engineer)
 
