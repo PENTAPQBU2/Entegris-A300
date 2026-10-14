@@ -40,7 +40,7 @@ namespace CAMLine
         #region Constructor
         public Entergris_TcpCommService()
         {
-            keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, "8500", DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
+            keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, Global.PLCPort, DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
 
             try
             {
@@ -105,6 +105,12 @@ namespace CAMLine
         {
             try
             {
+                if (Global.IsOfflineMode)
+                {
+                    FileLogger_Utilities.TCPIP_Log("OfflineMode: TCP server connection skipped");
+                    return;
+                }
+
                 if (!String.IsNullOrEmpty(_serverSettingModel.ServerIP) && !String.IsNullOrEmpty(_serverSettingModel.ServerPort))
                 {
                     string serverIP_tryToConnect = string.Empty;

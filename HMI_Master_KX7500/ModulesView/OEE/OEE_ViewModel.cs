@@ -40,7 +40,7 @@ namespace HMI_Master_KX7500.Model.OEE
         {
             initializeMessenger();
 
-            keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, "8500", DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
+            keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, Global.PLCPort, DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
 
             Event.UpdateEvent += Update;
         }
@@ -299,7 +299,7 @@ namespace HMI_Master_KX7500.Model.OEE
 
         //    if(Global.MachineConfigModel.InitializeKX7500)
         //    {
-        //        keyenceDll = new KeyenceDll(oEETagList, Global.OPCUA_Url, "8500", DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, module);
+        //        keyenceDll = new KeyenceDll(oEETagList, Global.OPCUA_Url, Global.PLCPort, DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, module);
         //        Messenger.Default.Send(keyenceDll);
         //    }
         //}

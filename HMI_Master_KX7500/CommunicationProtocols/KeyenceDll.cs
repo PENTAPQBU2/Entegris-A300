@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 using HMI_Master_KX7500.Helpers;
 using HMI_Master_KX7500.Models.KeyencePLC;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -16,8 +17,18 @@ namespace HMI_Master_KX7500.CommunicationProtocols
 
         private Dictionary<string, string> KeyencePLCAddressList = new Dictionary<string, string>();
         private readonly List<KeyencePLCTagModel> KeyenceDllValueList = new List<KeyencePLCTagModel>();
-        private DBCommManager DBCommManager1 = new DBCommManager();
-        private DBTriggerManager DBTriggerManager1 = new DBTriggerManager();
+
+        //Created only when talking to a real PLC, so Offline mode also works on a PC without KV DataBuilder installed
+        private DBCommManager DBCommManager1 = null;
+        private DBTriggerManager DBTriggerManager1 = null;
+
+        //Instances created before MachineConfig.xml is loaded connect on first Read/Write instead
+        private bool deferredConnect = false;
+        private DBPlcId deferredPLCModel;
+        private readonly object connectLock = new object();
+
+        //Offline mode: one simulated PLC memory shared by all instances
+        private static readonly ConcurrentDictionary<string, object> simulatedMemory = new ConcurrentDictionary<string, object>();
 
         private Thread th_ReadPLCValue;
         private bool bolLoopReadPLC = false;
@@ -30,7 +41,13 @@ namespace HMI_Master_KX7500.CommunicationProtocols
 
         public KeyenceDll()
         {
-            MethodHelper.Initialize(GetType().Name, GetType().Name);
+            MethodHelper.Initialize(GetType().Name, GetType().Name, () =>
+            {
+                if(!Global.IsOfflineMode)
+                {
+                    createComObjects();
+                }
+            });
         }
 
         ~KeyenceDll()
@@ -38,8 +55,8 @@ namespace HMI_Master_KX7500.CommunicationProtocols
             bolLoopReadPLC = false;
             try
             {
-                DBTriggerManager1.Active = false;
-                DBCommManager1.Disconnect();
+                if(DBTriggerManager1 != null) { DBTriggerManager1.Active = false; }
+                if(DBCommManager1 != null) { DBCommManager1.Disconnect(); }
             }
             catch (Exception ex)
             {
@@ -58,7 +75,22 @@ namespace HMI_Master_KX7500.CommunicationProtocols
                 KeyencePLCAddressList = _KeyencePLCAddressList;
                 LogHelper.KeyValue(GetType().Name, nameof(KeyencePLCAddressList), KeyencePLCAddressList.Count);
 
-                DBCommManager1.KVSimulator = true;
+                if(!Global.MachineConfigLoaded)
+                {
+                    //Offline/IP settings are not known yet. Connect on first Read/Write using Global.OPCUA_Url and Global.PLCPort.
+                    deferredConnect = true;
+                    deferredPLCModel = _PLCModel;
+                    return;
+                }
+
+                if(Global.IsOfflineMode)
+                {
+                    LogHelper.KeyValue(GetType().Name, "OfflineMode", "Simulated PLC, not connecting");
+                    return;
+                }
+
+                createComObjects();
+                DBCommManager1.KVSimulator = Global.MachineConfigModel.UseKVStudioSimulator;
                 DBCommManager1.PLC = _PLCModel; //DBPlcId.DBPLC_DKV8K;
                 DBCommManager1.Peer = PLCIPAddress + ":" + PLCPort;
                 DBTriggerManager1 = new DBTriggerManager();
@@ -124,13 +156,89 @@ namespace HMI_Master_KX7500.CommunicationProtocols
         {
             try
             {
-                DBTriggerManager1.Active = false;
-                DBCommManager1.Disconnect();
+                if(DBTriggerManager1 != null) { DBTriggerManager1.Active = false; }
+                if(DBCommManager1 != null) { DBCommManager1.Disconnect(); }
             }
             catch (Exception ex)
             {
                 throw new Exception("Disconnect failed:\n\n" + ex.Message);
             }
+        }
+
+        private void createComObjects()
+        {
+            if(DBCommManager1 == null) { DBCommManager1 = new DBCommManager(); }
+            if(DBTriggerManager1 == null) { DBTriggerManager1 = new DBTriggerManager(); }
+        }
+
+        //Completes a connection that was postponed because MachineConfig.xml was not loaded when this instance was created
+        private void ensureDeferredConnect()
+        {
+            if(!deferredConnect || !Global.MachineConfigLoaded)
+            {
+                return;
+            }
+
+            lock(connectLock)
+            {
+                if(!deferredConnect)
+                {
+                    return;
+                }
+                deferredConnect = false;
+
+                if(Global.IsOfflineMode)
+                {
+                    return;
+                }
+
+                MethodHelper.Initialize(GetType().Name, nameof(ensureDeferredConnect), () =>
+                {
+                    createComObjects();
+                    DBCommManager1.KVSimulator = Global.MachineConfigModel.UseKVStudioSimulator;
+                    DBCommManager1.PLC = deferredPLCModel;
+                    DBCommManager1.Peer = Global.OPCUA_Url + ":" + Global.PLCPort;
+                    DBTriggerManager1 = new DBTriggerManager();
+                    YaskawaMEMOBUS.IniEngine();
+                    connect();
+                });
+            }
+        }
+
+        private static string simulatedKey(string raw_address)
+        {
+            return (raw_address ?? string.Empty).Trim().ToUpperInvariant();
+        }
+
+        private static T readSimulated<T>(string raw_address)
+        {
+            object value;
+            if(simulatedMemory.TryGetValue(simulatedKey(raw_address), out value) && value != null)
+            {
+                try
+                {
+                    return (T)Convert.ChangeType(value, typeof(T));
+                }
+                catch(Exception) { }
+            }
+
+            if(typeof(T) == typeof(string))
+            {
+                return (T)(object)string.Empty;
+            }
+            return default(T);
+        }
+
+        //Offline mode only: set a simulated PLC value, e.g. SetSimulatedValue("EM103", (short)2)
+        public static void SetSimulatedValue(string raw_address, object value)
+        {
+            simulatedMemory[simulatedKey(raw_address)] = value;
+        }
+
+        //Offline mode only: copy of all simulated PLC values written so far
+        public static Dictionary<string, object> GetSimulatedValues()
+        {
+            return simulatedMemory.ToDictionary(x => x.Key, x => x.Value);
         }
 
         private void connectKVStudio(ref DBCommManager CommManager, ref DBTriggerManager TriggerManager, ref bool PLCDisabled)
@@ -324,6 +432,12 @@ namespace HMI_Master_KX7500.CommunicationProtocols
 
         public T Read<T>(string raw_address, int strLength = 0)
         {
+            ensureDeferredConnect();
+            if(Global.IsOfflineMode)
+            {
+                return readSimulated<T>(raw_address);
+            }
+
             T result = default;
 
             DATABUILDERAXLibLB.DBValueConverterEx CV;
@@ -410,6 +524,14 @@ namespace HMI_Master_KX7500.CommunicationProtocols
 
         public void Write<T>(string raw_addr, T value, int strLength = 0)
         {
+            ensureDeferredConnect();
+            if(Global.IsOfflineMode)
+            {
+                SetSimulatedValue(raw_addr, value);
+                LogHelper.OPCTrace(GetType().Name, MessageHelper.Write(MessageHelper.KeyValue(raw_addr, Convert.ToString(value))));
+                return;
+            }
+
             DATABUILDERAXLibLB.DBValueConverterEx CV;
             CV = new DATABUILDERAXLibLB.DBValueConverterEx();
             int lowerValue, higherValue;

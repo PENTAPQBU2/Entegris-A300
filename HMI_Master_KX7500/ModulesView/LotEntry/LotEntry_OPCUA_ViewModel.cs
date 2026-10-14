@@ -54,7 +54,7 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
             }
             catch (Exception ex) { logger.Error(ex); }
 
-            keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, "8500", DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
+            keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, Global.PLCPort, DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
 
             LoadSettingService.OnUpdate_ServerSetting += new LoadSettingService.UpdateServerSetting(LoadServerSetting);
             LoadSettingService.LoadServerSetting();
@@ -84,7 +84,7 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                         batchID = keyenceDll.Read<string>(PLCTag.Lot_ID, 50);
                         FileLogger_Utilities.TCPIP_Log($"Details : {batchID}, {serialNumber}, {equipID}");
 
-                        entergris_TcpCommService.tcpIpClient.Send($"START_JOB|BATCHID:{batchID}|SERIAL_NO:{serialNumber}|EQID:{equipID}");
+                        entergris_TcpCommService.tcpIpClient?.Send($"START_JOB|BATCHID:{batchID}|SERIAL_NO:{serialNumber}|EQID:{equipID}");
                         keyenceDll.Write(PLCTag.Trigger_HMI_Send_Start_Job, false);
                     }
                     catch (Exception ex) { logger.Error(ex); }
@@ -117,12 +117,12 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                     //{
                     //    FileLogger_Utilities.TCPIP_Log("Result String Is Not Null");
                     //    FileLogger_Utilities.TCPIP_Log("resultPass is true");
-                    //    entergris_TcpCommService.tcpIpClient.Send($"COMPLETED|BATCHID:{batchID}|SERIAL_NO:{serialNumber}|EQID:{equipID}|RESULT:PASS|{resultString}");
+                    //    entergris_TcpCommService.tcpIpClient?.Send($"COMPLETED|BATCHID:{batchID}|SERIAL_NO:{serialNumber}|EQID:{equipID}|RESULT:PASS|{resultString}");
                     //    siemensOPC.WriteTag(LotEntry_Tag.Trigger_HMI_SendJobComplete, false);
                     //}
                     //else { FileLogger_Utilities.TCPIP_Log("Result String Is Null"); }
 
-                    entergris_TcpCommService.tcpIpClient.Send($"COMPLETED|BATCHID:{batchID}|SERIAL_NO:{serialNumber}|EQID:{equipID}|RESULT:PASS");
+                    entergris_TcpCommService.tcpIpClient?.Send($"COMPLETED|BATCHID:{batchID}|SERIAL_NO:{serialNumber}|EQID:{equipID}|RESULT:PASS");
                     keyenceDll.Write<bool>(PLCTag.Trigger_HMI_Send_Job_Complete, false);
                 }
                 else if (keyenceDll.Read<bool>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.TSOColumnTag) != LotEntryInterfaceModel.LotEntryModel.TSOColumnValue)

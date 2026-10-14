@@ -39,6 +39,12 @@ namespace HMI_Master_KX7500
 
         //public static string OPCUA_Url = "opc.tcp://192.168.3.11:4840";
         public static string OPCUA_Url = "192.168.0.10";
+        public static string PLCPort = "8500";
+
+        //Set once MachineConfig.xml has been read (see InitializeMachineConfig)
+        public static bool MachineConfigLoaded = false;
+
+        public static bool IsOfflineMode => MachineConfigModel != null && MachineConfigModel.OfflineMode;
 
         public static string NodeNameSpace = string.Empty; //because last time we test on with plc, with out declare like original nodenamespace, we can still read write, old => NodeNameSpace = "BYD_Welding.PLC";
         public static string HMIVersionNode = $"EM930";
@@ -77,6 +83,32 @@ namespace HMI_Master_KX7500
                 }
 
                 MachineConfigModel = XmlTools.Deserialize<MachineConfigModel>(FilePath.MachineConfig, MachineConfigModel);
+
+                if(!string.IsNullOrWhiteSpace(MachineConfigModel.PLCIPAddress))
+                {
+                    OPCUA_Url = MachineConfigModel.PLCIPAddress.Trim();
+                }
+
+                if(!string.IsNullOrWhiteSpace(MachineConfigModel.PLCPort))
+                {
+                    PLCPort = MachineConfigModel.PLCPort.Trim();
+                }
+
+                if(MachineConfigModel.OfflineMode)
+                {
+                    logger.Warn("OfflineMode is ON. PLC, COM port and TCP server are simulated/disabled.");
+                }
+            }
+            catch(Exception ex) { logger.Error(ex); }
+            finally
+            {
+                MachineConfigLoaded = true;
+            }
+
+            try
+            {
+                //Write back so settings added in newer versions appear in an existing MachineConfig.xml
+                XmlTools.Serialize(FilePath.MachineConfig, MachineConfigModel);
             }
             catch(Exception ex) { logger.Error(ex); }
             //initializeMachineConfigModel();

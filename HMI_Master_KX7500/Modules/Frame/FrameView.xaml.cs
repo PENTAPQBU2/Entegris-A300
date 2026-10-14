@@ -178,7 +178,10 @@ namespace HMI_Master_KX7500.Modules.Frame
                 //COMPort 6
                 SL = new SerialListener();
                 SL.onDataReceived += LoadCellListener;
-                SL.Open(true);
+                if(!Global.IsOfflineMode)
+                {
+                    SL.Open(true);
+                }
 
                 token = source.Token;
                 Event.UpdateEvent += Update;
@@ -188,6 +191,12 @@ namespace HMI_Master_KX7500.Modules.Frame
                     {
                         //Thread.Sleep(100);
                         Event.RaiseUpdateEvent();
+
+                        //Real PLC reads pace this loop. The simulated PLC answers instantly, so throttle it.
+                        if(Global.IsOfflineMode)
+                        {
+                            Thread.Sleep(100);
+                        }
                     }
                 });
             }
@@ -385,13 +394,13 @@ namespace HMI_Master_KX7500.Modules.Frame
 #if DEBUG
                     string foupId = "FOUPTESTABC123";
                     string lotId = "LotTest123";
-                    string folderPath = @"D:\HMI_A300\FOUP CSV\";
+                    string folderPath = getFoupCsvFolder(@"D:\HMI_A300\FOUP CSV\");
                     int screwNum = 1234;
 #else
                     string foupId = keyenceDll.Read<string>(PLCTag.Foup_Barcode, 20);
                     string lotId = keyenceDll.Read<string>(PLCTag.Lot_ID);
                     int screwNum = keyenceDll.Read<int>(PLCTag.Screw_Number);
-                    string folderPath = @"D:\HMI\FOUP CSV\";
+                    string folderPath = getFoupCsvFolder(@"D:\HMI\FOUP CSV\");
 #endif
                     if (!Directory.Exists(folderPath))
                     {
@@ -452,6 +461,24 @@ namespace HMI_Master_KX7500.Modules.Frame
             {
                 LogHelper.Error(GetType().Name, ex);
             }
+        }
+
+        //Configured folder, else the legacy D: folder, else "<HMI folder>\FOUP CSV\" when that drive does not exist
+        private string getFoupCsvFolder(string legacyFolder)
+        {
+            string configured = Global.MachineConfigModel?.FoupCsvFolder;
+            if(!string.IsNullOrWhiteSpace(configured))
+            {
+                return configured.Trim().TrimEnd('\\') + @"\";
+            }
+
+            if(Directory.Exists(Path.GetPathRoot(legacyFolder)))
+            {
+                return legacyFolder;
+            }
+
+            string hmiFolder = Directory.GetParent(FolderPath.Logs.TrimEnd('\\')).FullName;
+            return Path.Combine(hmiFolder, "FOUP CSV") + @"\";
         }
 
         private void Update()
@@ -582,8 +609,8 @@ namespace HMI_Master_KX7500.Modules.Frame
                     ///    OPCModules.WelderSetup, OPCModules.Recipe, OPCModules.DBCLog, OPCModules.WelderLog };
                     ///opcUA.InitializeUAOPC(Global.OPCUA_Url,Global.GetList_GeneralNodeList(), modules);
                     
-                    //keyenceDll = new KeyenceDll(Global.GetList_GeneralNodeList(mainViewModel.GetTagList()), Global.OPCUA_Url, "8500", DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, modules1);
-                    keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, "8500", DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, modules1);
+                    //keyenceDll = new KeyenceDll(Global.GetList_GeneralNodeList(mainViewModel.GetTagList()), Global.OPCUA_Url, Global.PLCPort, DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, modules1);
+                    keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, Global.PLCPort, DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, modules1);
 
                     //keyenceDll2.InitializeUAOPC(Global.OPCUA_Url, Global.GetList_GeneralNodeList2(), modules2);
                     //opcUA_3.InitializeUAOPC(Global.OPCUA_Url, Global.GetList_GeneralNodeList3(), modules3);
@@ -876,6 +903,10 @@ namespace HMI_Master_KX7500.Modules.Frame
                 initializeAlarmContent();
                 InitializeKX7500();
                 TextBlockAssemblyVersion.Text = $"V{Assembly.GetExecutingAssembly().GetName().Version}";
+                if(Global.IsOfflineMode)
+                {
+                    TextBlockAssemblyVersion.Text += " [OFFLINE]";
+                }
                 //opcUA.Write(Global.HMIVersionNode, TextBlockAssemblyVersion.Text);
                 //Messenger.Default.Send(opcUA);
                 //opcUA.ReadAllAddresses();
@@ -1135,6 +1166,8 @@ namespace HMI_Master_KX7500.Modules.Frame
                     {
                         gl_conn.Close();
                     }
+                    //gl_conn is created before FolderPath is set, so point it at MachineSettings\Alarm.mdb here
+                    gl_conn.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FilePath.Alarm;
                     gl_conn.Open();
                     OleDbDataAdapter adapter = new OleDbDataAdapter("SELECT * FROM AlarmV1Model", gl_conn);
                     OleDbCommandBuilder cmdBuilder = new OleDbCommandBuilder(adapter);
@@ -1156,6 +1189,8 @@ namespace HMI_Master_KX7500.Modules.Frame
                     {
                         gl_conn.Close();
                     }
+                    //gl_conn is created before FolderPath is set, so point it at MachineSettings\Alarm.mdb here
+                    gl_conn.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FilePath.Alarm;
                     gl_conn.Open();
                     OleDbDataAdapter adapter = new OleDbDataAdapter("SELECT * FROM AlarmV1Model", gl_conn);
                     OleDbCommandBuilder cmdBuilder = new OleDbCommandBuilder(adapter);

@@ -47,7 +47,7 @@ namespace HMI_Master_KX7500.ModulesView.Settings
         {
             try
             {
-                _keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, "8500", DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
+                _keyenceDll = new KeyenceDll(new Dictionary<string, string>(), Global.OPCUA_Url, Global.PLCPort, DATABUILDERAXLibLB.DBPlcId.DBPLC_DKV7K, new List<OPCModules>());
                 initializeSettingsGeneral();
                 Event.UpdateEvent += Update;
             }
