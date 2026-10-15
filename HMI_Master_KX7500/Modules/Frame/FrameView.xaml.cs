@@ -1107,29 +1107,13 @@ namespace HMI_Master_KX7500.Modules.Frame
         {
             try
             {
-                // OFFLINE MODE: on a PC without Keyence KV COM+ Library, create folders, logging and file paths
-                // BEFORE the PLC/TCP services. Otherwise an exception in Entergris_TcpCommService skips them,
-                // leaving FilePath.* empty (no user list -> cannot log in, COM port name empty) and no logs.
-                // On the machine PC (IsOffline == false) the original order below is used unchanged.
-                bool offlineMode = isOfflineMode();
-                if (offlineMode)
-                {
-                    initializeFolderPath();
-                    initializeLog();
-                    initializeFilePath();
-                }
-                // OFFLINE MODE end
-
                 LoadSettingService.OnUpdate_ServerSetting += new LoadSettingService.UpdateServerSetting(LoadServerSetting);
                 LoadSettingService.LoadServerSetting();
                 Entergris_TcpCommService entergris_TcpCommService = new Entergris_TcpCommService();
 
-                if (!offlineMode) // OFFLINE MODE: condition added, original code always ran these 3 lines here
-                {
-                    initializeFolderPath();
-                    initializeLog();
-                    initializeFilePath();
-                }
+                initializeFolderPath();
+                initializeLog();
+                initializeFilePath();
                 Global.InitializeMachineConfig(); //to create setting file for debug mode and initializeOPC
                 initializeFrame();
                 initializeMenu();
@@ -1147,30 +1131,7 @@ namespace HMI_Master_KX7500.Modules.Frame
                 //LoadSettingService.LoadServerSetting();
                 //Entergris_TcpCommService entergris_TcpCommService = new Entergris_TcpCommService();
             }
-            catch(Exception ex)
-            {
-                logger.Error(ex);
-                // OFFLINE MODE: show startup errors, logging may not be configured yet so logger.Error() writes nothing
-                if (isOfflineMode())
-                {
-                    MessageBox.Show(ex.ToString(), "OFFLINE MODE | initializeNonAsync failed");
-                }
-                // OFFLINE MODE end
-            }
-        }
-
-        // OFFLINE MODE: true when Keyence KV COM+ Library is not installed (see KeyenceDll.IsOffline).
-        // Wrapped in try/catch so a failure reading the flag also counts as offline.
-        private static bool isOfflineMode()
-        {
-            try
-            {
-                return KeyenceDll.IsOffline;
-            }
-            catch (Exception)
-            {
-                return true;
-            }
+            catch(Exception ex) { logger.Error(ex); }
         }
 
         private void LoadServerSetting(SetupSettingModel _serverSettingModel)
