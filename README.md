@@ -42,10 +42,10 @@ cancelled by the customer; its code is kept in `Archive/MT_002_RobotPage/`. Item
   PC Red, PC Green) are copied there on first start.
 - **Lot Entry recipe drop-down (MT_001)** – recipe chosen from the recipe files instead of typing a number.
   New Lot writes the recipe ID (EM1559), name (EM1623) and the recipe's robot point set to the new
-  address `HMI_Robot_PointSet` EM4200. The PLC moves it to `shell_int` (W0102) and the robot uses that
+  address `HMI_Robot_PointSet` EM4250. The PLC moves it to `shell_int` (W0102) and the robot uses that
   point set (taught on the pendant). The Black/Transparent buttons (MR4500/MR4501) are no longer used.
 - `Docs/UR_Robot/UR_Program_Change_Spec.md` – robot and PLC changes for the five recipes
-  (`Switch shell_int` Case 2–4, PLC rung EM4200 → W0102).
+  (`Switch shell_int` Case 2–4, PLC rung EM4250 → W0102).
 
 **Changed**
 - Torque CSV log falls back to `<HMI folder>\FOUP CSV\` when the `D:` drive does not exist

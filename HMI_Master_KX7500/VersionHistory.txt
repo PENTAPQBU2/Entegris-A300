@@ -9,7 +9,7 @@ Changes			:
 5. Fix Alarm.mdb path: now read from MachineSettings\Alarm.mdb of the running build (Debug read the Release folder before).
 6. Add Recipe page (Technician/Pentamaster): recipe ID, name and robot point set; save, create copy, delete.
 7. Lot Entry: recipe drop-down replaces the Black/Transparent buttons. New Lot writes recipe ID/name and the
-   robot point set (EM4200, PLC moves it to W0102 shell_int); the robot uses that set's taught points.
+   robot point set (EM4250, PLC moves it to W0102 shell_int); the robot uses that set's taught points.
 8. Chinese menu names corrected (Recipe, Robot).
 
 Version			: V1.3.13.0

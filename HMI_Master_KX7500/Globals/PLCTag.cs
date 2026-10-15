@@ -147,7 +147,7 @@ namespace HMI_Master_KX7500.Globals
         public const string Lot_Recipe_Name = "EM1623";      //Lot_Info_DB_Curr_Recipe_Name, string[20]
 
         //Robot point set of the lot recipe. PLC moves it to W0102 (robot int input 1, shell_int)
-        public const string HMI_Robot_PointSet = "EM4200";   //2W
+        public const string HMI_Robot_PointSet = "EM4250";   //2W
         #endregion
 
     }
