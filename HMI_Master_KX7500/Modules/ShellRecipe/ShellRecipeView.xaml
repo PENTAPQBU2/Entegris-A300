@@ -6,50 +6,67 @@
              xmlns:local="clr-namespace:HMI_Master_KX7500"
              Loaded="UserControl_Loaded">
 
-    <!-- Layout follows BU4 sample (Welding HMI RecipeEditorView) -->
-    <Grid Background="White" Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="44"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto" MinWidth="120"/>
-            <ColumnDefinition Width="350"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <!-- Layout follows BU4 sample (Welding HMI RecipeEditorView), Robot Points box on the right to keep the page short -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Background="White">
+        <Grid Background="White" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <Image Grid.Row="0" Grid.Column="0" Width="32" Height="32" Margin="0 0 8 0"
-               Source="pack://application:,,,/Pentamaster;component/HMI/Icons/Task.png"/>
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="{DynamicResource Recipe}" Style="{StaticResource LeftTextBlock}"/>
-        <ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding RecipeList}" SelectedItem="{Binding SelectedRecipe}"
-                  DisplayMemberPath="DisplayName"/>
+            <!-- recipe -->
+            <Grid Grid.Column="0" VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="44"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" MinWidth="120"/>
+                    <ColumnDefinition Width="350"/>
+                </Grid.ColumnDefinitions>
 
-        <UniformGrid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Rows="1" Margin="0 10 0 10">
-            <Button Content="New" Command="{Binding NewRecipeCommand}" Margin="2"/>
-            <Button Content="Save" Command="{Binding SaveRecipeCommand}" Margin="2"/>
-            <Button Content="Delete" Command="{Binding DeleteRecipeCommand}" Margin="2"/>
-        </UniformGrid>
+                <Image Grid.Row="0" Grid.Column="0" Width="32" Height="32" Margin="0 0 8 0"
+                       Source="pack://application:,,,/Pentamaster;component/HMI/Icons/Task.png"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{DynamicResource Recipe}" Style="{StaticResource LeftTextBlock}"/>
+                <ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding RecipeList}" SelectedItem="{Binding SelectedRecipe}"
+                          DisplayMemberPath="DisplayName"/>
 
-        <TextBlock Grid.Row="2" Grid.Column="1" Text="Recipe Name" Style="{StaticResource LeftTextBlock}"/>
-        <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding RecipeName, UpdateSourceTrigger=PropertyChanged}" MaxLength="20"/>
+                <UniformGrid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Rows="1" Margin="0 10 0 10">
+                    <Button Content="New" Command="{Binding NewRecipeCommand}" Margin="2"/>
+                    <Button Content="Save" Command="{Binding SaveRecipeCommand}" Margin="2"/>
+                    <Button Content="Delete" Command="{Binding DeleteRecipeCommand}" Margin="2"/>
+                </UniformGrid>
 
-        <TextBlock Grid.Row="3" Grid.Column="1" Text="Recipe ID (Shell ID)" Style="{StaticResource LeftTextBlock}"/>
-        <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding RecipeID, UpdateSourceTrigger=PropertyChanged}" MaxLength="3"
-                 IsEnabled="{Binding IsNewRecipe}"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="Recipe Name" Style="{StaticResource LeftTextBlock}"/>
+                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding RecipeName, UpdateSourceTrigger=PropertyChanged}" MaxLength="20"/>
 
-        <!-- Robot points: copy of the Black points (Point_1b -> <prefix>_Point_1 ...) in the robot installation file -->
-        <TextBlock Grid.Row="4" Grid.Column="1" Text="Robot Point Prefix" Style="{StaticResource LeftTextBlock}"/>
-        <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding RobotPointPrefix, UpdateSourceTrigger=PropertyChanged}" MaxLength="5"
-                 IsEnabled="{Binding IsNewRecipe, Converter={StaticResource InverseBooleanConverter}}"/>
-        <Button Grid.Row="4" Grid.Column="3" Content="Create Point" Command="{Binding CreatePointCommand}" Margin="8 2 0 2"
-                HorizontalAlignment="Left" MinWidth="140"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="Recipe ID (Shell ID)" Style="{StaticResource LeftTextBlock}"/>
+                <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding RecipeID, UpdateSourceTrigger=PropertyChanged}" MaxLength="3"
+                         IsEnabled="{Binding IsNewRecipe}"/>
 
-        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="0 20 0 0" TextWrapping="Wrap" VerticalAlignment="Top"
-                   Text="Recipe ID = Shell ID sent to PLC. Choose the recipe on Lot Entry, it is sent to PLC on New Lot. Create Point: select the installation file copied from the robot, the Black points are copied with the prefix (e.g. Blue: Point_1b -> Blue_Point_1, Point_1bEntry -> Blue_Point_1Entry). Load the new file on the robot and adjust the points on the teach pendant."/>
-    </Grid>
+                <!-- prefix of the robot point set of this recipe, saved with Save (empty for the built-in Black / Transparent points) -->
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Robot Point Prefix" Style="{StaticResource LeftTextBlock}"/>
+                <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding RobotPointPrefix, UpdateSourceTrigger=PropertyChanged}" MaxLength="5"/>
+
+                <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 20 0 0" TextWrapping="Wrap"
+                           Text="Recipe ID = Shell ID sent to PLC. Choose the recipe on Lot Entry, it is sent to PLC on New Lot and selects the robot point set."/>
+            </Grid>
+
+            <!-- robot points -->
+            <GroupBox Grid.Column="1" Header="Robot Points" Margin="30 44 0 0" MaxWidth="450"
+                      HorizontalAlignment="Left" VerticalAlignment="Top">
+                <StackPanel Margin="4">
+                    <TextBlock Text="{Binding RobotPointInfo}" TextWrapping="Wrap" Margin="0 0 0 8"/>
+                    <Button Content="Create Points" Command="{Binding CreatePointCommand}" HorizontalAlignment="Left" MinWidth="160"/>
+                    <TextBlock TextWrapping="Wrap" Margin="0 8 0 0" FontSize="12"
+                               Text="Copies the 33 Black points to &lt;prefix&gt;_P01..P33 in the robot installation file and makes recipe_points.script. Load both files on the robot."/>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

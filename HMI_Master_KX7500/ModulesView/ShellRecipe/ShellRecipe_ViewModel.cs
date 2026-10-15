@@ -57,8 +57,15 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
                         RobotPointPrefix = selectedRecipe.RobotPointPrefix;
                         IsNewRecipe = false;
                     }
+                    RaisePropertyChanged(nameof(RobotPointInfo));
                 }
             }
+        }
+
+        // which robot points the saved recipe uses (shown in the Robot Points box)
+        public string RobotPointInfo
+        {
+            get { return IsNewRecipe ? "Save the recipe first." : RobotPointService.GetPointInfo(SelectedRecipe); }
         }
 
         private int recipeID = 0;
@@ -114,6 +121,7 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
                 {
                     isNewRecipe = value;
                     RaisePropertyChanged(nameof(IsNewRecipe));
+                    RaisePropertyChanged(nameof(RobotPointInfo));
                 }
             }
         }
@@ -172,6 +180,7 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
 
                 RecipeID = nextID;
                 RecipeName = string.Empty;
+                RobotPointPrefix = string.Empty;
                 IsNewRecipe = true;
             }
             catch (Exception ex) { logger.Error(ex); }
@@ -208,9 +217,30 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
                     return;
                 }
 
+                // robot point prefix: empty = no own points (recipe 0 / 1 use the built-in Black / Transparent points)
+                string prefix = RobotPointService.NormalizePrefix(RobotPointPrefix);
+                if (prefix.Length > 0 && !RobotPointService.IsValidPrefix(prefix))
+                {
+                    MessageBox.Show($"Robot Point Prefix must be 1 - {RobotPointService.MaxPrefixLength} letters or numbers and start with a letter (e.g. Blue).",
+                        "Recipe", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                ShellRecipeModel samePrefix = list.FirstOrDefault(x => x.RecipeID != editID && prefix.Length > 0
+                    && string.Equals(RobotPointService.NormalizePrefix(x.RobotPointPrefix), prefix, StringComparison.OrdinalIgnoreCase));
+                if (samePrefix != null)
+                {
+                    MessageBox.Show($"Robot Point Prefix \"{prefix}\" is already used by recipe {samePrefix.DisplayName}.", "Recipe", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 string question = IsNewRecipe
                     ? $"Add recipe {RecipeID} - {name}?"
-                    : $"Rename recipe {editID} - {SelectedRecipe.RecipeName} to \"{name}\"?";
+                    : $"Save recipe {editID} - {SelectedRecipe.RecipeName} as \"{name}\"?";
+                string oldPrefix = IsNewRecipe ? string.Empty : RobotPointService.NormalizePrefix(SelectedRecipe.RobotPointPrefix);
+                if (oldPrefix.Length > 0 && !string.Equals(oldPrefix, prefix, StringComparison.Ordinal))
+                {
+                    question += $"\n\nRobot Point Prefix changes from \"{oldPrefix}\" to \"{prefix}\". The robot points {oldPrefix}_P.. stay in the robot, press Create Points to make the new ones.";
+                }
                 if (MessageBox.Show(question, "Recipe", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
@@ -223,10 +253,11 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
                     list.Add(recipe);
                 }
                 recipe.RecipeName = name;
+                recipe.RobotPointPrefix = prefix;
 
                 if (ShellRecipeService.SaveRecipeList(list))
                 {
-                    logger.Info($"Recipe saved: {editID} - {name}");
+                    logger.Info($"Recipe saved: {editID} - {name}, robot point prefix \"{prefix}\"");
                     IsNewRecipe = false;
                     selectedRecipe = recipe;
                     Refresh();
@@ -269,26 +300,26 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
             catch (Exception ex) { logger.Error(ex); }
         }
 
-        // Robot points for the selected recipe: copy of the Black points (Point_1b -> <prefix>_Point_1 ...), in a UR installation file
+        // Robot points for the selected recipe (Point_1b.. -> <prefix>_P01..P33) in a new installation file
+        // + recipe_points.script with the point sets of all recipes, both files are loaded on the robot
         private void createPointCommand()
         {
             try
             {
                 ShellRecipeModel recipe = SelectedRecipe;
-                if (!RobotPointService.IsValidPrefix(RobotPointPrefix))
+                string prefix = RobotPointService.NormalizePrefix(recipe.RobotPointPrefix);
+
+                if (!string.Equals(prefix, RobotPointService.NormalizePrefix(RobotPointPrefix), StringComparison.Ordinal))
                 {
-                    MessageBox.Show($"Prefix must be 1 - {RobotPointService.MaxPrefixLength} letters or numbers and start with a letter (e.g. Blue).",
-                        "Create Point", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Robot Point Prefix is changed, please Save the recipe first.", "Create Points", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                string prefix = RobotPointService.NormalizePrefix(RobotPointPrefix);
-
-                List<ShellRecipeModel> list = ShellRecipeService.GetRecipeList();
-                ShellRecipeModel samePrefix = list.FirstOrDefault(x => x.RecipeID != recipe.RecipeID
-                    && string.Equals(RobotPointService.NormalizePrefix(x.RobotPointPrefix), prefix, StringComparison.OrdinalIgnoreCase));
-                if (samePrefix != null)
+                if (prefix.Length == 0)
                 {
-                    MessageBox.Show($"Prefix \"{prefix}\" is already used by recipe {samePrefix.DisplayName}.", "Create Point", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(RobotPointService.IsBuiltInSet(recipe)
+                        ? $"Recipe {recipe.DisplayName} uses the built-in robot points, no need to create points."
+                        : "Please fill in the Robot Point Prefix and Save the recipe first.",
+                        "Create Points", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -305,35 +336,28 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
 
                 SaveFileDialog saveDialog = new SaveFileDialog
                 {
-                    Title = "Save the new robot installation file",
+                    Title = $"Save the new robot installation file ({RobotPointService.ScriptFileName} is saved in the same folder)",
                     Filter = "Robot installation (*.installation)|*.installation",
                     InitialDirectory = Path.GetDirectoryName(openDialog.FileName),
-                    FileName = Path.GetFileName(openDialog.FileName)
+                    FileName = $"{DateTime.Now:yyyyMMddHHmmss}.installation"
                 };
                 if (saveDialog.ShowDialog() != true)
                 {
                     return;
                 }
 
-                int count = RobotPointService.CreatePoints(openDialog.FileName, saveDialog.FileName, prefix, out string error);
-                if (count == 0)
+                string scriptFile = Path.Combine(Path.GetDirectoryName(saveDialog.FileName), RobotPointService.ScriptFileName);
+                if (!RobotPointService.CreatePoints(openDialog.FileName, saveDialog.FileName, scriptFile, prefix,
+                    ShellRecipeService.GetRecipeList(), out string message))
                 {
-                    MessageBox.Show($"Create Point failed: {error}", "Create Point", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Create Points failed: {message}", "Create Points", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                ShellRecipeModel saved = list.FirstOrDefault(x => x.RecipeID == recipe.RecipeID);
-                if (saved != null)
-                {
-                    saved.RobotPointPrefix = prefix;
-                    ShellRecipeService.SaveRecipeList(list);
-                    Refresh();
-                }
-
-                MessageBox.Show($"{count} points created ({prefix}_Point_1 ...) for recipe {recipe.DisplayName}.\n\n" +
-                    $"File: {saveDialog.FileName}\n\n" +
-                    "Load this installation file on the robot, then adjust the points on the teach pendant.",
-                    "Create Point", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Recipe {recipe.DisplayName}: {message}\n\n" +
+                    $"Files:\n{saveDialog.FileName}\n{scriptFile}\n\n" +
+                    "Load both files on the robot, then adjust the points on the teach pendant.",
+                    "Create Points", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex) { logger.Error(ex); }
         }
