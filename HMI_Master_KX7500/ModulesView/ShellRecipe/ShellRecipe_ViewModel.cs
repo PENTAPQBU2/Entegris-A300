@@ -2,10 +2,12 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using HMI_Master_KX7500.Model.ShellRecipe;
 using HMI_Master_KX7500.Service.ShellRecipe;
+using Microsoft.Win32;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -52,6 +54,7 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
                     {
                         RecipeID = selectedRecipe.RecipeID;
                         RecipeName = selectedRecipe.RecipeName;
+                        RobotPointPrefix = selectedRecipe.RobotPointPrefix;
                         IsNewRecipe = false;
                     }
                 }
@@ -86,6 +89,20 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
             }
         }
 
+        private string robotPointPrefix = string.Empty;
+        public string RobotPointPrefix
+        {
+            get { return robotPointPrefix; }
+            set
+            {
+                if (robotPointPrefix != value)
+                {
+                    robotPointPrefix = value;
+                    RaisePropertyChanged(nameof(RobotPointPrefix));
+                }
+            }
+        }
+
         // Recipe ID (shell ID) can only be keyed in for a new recipe, existing recipe can only be renamed
         private bool isNewRecipe = false;
         public bool IsNewRecipe
@@ -106,6 +123,7 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
         public ICommand NewRecipeCommand { get; set; }
         public ICommand SaveRecipeCommand { get; set; }
         public ICommand DeleteRecipeCommand { get; set; }
+        public ICommand CreatePointCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -114,6 +132,7 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
             NewRecipeCommand = new RelayCommand(newRecipeCommand);
             SaveRecipeCommand = new RelayCommand(saveRecipeCommand, () => IsNewRecipe || SelectedRecipe != null);
             DeleteRecipeCommand = new RelayCommand(deleteRecipeCommand, () => !IsNewRecipe && SelectedRecipe != null);
+            CreatePointCommand = new RelayCommand(createPointCommand, () => !IsNewRecipe && SelectedRecipe != null);
         }
         #endregion
 
@@ -249,6 +268,75 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
             }
             catch (Exception ex) { logger.Error(ex); }
         }
+
+        // Robot points for the selected recipe: copy of the Black points (Point_1b -> <prefix>_Point_1 ...), in a UR installation file
+        private void createPointCommand()
+        {
+            try
+            {
+                ShellRecipeModel recipe = SelectedRecipe;
+                if (!RobotPointService.IsValidPrefix(RobotPointPrefix))
+                {
+                    MessageBox.Show($"Prefix must be 1 - {RobotPointService.MaxPrefixLength} letters or numbers and start with a letter (e.g. Blue).",
+                        "Create Point", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                string prefix = RobotPointService.NormalizePrefix(RobotPointPrefix);
+
+                List<ShellRecipeModel> list = ShellRecipeService.GetRecipeList();
+                ShellRecipeModel samePrefix = list.FirstOrDefault(x => x.RecipeID != recipe.RecipeID
+                    && string.Equals(RobotPointService.NormalizePrefix(x.RobotPointPrefix), prefix, StringComparison.OrdinalIgnoreCase));
+                if (samePrefix != null)
+                {
+                    MessageBox.Show($"Prefix \"{prefix}\" is already used by recipe {samePrefix.DisplayName}.", "Create Point", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                OpenFileDialog openDialog = new OpenFileDialog
+                {
+                    Title = "Select the robot installation file (latest copy from the robot)",
+                    Filter = "Robot installation (*.installation)|*.installation",
+                    FileName = "default.installation"
+                };
+                if (openDialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                SaveFileDialog saveDialog = new SaveFileDialog
+                {
+                    Title = "Save the new robot installation file",
+                    Filter = "Robot installation (*.installation)|*.installation",
+                    InitialDirectory = Path.GetDirectoryName(openDialog.FileName),
+                    FileName = Path.GetFileName(openDialog.FileName)
+                };
+                if (saveDialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                int count = RobotPointService.CreatePoints(openDialog.FileName, saveDialog.FileName, prefix, out string error);
+                if (count == 0)
+                {
+                    MessageBox.Show($"Create Point failed: {error}", "Create Point", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                ShellRecipeModel saved = list.FirstOrDefault(x => x.RecipeID == recipe.RecipeID);
+                if (saved != null)
+                {
+                    saved.RobotPointPrefix = prefix;
+                    ShellRecipeService.SaveRecipeList(list);
+                    Refresh();
+                }
+
+                MessageBox.Show($"{count} points created ({prefix}_Point_1 ...) for recipe {recipe.DisplayName}.\n\n" +
+                    $"File: {saveDialog.FileName}\n\n" +
+                    "Load this installation file on the robot, then adjust the points on the teach pendant.",
+                    "Create Point", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex) { logger.Error(ex); }
+        }
         #endregion
 
         #region PrivateMethods
@@ -256,6 +344,7 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
         {
             RecipeID = 0;
             RecipeName = string.Empty;
+            RobotPointPrefix = string.Empty;
             IsNewRecipe = false;
         }
         #endregion

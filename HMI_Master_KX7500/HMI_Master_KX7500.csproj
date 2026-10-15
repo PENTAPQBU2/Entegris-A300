@@ -570,6 +570,7 @@
     <Compile Include="Modules\ShellRecipe\ShellRecipeView.xaml.cs">
       <DependentUpon>ShellRecipeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Service\ShellRecipe\RobotPointService.cs" />
     <Compile Include="Service\ShellRecipe\ShellRecipeService.cs" />
     <Compile Include="Initialize\SettingsInitializeModel.cs" />
     <Compile Include="Initialize\TrackingStatusInitializeModel.cs" />

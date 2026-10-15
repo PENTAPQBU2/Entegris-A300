@@ -13,6 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -41,7 +42,14 @@
         <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding RecipeID, UpdateSourceTrigger=PropertyChanged}" MaxLength="3"
                  IsEnabled="{Binding IsNewRecipe}"/>
 
-        <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Margin="0 20 0 0" TextWrapping="Wrap" VerticalAlignment="Top"
-                   Text="Recipe ID = Shell ID sent to PLC. Choose the recipe on Lot Entry, it is sent to PLC on New Lot. Robot teach points stay in the teach pendant."/>
+        <!-- Robot points: copy of the Black points (Point_1b -> <prefix>_Point_1 ...) in the robot installation file -->
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="Robot Point Prefix" Style="{StaticResource LeftTextBlock}"/>
+        <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding RobotPointPrefix, UpdateSourceTrigger=PropertyChanged}" MaxLength="5"
+                 IsEnabled="{Binding IsNewRecipe, Converter={StaticResource InverseBooleanConverter}}"/>
+        <Button Grid.Row="4" Grid.Column="3" Content="Create Point" Command="{Binding CreatePointCommand}" Margin="8 2 0 2"
+                HorizontalAlignment="Left" MinWidth="140"/>
+
+        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="0 20 0 0" TextWrapping="Wrap" VerticalAlignment="Top"
+                   Text="Recipe ID = Shell ID sent to PLC. Choose the recipe on Lot Entry, it is sent to PLC on New Lot. Create Point: select the installation file copied from the robot, the Black points are copied with the prefix (e.g. Blue: Point_1b -> Blue_Point_1, Point_1bEntry -> Blue_Point_1Entry). Load the new file on the robot and adjust the points on the teach pendant."/>
     </Grid>
 </UserControl>

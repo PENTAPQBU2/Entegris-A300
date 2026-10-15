@@ -41,6 +41,21 @@ namespace HMI_Master_KX7500.Model.ShellRecipe
             }
         }
 
+        // prefix of the robot points created for this recipe (e.g. BLU_ -> BLU_Point_1b), empty = not created
+        private string robotPointPrefix = string.Empty;
+        public string RobotPointPrefix
+        {
+            get { return robotPointPrefix; }
+            set
+            {
+                if (robotPointPrefix != value)
+                {
+                    robotPointPrefix = value;
+                    RaisePropertyChanged(nameof(RobotPointPrefix));
+                }
+            }
+        }
+
         [XmlIgnore]
         public string DisplayName
         {
