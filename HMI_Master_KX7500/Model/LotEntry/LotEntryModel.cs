@@ -53,32 +53,17 @@ namespace HMI_Master_KX7500.Model.LotEntry
             }
         }
 
-        //
-        private ICommand shellColourBlackCommand = null;
+        private ICommand selectShellColourCommand = null;
         [XmlIgnore]
-        public ICommand ShellColourBlackCommand
+        public ICommand SelectShellColourCommand
         {
-            get { return shellColourBlackCommand; }
+            get { return selectShellColourCommand; }
             set
             {
-                if (shellColourBlackCommand != value)
+                if (selectShellColourCommand != value)
                 {
-                    shellColourBlackCommand = value;
-                    RaisePropertyChanged(nameof(ShellColourBlackCommand));
-                }
-            }
-        }
-        private ICommand transparentCommand = null;
-        [XmlIgnore]
-        public ICommand TransparentCommand
-        {
-            get { return transparentCommand; }
-            set
-            {
-                if (transparentCommand != value)
-                {
-                    transparentCommand = value;
-                    RaisePropertyChanged(nameof(TransparentCommand));
+                    selectShellColourCommand = value;
+                    RaisePropertyChanged(nameof(SelectShellColourCommand));
                 }
             }
         }

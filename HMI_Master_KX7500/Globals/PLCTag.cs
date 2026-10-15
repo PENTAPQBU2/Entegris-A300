@@ -141,5 +141,25 @@ namespace HMI_Master_KX7500.Globals
         //ScrewNumber
         public const string Screw_Number = "EM10";
         #endregion     
+
+        #region Shell Colour
+        // PLC: HMI_Axis_Trigger - on rising edge of one colour bit the PLC resets the other colour bits
+        // and writes the colour index (0-5) to W0102. HMI only needs to set the selected bit.
+        public const string Shell_Colour_Black = "MR4500";
+        public const string Shell_Colour_Transparent = "MR4501";
+        public const string Shell_Colour_Amber = "MR4502";
+        public const string Shell_Colour_Green = "MR4503";
+        public const string Shell_Colour_Red = "MR4504";
+        public const string Shell_Colour_Blue = "MR4511";
+        #endregion
+
+        #region Shell Process (FOUP CSV)
+        // PLC Machine_Main_Seq: operator chooses New/Rework at step 1-2, PLC resets them at step 360 (shell done) or hard reset.
+        public const string New_Shell = "MR4507";
+        public const string Rework_Shell = "MR4508";
+        public const string Rework_ConveyorPlate = "MR4509";
+        public const string Rework_SideColumn = "MR4510";
+        // Overall_Pass (MR49600, Camline region) is set at step 340 when screw set 4 is done, reset at step 360.
+        #endregion
     }
 }

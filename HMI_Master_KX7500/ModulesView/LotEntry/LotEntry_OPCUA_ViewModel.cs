@@ -192,22 +192,31 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
             catch (Exception ex) { logger.Error(ex); }
         }
 
-        private void shellColourBlackCommand()
+        // Shell colour name shown on HMI -> PLC bit (see PLCTag Shell Colour region)
+        private static readonly Dictionary<string, string> shellColourTags = new Dictionary<string, string>
         {
-            try
-            {
-                keyenceDll.Write<bool>("MR4500", true);
-                LotEntryInterfaceModel.LotEntryModel.Shell_Colour = "Black";
-            }
-            catch (Exception ex) { logger.Error(ex); }
-        }
+            { "Black", PLCTag.Shell_Colour_Black },
+            { "Transparent", PLCTag.Shell_Colour_Transparent },
+            { "Amber", PLCTag.Shell_Colour_Amber },
+            { "Green", PLCTag.Shell_Colour_Green },
+            { "Red", PLCTag.Shell_Colour_Red },
+            { "Blue", PLCTag.Shell_Colour_Blue },
+        };
 
-        private void transparentCommand()
+        private void selectShellColourCommand(string colour)
         {
             try
             {
-                keyenceDll.Write<bool>("MR4501", true);
-                LotEntryInterfaceModel.LotEntryModel.Shell_Colour = "Transparent";
+                if (string.IsNullOrEmpty(colour) || !shellColourTags.ContainsKey(colour))
+                {
+                    logger.Error($"Unknown shell colour: {colour}");
+                    return;
+                }
+
+                // PLC resets the other colour bits on the rising edge of this bit
+                keyenceDll.Write<bool>(shellColourTags[colour], true);
+                LotEntryInterfaceModel.LotEntryModel.Shell_Colour = colour;
+                logger.Info($"Shell colour selected: {colour} ({shellColourTags[colour]})");
             }
             catch (Exception ex) { logger.Error(ex); }
         }
@@ -223,8 +232,7 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                 LotEntryInterfaceModel.LotEntryModel.TSOColumnCommand = new RelayCommand<object>(TSOColumnCommandEvent);
                 LotEntryInterfaceModel.LotEntryModel.EndLotCommand = new RelayCommand(endLotCommand);
 
-                LotEntryInterfaceModel.LotEntryModel.ShellColourBlackCommand = new RelayCommand(shellColourBlackCommand);
-                LotEntryInterfaceModel.LotEntryModel.TransparentCommand = new RelayCommand(transparentCommand);
+                LotEntryInterfaceModel.LotEntryModel.SelectShellColourCommand = new RelayCommand<string>(selectShellColourCommand);
 
                 //Messenger.Default.Register<OPCUA_>(this, initializeOpcUa);
             }

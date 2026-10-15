@@ -188,12 +188,20 @@
 
         <TextBlock Grid.Row="5"/>
         
-        <Button Grid.Row="6" Grid.Column="0" Command="{Binding ShellColourBlackCommand}"
-                    Content="Black" Background="Gray">
-        </Button>
-        <Button Grid.Row="6" Grid.Column="1" Command="{Binding TransparentCommand}"
-                    Content="Transparent" Background="Wheat">
-        </Button>
+        <UniformGrid Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Rows="2" Columns="3">
+            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Black"
+                    Content="Black" Background="Gray" Margin="2"/>
+            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Transparent"
+                    Content="Transparent" Background="Wheat" Margin="2"/>
+            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Amber"
+                    Content="Amber" Background="Orange" Margin="2"/>
+            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Green"
+                    Content="Green" Background="LimeGreen" Margin="2"/>
+            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Red"
+                    Content="Red" Background="IndianRed" Margin="2"/>
+            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Blue"
+                    Content="Blue" Background="SteelBlue" Margin="2"/>
+        </UniformGrid>
 
         <TextBlock Grid.Row="7" Grid.Column="0" Text="TSO Column" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <UniformGrid Rows="1" Grid.Row="7" Grid.Column="1">
