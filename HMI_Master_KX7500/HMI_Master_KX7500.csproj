@@ -360,6 +360,8 @@
     <Compile Include="CommunicationProtocols\TcpIpClient.cs" />
     <Compile Include="Model\LotRecipe\LotRecipeModel.cs" />
     <Compile Include="Service\LotRecipe\LotRecipeService.cs" />
+    <Compile Include="Model\LotRecipe\RobotPointSetModel.cs" />
+    <Compile Include="Service\LotRecipe\RobotPointSetService.cs" />
     <Compile Include="ModulesView\RecipeManager\RecipeManagerViewModel.cs" />
     <Compile Include="Modules\RecipeManager\RecipeManagerView.xaml.cs">
       <DependentUpon>RecipeManagerView.xaml</DependentUpon>

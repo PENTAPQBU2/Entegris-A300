@@ -34,7 +34,9 @@
             </DataGrid>
         </GroupBox>
 
-        <GroupBox Grid.Column="1" Header="Selected recipe" Margin="4">
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+        <GroupBox Header="Selected recipe" Margin="4">
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -63,6 +65,53 @@
                            Text="Save: name and robot point set of the selected recipe. Create copy: new recipe with the name, point set and new ID above. Delete moves the file to Recipe\Deleted. The robot point set (0 = Black, 1 = Transparent, 2.. = new sets) is the robot shell_int case whose points are taught on the pendant; it is sent to the PLC at New Lot."/>
             </StackPanel>
         </GroupBox>
+
+        <GroupBox Header="Robot point sets (33 points per set, taught on the robot pendant)" Margin="4">
+            <StackPanel>
+                <DataGrid ItemsSource="{Binding PointSets}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                          HeadersVisibility="Column" Margin="4" FontSize="14" MaxHeight="180">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Set" Binding="{Binding SetNo}" Width="50"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Pendant names" Binding="{Binding PendantNames}" Width="200"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Robot installation" Style="{StaticResource KeyText}"/>
+                    <TextBox Grid.Column="1" Text="{Binding InstallationFile}" IsReadOnly="True" Margin="4" FontSize="13"/>
+                    <Button Grid.Column="2" Content="Browse..." Command="{Binding BrowseInstallationCommand}" Margin="4" Height="34" MinWidth="90"/>
+                    <TextBlock Grid.Row="1" Text="Copy points from" Style="{StaticResource KeyText}"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding PointSets}" SelectedItem="{Binding SourcePointSet}"
+                              DisplayMemberPath="Name" Margin="4" FontSize="15" MaxWidth="260" HorizontalAlignment="Left" MinWidth="200"/>
+                    <TextBlock Grid.Row="2" Text="New set number" Style="{StaticResource KeyText}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NewSetNo, UpdateSourceTrigger=PropertyChanged}" Margin="4" FontSize="15" Width="80" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="3" Text="Name" Style="{StaticResource KeyText}"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding NewSetName, UpdateSourceTrigger=PropertyChanged}" MaxLength="30" Margin="4" FontSize="15" Width="260" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="4" Text="Pendant prefix" Style="{StaticResource KeyText}"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding NewSetPrefix, UpdateSourceTrigger=PropertyChanged}" MaxLength="8" Margin="4" FontSize="15" Width="120" HorizontalAlignment="Left"/>
+                </Grid>
+                <WrapPanel>
+                    <Button Content="Create point set" Command="{Binding CreatePointSetCommand}" Margin="4" Height="40" MinWidth="140"/>
+                    <Button Content="Write script only" Command="{Binding WriteScriptCommand}" Margin="4" Height="40" MinWidth="140"/>
+                </WrapPanel>
+                <TextBlock TextWrapping="Wrap" Margin="4" FontSize="12" MaxWidth="640" HorizontalAlignment="Left"
+                           Text="1. Copy default.installation from the robot to a USB stick and select it above. 2. Create point set: adds Prefix_P01 ... Prefix_P33 (copies of the chosen set) to that file and writes recipe_points.script next to it. A copy of the original file is kept in the HMI RobotBackup folder. 3. Copy both files back to the robot's programs folder, load the installation and the program, then teach the new points on the pendant (P1-P21 screw 1-21, P22-P33 entry above screw 1, 2, 3, 7, 8, 10, 16-21). 4. Give the recipe this point set number."/>
+            </StackPanel>
+        </GroupBox>
+        </StackPanel>
+        </ScrollViewer>
 
         <Border Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="Gray" Margin="4" Padding="6">
             <TextBlock Text="{Binding Message}" FontSize="14"/>

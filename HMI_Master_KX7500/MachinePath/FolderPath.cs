@@ -10,6 +10,7 @@
         public static string MachineSettings = string.Empty;
         public static string OEE = string.Empty;
         public static string Images = string.Empty;
+        public static string RobotBackup = string.Empty;   //copies of the robot installation before the HMI changes it
         //public static string DBCLog = string.Empty;
         //public static string DBCLogCopy = string.Empty;
 

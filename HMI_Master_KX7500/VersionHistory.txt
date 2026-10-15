@@ -10,7 +10,9 @@ Changes			:
 6. Add Recipe page (Technician/Pentamaster): recipe ID, name and robot point set; save, create copy, delete.
 7. Lot Entry: recipe drop-down replaces the Black/Transparent buttons. New Lot writes recipe ID/name and the
    robot point set (EM4250, PLC moves it to W0102 shell_int); the robot uses that set's taught points.
-8. Chinese menu names corrected (Recipe, Robot).
+8. Recipe page: Robot point sets. Create point set adds <Prefix>_P01 ... <Prefix>_P33 to a copy of the robot
+   installation file (backup kept in RobotBackup) and writes recipe_points.script for the robot program.
+9. Chinese menu names corrected (Recipe, Robot).
 
 Version			: V1.3.13.0
 Date Updated	: 21/05/2026
