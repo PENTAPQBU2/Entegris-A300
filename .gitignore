@@ -390,3 +390,7 @@ FodyWeavers.xsd
 /PTSWD4002_SSDC_PIM_HMI_LIST_v1_6_AlarmList.xlsx
 /Copy of PTSWD4002_SSDC_PIM_HMI_LIST_v1_6_AlarmList1.xlsx
 /Alarm.mdb
+
+# Offline mode (dev PC only, never commit) - see CLAUDE.md
+/offline-mode.patch
+/OFFLINE_MODE_CHANGES.md
