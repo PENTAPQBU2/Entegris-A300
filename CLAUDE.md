@@ -4,7 +4,7 @@ Context for Claude Code. Read this before changing code.
 
 ## Project
 - WPF HMI (C#, .NET Framework 4.8) for the **Entegris A300 Shell Assembly machine** (assembles FOUP shells: handles, conveyor plate, side columns screwed by FIAM torque driver + UR robot).
-- Repo: `PENTAPQBU2/Entegris-A300`, solution `HMI_Master_KX7500.sln`, project `HMI_Master_KX7500` (exe: `HMI_SSDC_PIM.exe`), version 1.3.13.0 (= production).
+- Repo: `PENTAPQBU2/Entegris-A300`, solution `HMI_Master_KX7500.sln`, project `HMI_Master_KX7500` (exe: `HMI_SSDC_PIM.exe`), version 1.3.14.0 (branch `V1.3.14.0`; production = 1.3.13.0).
 - PLC: **Keyence KV** (KV STUDIO), accessed through `CommunicationProtocols/KeyenceDll.cs` (KV COM+ Library, `DBCommManager`).
 - Libraries: `Libraries/Pentamaster.dll` (login / user accounts, MdbTool), `PQ.HMI.dll` (XmlTools). Both identical to production.
 
