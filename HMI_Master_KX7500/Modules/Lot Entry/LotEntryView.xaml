@@ -47,8 +47,11 @@
 
         <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
                        Text="{DynamicResource RECIPE_NAME}"/>
-        <TextBox Grid.Row="3" Grid.Column="1" x:Name="RECIPEIDTextBox" Text="{Binding Recipe}"
-                 IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
+        <!-- MT_001: recipe ID = shell ID, list maintained on Recipe page -->
+        <ComboBox Grid.Row="3" Grid.Column="1" x:Name="RECIPEIDComboBox" ItemsSource="{Binding RecipeList}"
+                  DisplayMemberPath="DisplayName" SelectedValuePath="RecipeID" SelectedValue="{Binding Recipe}"
+                  DropDownOpened="RecipeComboBox_DropDownOpened"
+                  IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
 
         
         <!--<TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
@@ -82,7 +85,7 @@
                                                Value=""/>
                                 <Condition Binding="{Binding ElementName=CustIDTextBox, Path=Text}"
                                                Value=""/>
-                                <Condition Binding="{Binding ElementName=RECIPEIDTextBox, Path=Text}"
+                                <Condition Binding="{Binding ElementName=RECIPEIDComboBox, Path=Text}"
                                                Value=""/>
                             </MultiDataTrigger.Conditions>
                             <Setter Property="IsEnabled" Value="False"/>
@@ -103,7 +106,7 @@
                                                Value="{x:Null}"/>
                                 <Condition Binding="{Binding ElementName=CustIDTextBox, Path=Text}"
                                                Value="{x:Null}"/>
-                                <Condition Binding="{Binding ElementName=RECIPEIDTextBox, Path=Text}"
+                                <Condition Binding="{Binding ElementName=RECIPEIDComboBox, Path=Text}"
                                                 Value="{x:Null}"/>
                             </MultiDataTrigger.Conditions>
 
@@ -176,32 +179,6 @@
                 </Style>
             </Button.Style>-->
         </Button>
-
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Shell Colour"/>
-
-        <!--<ComboBox Grid.Row="4" Grid.Column="1" x:Name="ShellColourComboBox" IsEditable = "True" SelectedValue="{Binding Shell_Colour}">
-            <ComboBoxItem Content = "Shell Colour Black"/>
-            <ComboBoxItem Content = "Transparent"/>
-        </ComboBox>-->
-
-        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="Shell_Colour" Text="{Binding Shell_Colour}"/>
-
-        <TextBlock Grid.Row="5"/>
-        
-        <UniformGrid Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Rows="2" Columns="3">
-            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Black"
-                    Content="Black" Background="Gray" Margin="2"/>
-            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Transparent"
-                    Content="Transparent" Background="Wheat" Margin="2"/>
-            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Amber"
-                    Content="Amber" Background="Orange" Margin="2"/>
-            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Green"
-                    Content="Green" Background="LimeGreen" Margin="2"/>
-            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Red"
-                    Content="Red" Background="IndianRed" Margin="2"/>
-            <Button Command="{Binding SelectShellColourCommand}" CommandParameter="Blue"
-                    Content="Blue" Background="SteelBlue" Margin="2"/>
-        </UniformGrid>
 
         <TextBlock Grid.Row="7" Grid.Column="0" Text="TSO Column" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <UniformGrid Rows="1" Grid.Row="7" Grid.Column="1">

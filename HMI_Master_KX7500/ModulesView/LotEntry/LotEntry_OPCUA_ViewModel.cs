@@ -6,6 +6,7 @@ using HMI_Master_KX7500.CommunicationProtocols;
 using HMI_Master_KX7500.Globals;
 using HMI_Master_KX7500.Interface;
 using HMI_Master_KX7500.Service.LotEntry;
+using HMI_Master_KX7500.Service.ShellRecipe;
 using MahApps.Metro.Controls;
 using NLog;
 using System;
@@ -71,6 +72,8 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
         {
             if (Global.PageList["Lot Entry"])
             {
+                updateLotCreated();
+
                 if (keyenceDll.Read<bool>(PLCTag.Trigger_HMI_Send_Start_Job))
                 {
                     try
@@ -136,6 +139,56 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
         }
         #endregion
 
+        // Lock the Lot Entry inputs while a lot is running (New Lot -> End Lot), like the Welding HMI.
+        // On lot start (also HMI started during a lot) show the running lot data from the PLC.
+        private void updateLotCreated()
+        {
+            try
+            {
+                var model = LotEntryInterfaceModel.LotEntryModel;
+                bool lotCreated = keyenceDll.Read<bool>(model.LotEntryTagModel.Work_Order_Started_Tag);
+                if (lotCreated == model.LotCreated)
+                {
+                    return;
+                }
+
+                string lotID = string.Empty, operatorID = string.Empty;
+                int recipe = model.Recipe, lotQuantity = model.Lot_Quantity;
+                if (lotCreated)
+                {
+                    lotID = (keyenceDll.Read<string>(model.LotEntryTagModel.Work_Order_ID_Tag, 50) ?? string.Empty).Replace("\0", string.Empty).Trim();
+                    operatorID = (keyenceDll.Read<string>(model.LotEntryTagModel.OperatorID_Tag, 10) ?? string.Empty).Replace("\0", string.Empty).Trim();
+                    recipe = keyenceDll.Read<int>(model.LotEntryTagModel.Recipe_Tag);
+                    lotQuantity = keyenceDll.Read<int>(model.LotEntryTagModel.Lot_Quantity_Tag);
+                }
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (lotCreated)
+                    {
+                        model.LotID = lotID;
+                        model.OperatorID = operatorID;
+                        model.Recipe = recipe;
+                        model.Lot_Quantity = lotQuantity;
+                    }
+                    model.LotCreated = lotCreated;
+                });
+            }
+            catch (Exception ex) { logger.Error(ex); }
+        }
+
+        #region PublicMethods
+        // MT_001: recipe ID dropdown, reloaded when the dropdown opens (recipes edited on Recipe page)
+        public void RefreshRecipeList()
+        {
+            try
+            {
+                LotEntryInterfaceModel.LotEntryModel.RecipeList = ShellRecipeService.GetRecipeList();
+            }
+            catch (Exception ex) { logger.Error(ex); }
+        }
+        #endregion
+
         #region PrivateInitializeMethods
         private void initializeMessenger()
         {
@@ -162,11 +215,22 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
         {
             try
             {
+                // MT_001: recipe ID = shell ID, 0 is a valid shell (Black), so "nothing chosen" is -1
+                if (!LotEntryInterfaceModel.LotEntryModel.RecipeList.Any(x => x.RecipeID == LotEntryInterfaceModel.LotEntryModel.Recipe))
+                {
+                    MessageBox.Show("Please choose a Recipe.", "Lot Entry", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 keyenceDll.Write<string>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Work_Order_ID_Tag, lotID, 50);
                 keyenceDll.Write<string>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.OperatorID_Tag, LotEntryInterfaceModel.LotEntryModel.OperatorID, 10);
                 keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Recipe_Tag, LotEntryInterfaceModel.LotEntryModel.Recipe);
                 keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Lot_Quantity_Tag, LotEntryInterfaceModel.LotEntryModel.Lot_Quantity);
                 keyenceDll.Write<int>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Current_Quantity_Tag, LotEntryInterfaceModel.LotEntryModel.Current_Quantity);
+                keyenceDll.Write<int>(PLCTag.Shell_Colour_ID, LotEntryInterfaceModel.LotEntryModel.Recipe);
+
+                // New Lot bit last: PLC copies Shell_Colour_ID to the robot (W0102) on its rising edge
+                keyenceDll.Write<bool>(PLCTag.New_Lot_Bit, true);
 
                 //
                 //if(LotEntryInterfaceModel.LotEntryModel.Shell_Colour == "System.Windows.Controls.ComboBoxItem: Transparent")
@@ -191,35 +255,6 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
             }
             catch (Exception ex) { logger.Error(ex); }
         }
-
-        // Shell colour name shown on HMI -> PLC bit (see PLCTag Shell Colour region)
-        private static readonly Dictionary<string, string> shellColourTags = new Dictionary<string, string>
-        {
-            { "Black", PLCTag.Shell_Colour_Black },
-            { "Transparent", PLCTag.Shell_Colour_Transparent },
-            { "Amber", PLCTag.Shell_Colour_Amber },
-            { "Green", PLCTag.Shell_Colour_Green },
-            { "Red", PLCTag.Shell_Colour_Red },
-            { "Blue", PLCTag.Shell_Colour_Blue },
-        };
-
-        private void selectShellColourCommand(string colour)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(colour) || !shellColourTags.ContainsKey(colour))
-                {
-                    logger.Error($"Unknown shell colour: {colour}");
-                    return;
-                }
-
-                // PLC resets the other colour bits on the rising edge of this bit
-                keyenceDll.Write<bool>(shellColourTags[colour], true);
-                LotEntryInterfaceModel.LotEntryModel.Shell_Colour = colour;
-                logger.Info($"Shell colour selected: {colour} ({shellColourTags[colour]})");
-            }
-            catch (Exception ex) { logger.Error(ex); }
-        }
         #endregion
 
         #region PrivateMessengerMethods
@@ -232,7 +267,7 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                 LotEntryInterfaceModel.LotEntryModel.TSOColumnCommand = new RelayCommand<object>(TSOColumnCommandEvent);
                 LotEntryInterfaceModel.LotEntryModel.EndLotCommand = new RelayCommand(endLotCommand);
 
-                LotEntryInterfaceModel.LotEntryModel.SelectShellColourCommand = new RelayCommand<string>(selectShellColourCommand);
+                RefreshRecipeList();
 
                 //Messenger.Default.Register<OPCUA_>(this, initializeOpcUa);
             }

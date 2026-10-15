@@ -1,4 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
+using HMI_Master_KX7500.Model.ShellRecipe;
+using System.Collections.Generic;
 using System.Windows.Input;
 using System.Xml.Serialization;
 
@@ -53,20 +55,6 @@ namespace HMI_Master_KX7500.Model.LotEntry
             }
         }
 
-        private ICommand selectShellColourCommand = null;
-        [XmlIgnore]
-        public ICommand SelectShellColourCommand
-        {
-            get { return selectShellColourCommand; }
-            set
-            {
-                if (selectShellColourCommand != value)
-                {
-                    selectShellColourCommand = value;
-                    RaisePropertyChanged(nameof(SelectShellColourCommand));
-                }
-            }
-        }
         #endregion
 
         #region PublicProperties
@@ -146,7 +134,7 @@ namespace HMI_Master_KX7500.Model.LotEntry
             }
         }
 
-        private int recipe = 0;
+        private int recipe = -1; // MT_001: -1 = no recipe chosen (0 is a valid shell ID)
         [XmlIgnore]
         public int Recipe
         {
@@ -157,6 +145,22 @@ namespace HMI_Master_KX7500.Model.LotEntry
                 {
                     recipe = value;
                     RaisePropertyChanged(nameof(Recipe));
+                }
+            }
+        }
+
+        // MT_001: recipes for the Recipe ID dropdown (recipe ID = shell ID)
+        private List<ShellRecipeModel> recipeList = new List<ShellRecipeModel>();
+        [XmlIgnore]
+        public List<ShellRecipeModel> RecipeList
+        {
+            get { return recipeList; }
+            set
+            {
+                if (recipeList != value)
+                {
+                    recipeList = value;
+                    RaisePropertyChanged(nameof(RecipeList));
                 }
             }
         }
@@ -206,21 +210,6 @@ namespace HMI_Master_KX7500.Model.LotEntry
             }
         }
 
-        private string shell_Colour = string.Empty;
-        [XmlIgnore]
-        public string Shell_Colour
-        {
-            get { return shell_Colour; }
-            set
-            {
-                if (shell_Colour != value)
-                {
-                    shell_Colour = value;
-                    RaisePropertyChanged(nameof(Shell_Colour));
-                }
-            }
-        }
-
 
         private bool tsoColumnValue = false;
         [XmlIgnore]
@@ -238,36 +227,38 @@ namespace HMI_Master_KX7500.Model.LotEntry
         }
 
 
-        //---------------------------------------------------------------
-        //private string lotID = string.Empty;
-        //[XmlIgnore]
-        //public string LotID
-        //{
-        //    get { return lotID; }
-        //    set
-        //    {
-        //        if (lotID != value)
-        //        {
-        //            lotID = value;
-        //            RaisePropertyChanged(nameof(LotID));
-        //        }
-        //    }
-        //}
+        private string lotID = string.Empty;
+        [XmlIgnore]
+        public string LotID
+        {
+            get { return lotID; }
+            set
+            {
+                if (lotID != value)
+                {
+                    lotID = value;
+                    RaisePropertyChanged(nameof(LotID));
+                }
+            }
+        }
 
-        //private bool lotCreated = false;
-        //[XmlIgnore]
-        //public bool LotCreated
-        //{
-        //    get { return lotCreated; }
-        //    set
-        //    {
-        //        if (lotCreated != value)
-        //        {
-        //            lotCreated = value;
-        //            RaisePropertyChanged(nameof(LotCreated));
-        //        }
-        //    }
-        //}
+        // PLC Lot_Info_DB_New_Lot_Created (MR49500): ON from New Lot until End Lot, locks the Lot Entry inputs
+        private bool lotCreated = false;
+        [XmlIgnore]
+        public bool LotCreated
+        {
+            get { return lotCreated; }
+            set
+            {
+                if (lotCreated != value)
+                {
+                    lotCreated = value;
+                    RaisePropertyChanged(nameof(LotCreated));
+                }
+            }
+        }
+
+        //---------------------------------------------------------------
 
         //private string operatorID = string.Empty;
         //[XmlIgnore]

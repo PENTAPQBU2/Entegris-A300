@@ -565,6 +565,12 @@
     <Compile Include="Initialize\LFLegSettingsInitializeModel.cs" />
     <Compile Include="Initialize\PopUpInitializeModel.cs" />
     <Compile Include="Initialize\RecipeInitializeModel.cs" />
+    <Compile Include="Model\ShellRecipe\ShellRecipeModel.cs" />
+    <Compile Include="ModulesView\ShellRecipe\ShellRecipe_ViewModel.cs" />
+    <Compile Include="Modules\ShellRecipe\ShellRecipeView.xaml.cs">
+      <DependentUpon>ShellRecipeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Service\ShellRecipe\ShellRecipeService.cs" />
     <Compile Include="Initialize\SettingsInitializeModel.cs" />
     <Compile Include="Initialize\TrackingStatusInitializeModel.cs" />
     <Compile Include="Initialize\VisionSetupInitializeModel.cs" />
@@ -875,6 +881,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Modules\Lot Entry\LotEntryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\ShellRecipe\ShellRecipeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

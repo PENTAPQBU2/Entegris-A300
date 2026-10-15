@@ -128,6 +128,12 @@ namespace HMI_Master_KX7500
         #endregion
 
         #region PrivateEvents
+        // MT_001: reload recipes (may be added/renamed on Recipe page)
+        private void RecipeComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            (DataContext as LotEntry_OPCUA_ViewModel)?.RefreshRecipeList();
+        }
+
         //private void NewLotClick(object sender, RoutedEventArgs e)
         //{
         //    try

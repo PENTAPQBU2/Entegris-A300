@@ -41,6 +41,7 @@
         public static string WelderLog = string.Empty;
 
         public static string RecipeParameter = string.Empty;
+        public static string ShellRecipe = string.Empty; // MT_001 recipe list (recipe ID = shell ID)
         public static string Language = string.Empty;
         public static string MachineLayout = string.Empty;
 

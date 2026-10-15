@@ -142,9 +142,22 @@ namespace HMI_Master_KX7500.Globals
         public const string Screw_Number = "EM10";
         #endregion     
 
+        #region Recipe (MT_001)
+        // Lot_Info_DB_Recipe_ID: recipe ID = shell ID, written by Lot Entry on New Lot (read back for FOUP CSV Recipe).
+        public const string Recipe_ID = "EM1559";
+
+        // Shell_Colour_ID (2W signed integer, retain): shell ID for the robot, written by Lot Entry on New Lot.
+        // PLC: rising edge of Lot_Info_DB_New_Lot_Bit -> MOV.D Shell_Colour_ID W0102 (robot switch case).
+        public const string Shell_Colour_ID = "EM4250";
+
+        // Lot_Info_DB_New_Lot_Bit: set by HMI on New Lot (after the lot data), PLC resets it after 100 ms.
+        public const string New_Lot_Bit = "MR49501";
+        #endregion
+
         #region Shell Colour
+        // Not written by HMI anymore (MT_001: shell ID via Recipe_ID). Kept for reference.
         // PLC: HMI_Axis_Trigger - on rising edge of one colour bit the PLC resets the other colour bits
-        // and writes the colour index (0-5) to W0102. HMI only needs to set the selected bit.
+        // and writes the colour index (0-5) to W0102.
         public const string Shell_Colour_Black = "MR4500";
         public const string Shell_Colour_Transparent = "MR4501";
         public const string Shell_Colour_Amber = "MR4502";

@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="HMI_Master_KX7500.ShellRecipeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:HMI_Master_KX7500"
+             Loaded="UserControl_Loaded">
+
+    <!-- Layout follows BU4 sample (Welding HMI RecipeEditorView) -->
+    <Grid Background="White" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="44"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" MinWidth="120"/>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Image Grid.Row="0" Grid.Column="0" Width="32" Height="32" Margin="0 0 8 0"
+               Source="pack://application:,,,/Pentamaster;component/HMI/Icons/Task.png"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{DynamicResource Recipe}" Style="{StaticResource LeftTextBlock}"/>
+        <ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding RecipeList}" SelectedItem="{Binding SelectedRecipe}"
+                  DisplayMemberPath="DisplayName"/>
+
+        <UniformGrid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Rows="1" Margin="0 10 0 10">
+            <Button Content="New" Command="{Binding NewRecipeCommand}" Margin="2"/>
+            <Button Content="Save" Command="{Binding SaveRecipeCommand}" Margin="2"/>
+            <Button Content="Delete" Command="{Binding DeleteRecipeCommand}" Margin="2"/>
+        </UniformGrid>
+
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="Recipe Name" Style="{StaticResource LeftTextBlock}"/>
+        <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding RecipeName, UpdateSourceTrigger=PropertyChanged}" MaxLength="20"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="Recipe ID (Shell ID)" Style="{StaticResource LeftTextBlock}"/>
+        <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding RecipeID, UpdateSourceTrigger=PropertyChanged}" MaxLength="3"
+                 IsEnabled="{Binding IsNewRecipe}"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Margin="0 20 0 0" TextWrapping="Wrap" VerticalAlignment="Top"
+                   Text="Recipe ID = Shell ID sent to PLC. Choose the recipe on Lot Entry, it is sent to PLC on New Lot. Robot teach points stay in the teach pendant."/>
+    </Grid>
+</UserControl>
