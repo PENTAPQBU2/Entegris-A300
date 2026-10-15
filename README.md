@@ -28,7 +28,7 @@ Customer list: `PLC_Export/A300 Shell Assembly Software Open Item and Enhancemen
 | MT_006 | Hard reset pop-up, 5 s | Open – needs PLC change first |
 | MT_007 | Robot init: flush screw at home/standby | Open – robot program |
 | MT_008 | Remove Top Clamp sequence | Open – needs PLC change first |
-| MT_009 | "Spare" error messages | **Alarm texts written** in `Alarm.mdb` (Error 5, 12, 35, 56, 79, 80, 130; Warning 21). Copy to machine `C:\HMI\MachineSettings\`. Action texts of Error 5/130 and Warning 21 to be confirmed by PLC team |
+| MT_009 | "Spare" error messages | **Done.** Messages + actions written in `Alarm.mdb` (Error 5, 12, 35, 56, 79, 80, 130; Warning 21). `Alarm.mdb` is not in Git – copy it to machine `C:\HMI\MachineSettings\`. Wording of the action text of Error 5 / 130 and Warning 21 (written by HMI, PLC comment has only the message) to be checked by PLC team |
 | MT_010 | Start button needs multiple presses | Open – PLC |
 
 Questions sent: `PLC_Export/A300_Questions_for_PLC_and_Robot_Team.md`, `PLC_Export/A300_Questions_for_Customer.md`.
