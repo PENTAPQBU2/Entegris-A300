@@ -24,8 +24,8 @@ Customer list: `PLC_Export/A300 Shell Assembly Software Open Item and Enhancemen
 | MT_002 | Robot page on HMI | Open – waiting for robot engineer |
 | MT_003 | Shell CSV file (barcode, torque, result) | **Done in HMI.** Machine test pending, "result remedy" not defined yet. Open concern: 2+ CSV for 1 shell when screw 1–8 fails (see MT_003 below) |
 | MT_004 | Lot ID and recipe management (init after New Lot, Init Done off at End Lot) | Open – needs PLC change first (HMI Lot Entry lock already done, see below) |
-| MT_005 | Initialize button on HMI | Open – needs PLC change first |
-| MT_006 | Hard reset pop-up, 5 s | Open – needs PLC change first |
+| MT_005 | Initialize button on HMI | **Done in HMI** (force init, PLC done). Machine test pending |
+| MT_006 | Hard reset pop-up, 5 s | **Done in HMI** (PLC done: hold Reset 5 s in any condition). Machine test pending |
 | MT_007 | Robot init: flush screw at home/standby | Open – robot program |
 | MT_008 | Remove Top Clamp sequence | Open – needs PLC change first |
 | MT_009 | "Spare" error messages | **Done.** Messages + actions written in `Alarm.mdb` (Error 5, 12, 35, 56, 79, 80, 130; Warning 21). `Alarm.mdb` is not in Git – copy it to machine `C:\HMI\MachineSettings\`. Wording of the action text of Error 5 / 130 and Warning 21 (written by HMI, PLC comment has only the message) to be checked by PLC team |
@@ -73,6 +73,22 @@ Robot program (`A300 Shell 05092022.urp`) must still include `recipe_points.scri
   2. PLC rework option that restarts at screw 1 → the HMI treats it as Rework and continues the last FOUP CSV.
   3. HMI pop-up at New shell after a `_Fail`: "Same shell as `<LotID>_00001`?" → Yes continues that CSV.
 
+### MT_006 – Hard reset pop-up / MT_005 – Force init (Initialize button)
+PLC addresses from the PLC team (`Globals/PLCTag.cs`):
+
+| Bit | Address | Direction | HMI action |
+|---|---|---|---|
+| Hard_Reset_Req | `MR1612` | PLC → HMI | ON → HMI resets `MR1612` and shows "Hard Reset?" **Proceed / Cancel** |
+| Hard_Reset_Confirm | `MR1613` | HMI → PLC | Proceed → HMI sets `MR1613` (PLC resets it). Cancel → nothing written |
+| HMI_Data_Trf_DB_HMI_Init | `MR003` | HMI → PLC | Initialize → Confirm → HMI sets `MR003` (PLC sets `Machine_Sys_DB_StartInit` and resets `MR003`) |
+| Machine_Sys_DB_StartInit | `MR3000` | PLC → HMI | ON → Initialize button greyed out |
+
+- **Hard reset:** the operator holds the **physical** Reset button 5 s (any machine condition) → PLC sets `MR1612`. The HMI Reset button stays a short pulse (`MR002`, cleared by PLC) and cannot start a hard reset.
+- **Initialize button:** new button in the control panel (right side), always enabled (also when InitDone is ON) except while initializing. On press: "Re-initialise the machine? It will stop the current cycle." **Confirm / Cancel**.
+- The Initialize button is added by the HMI code, so the machine `ControlPanel.xml` (Start / Stop / Reset) does not need to be changed.
+- Pop-up window `Modules/Frame/ConfirmView.xaml` (Topmost, large buttons); texts in `Languages/English.xaml` / `ChineseSimplified.xaml`. Logged in the HMI log (Hard reset requested / Proceed / Cancel, Initialize confirmed).
+- Machine test: hold Reset 5 s → pop-up → Proceed → machine restarts at step 1; Cancel → nothing happens. Initialize → Confirm → machine initializes, button greyed out while `MR3000` is ON.
+
 ### Lot Entry
 - Lot ID, Operator, Quantity, Recipe and the New Lot button are locked while `MR49500` New_Lot_Created is ON; the running lot data is read back from the PLC. Unlock = End Lot.
 
@@ -86,4 +102,5 @@ Robot program (`A300 Shell 05092022.urp`) must still include `recipe_points.scri
 1. Back up `C:\HMI` on the machine PC.
 2. Build **Release | x86**, copy the output to the machine.
 3. Copy the updated `Alarm.mdb` (MT_009) to `C:\HMI\MachineSettings\`.
-4. Test: New Lot / End Lot, one shell Pass + one Fail → check `D:\HMI\FOUP CSV\`, Recipe page and Create Points with the robot installation file.
+4. Test: New Lot / End Lot, one shell Pass + one Fail → check `D:\HMI\FOUP CSV\`, Recipe page and Create Points with the robot installation file, hard reset pop-up and Initialize button (MT_006 / MT_005).
+5. The PLC program with `MR1612` / `MR1613` (hard reset) must be on the machine before this HMI version is used.

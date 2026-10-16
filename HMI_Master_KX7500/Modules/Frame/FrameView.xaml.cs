@@ -569,6 +569,76 @@ namespace HMI_Master_KX7500.Modules.Frame
         }
         #endregion FOUP CSV (MT_003)
 
+        #region Hard Reset / Force Init (MT_006, MT_005)
+        // Hard reset: operator holds the physical Reset button 5 s -> PLC sets Hard_Reset_Req (MR1612).
+        //   HMI resets MR1612 and shows "Hard Reset? Proceed / Cancel". Proceed -> Hard_Reset_Confirm (MR1613), PLC resets it.
+        //   Cancel -> nothing written.
+        // Force init: Initialize button always enabled, Confirm -> HMI_Init (MR003) as before (see buttonControlPanelClick).
+        //   Greyed out while Machine_Sys_DB_StartInit (MR3000) is ON.
+        private bool hardResetPopUpOpen = false;
+        private bool lastStartInit = false;
+
+        private static ButtonModel initializeButtonModel()
+        {
+            return new ButtonModel()
+            {
+                ButtonKey = "Initialize",
+                ButtonNode = PLCTag.HMI_Init,
+                ButtonNodeType = "BOOL",
+                ButtonImage = "pack://application:,,,/Pentamaster;component/HMI/Icons/Refresh.png",
+            };
+        }
+
+        // called from Update() (PLC polling thread)
+        private void hardResetInitUpdate()
+        {
+            try
+            {
+                if (keyenceDll.Read<bool>(PLCTag.Hard_Reset_Req))
+                {
+                    keyenceDll.Write<bool>(PLCTag.Hard_Reset_Req, false);
+
+                    // one pop-up only; BeginInvoke so the PLC polling (FOUP CSV, status) keeps running while it is open
+                    if (!hardResetPopUpOpen)
+                    {
+                        hardResetPopUpOpen = true;
+                        logger.Info("Hard reset requested by PLC");
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            try
+                            {
+                                if (ConfirmView.Ask(this, HmiHelper.GetResource<string>("Reset"), HmiHelper.GetResource<string>("HardResetQuestion"),
+                                    HmiHelper.GetResource<string>("Proceed"), HmiHelper.GetResource<string>("CancelButton")))
+                                {
+                                    keyenceDll.Write<bool>(PLCTag.Hard_Reset_Confirm, true);
+                                    logger.Info("Hard reset: Proceed");
+                                }
+                                else
+                                {
+                                    logger.Info("Hard reset: Cancel");
+                                }
+                            }
+                            catch (Exception ex) { logger.Error(ex); }
+                            finally { hardResetPopUpOpen = false; }
+                        }));
+                    }
+                }
+
+                bool startInit = keyenceDll.Read<bool>(PLCTag.Machine_Sys_DB_StartInit);
+                if (startInit != lastStartInit)
+                {
+                    lastStartInit = startInit;
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        controlPanelModel_.SelectMany(x => x.ButtonModelList).Where(x => x.ButtonNode == PLCTag.HMI_Init).ToList()
+                            .ForEach(x => x.ButtonIsEnabled = !startInit);
+                    }));
+                }
+            }
+            catch (Exception ex) { logger.Error(ex); }
+        }
+        #endregion Hard Reset / Force Init (MT_006, MT_005)
+
         private void LoadCellListener(object sender, EventArgs e)
         {
             try
@@ -782,6 +852,7 @@ namespace HMI_Master_KX7500.Modules.Frame
 #if !DEBUG
                     foupCsvTrackShell(); // FOUP CSV: detect shell start / pass / end from PLC
 #endif
+                    hardResetInitUpdate(); // MT_006 hard reset pop-up, MT_005 Initialize button
                     //var sscsEnable = keyenceDll.Read<bool>("MR1504");
                     //var cscEnable = keyenceDll.Read<bool>("MR1511");
                     //var sscsText = keyenceDll.Read<string>("EM3700", 100);
@@ -1148,12 +1219,7 @@ namespace HMI_Master_KX7500.Modules.Frame
                                 ButtonNodeType = "BOOL",
                                 ButtonImage = "pack://application:,,,/Pentamaster;component/HMI/Icons/Reload.png",
                             },
-                             //new ButtonModel()
-                             //{
-                             //    ButtonKey = "Initialize",
-                             //    ButtonNode = $"{Global.NodeNameSpace}DB_HMI_Data_Transfer.HMI_Init",
-                             //    ButtonImage = "pack://application:,,,/Pentamaster;component/HMI/Icons/Refresh.png",
-                             //}
+                            initializeButtonModel(),
                         },
                         ToggleModelList = new List<ToggleModel>()
                         {
@@ -1171,6 +1237,14 @@ namespace HMI_Master_KX7500.Modules.Frame
                 }
 
                 controlPanelModel_ = XmlTools.Deserialize<List<ControlPanelModel>>(FilePath.ControlPanel, controlPanelModel_);
+
+                // Initialize button (MT_005): added here, ControlPanel.xml on the machine has only Start / Stop / Reset
+                if (controlPanelModel_.Count > 0 && !controlPanelModel_.Any(x => x.ButtonModelList.Exists(y => y.ButtonNode == PLCTag.HMI_Init)))
+                {
+                    ButtonModel initButton = initializeButtonModel();
+                    initButton.ButtonName = HmiHelper.GetResource<string>(initButton.ButtonKey);
+                    controlPanelModel_[0].ButtonModelList.Add(initButton);
+                }
                 ItemsControl_ControlPanel.ItemsSource = controlPanelModel_;
             }
             catch(Exception ex) { logger.Error(ex); }
@@ -1700,6 +1774,17 @@ namespace HMI_Master_KX7500.Modules.Frame
 
                 //});
                 //z++;
+
+                // Initialize (MT_005): always enabled (also when InitDone is ON), confirm first because it stops the current cycle
+                if (buttonModel.ButtonNode == PLCTag.HMI_Init)
+                {
+                    if (!ConfirmView.Ask(this, HmiHelper.GetResource<string>("Initialize"), HmiHelper.GetResource<string>("InitQuestion"),
+                        HmiHelper.GetResource<string>("Confirm"), HmiHelper.GetResource<string>("CancelButton")))
+                    {
+                        return;
+                    }
+                    logger.Info("Initialize confirmed by operator");
+                }
 
                 //keyenceDll.Write(buttonModel.ButtonNode, 1);
                 keyenceDll.Write<bool>(buttonModel.ButtonNode, true);

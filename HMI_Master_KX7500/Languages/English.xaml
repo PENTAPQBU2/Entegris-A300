@@ -2879,5 +2879,10 @@
     <system:String x:Key="Start_Calibration">Start Calibration</system:String>
     <system:String x:Key="Calibration_Program_1">Calibration Program 1</system:String>
     <system:String x:Key="Calibration_Program_2">Calibration Program 2</system:String>
+    <system:String x:Key="HardResetQuestion">Hard Reset?</system:String>
+    <system:String x:Key="InitQuestion">Re-initialise the machine? It will stop the current cycle.</system:String>
+    <system:String x:Key="Proceed">Proceed</system:String>
+    <system:String x:Key="Confirm">Confirm</system:String>
+    <system:String x:Key="CancelButton">Cancel</system:String>
 
 </ResourceDictionary>

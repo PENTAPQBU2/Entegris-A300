@@ -80,5 +80,22 @@ namespace HMI_Master_KX7500.Model.Frame
                 }
             }
         }
+
+        private bool buttonIsEnabled = true;
+
+        // Initialize button: greyed out while Machine_Sys_DB_StartInit is ON (MT_005)
+        [XmlIgnore]
+        public bool ButtonIsEnabled
+        {
+            get { return buttonIsEnabled; }
+            set
+            {
+                if(buttonIsEnabled != value)
+                {
+                    buttonIsEnabled = value;
+                    RaisePropertyChanged(nameof(ButtonIsEnabled));
+                }
+            }
+        }
     }
 }

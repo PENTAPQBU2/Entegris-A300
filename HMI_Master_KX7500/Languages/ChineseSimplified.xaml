@@ -2771,4 +2771,9 @@
     <system:String x:Key="PinPresent">针头 存在</system:String>
     <system:String x:Key="VisionPass">视觉 成功</system:String>
     <system:String x:Key="VisionFail">视觉 失败</system:String>
+    <system:String x:Key="HardResetQuestion">硬复位？</system:String>
+    <system:String x:Key="InitQuestion">重新初始化机器？当前循环将会停止。</system:String>
+    <system:String x:Key="Proceed">继续</system:String>
+    <system:String x:Key="Confirm">确认</system:String>
+    <system:String x:Key="CancelButton">取消</system:String>
 </ResourceDictionary>

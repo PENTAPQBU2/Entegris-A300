@@ -247,6 +247,7 @@
                                                     <DataTemplate>
 
                                                         <Button Uid="{Binding ButtonNode}" Tag="{Binding }" Click="buttonControlPanelClick"
+                                                                IsEnabled="{Binding ButtonIsEnabled}"
                                                                 Style="{DynamicResource MaterialDesignFlatButton}" Height="100">
                                                             <DockPanel>
                                                                 <TextBlock DockPanel.Dock="Bottom" Style="{DynamicResource CenterTextBlock}"

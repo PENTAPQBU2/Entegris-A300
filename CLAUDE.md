@@ -46,7 +46,9 @@ Marked with `// OFFLINE MODE` (search for it). Documented in `OFFLINE_MODE_CHANG
 | `MR49600` | Overall_Pass | set at step 340 (screw set 4 done) |
 | `MR49601` | Overall_Fail | only when CAMLINE enabled |
 | `MR1209` | Bypass_DB_Bypass_CAMLINE | |
-| `MR003` | HMI_Data_Trf_DB_HMI_Init | exists, unused by PLC (MT_005) |
+| `MR003` | HMI_Data_Trf_DB_HMI_Init | Initialize button (MT_005): PLC sets `MR3000` Machine_Sys_DB_StartInit, resets `MR003` |
+| `MR1612` / `MR1613` | Hard_Reset_Req / Hard_Reset_Confirm | MT_006: PLC sets `MR1612` after physical Reset held 5 s; HMI resets it + pop-up, Proceed sets `MR1613` (PLC resets) |
+| `MR002` | HMI_Data_Trf_DB_HMI_Reset | HMI Reset button = one write ON, PLC clears it after a short delay → cannot start a hard reset |
 | `EM4250` 2W signed int | Shell_Colour_ID | shell ID from HMI (New Lot), copied to `W0102` on `MR49501` rising edge |
 | `W0100/W0102/W0104` | – | to robot: screw no / colour index / shell type |
 
@@ -71,7 +73,8 @@ PLC program export (KV STUDIO mnemonic, UTF-16 text): `PLC_Export/Program/*.mnm`
 - MT_001 Recipe page (create/edit/delete) – done. Each recipe has a Robot Point Prefix (max 5 chars, saved with the recipe; empty = recipe 0/1 use the built-in Black/Transparent points). Robot points: "Create Points" on the Recipe page (`Service/ShellRecipe/RobotPointService.cs`) reads a UR installation file copied from the robot (PolyScope 5.12 `*.installation` = gzip XML) and adds a copy of the 33 Black points under the recipe prefix (`Point_1b..21b` → `Blue_P01..P21`, the 12 `Point_NbEntry` (screws 1,2,3,7,8,10,16–21) → `Blue_P22..P33`); existing content is never changed, points that already exist are kept. Saves `<yyyyMMddHHmmss>.installation` + `recipe_points.script` (`rcp_height(n)` / `rcp_entry(n)` return the point list of recipe ID n = `shell_int`, index = screw number). Verified offline 2026-10-15 (Amber/Green/Red/Blue = recipe 2–5, poses identical to Black, rest of file unchanged). Robot today: Black = `Point_Nb`/`Point_NbEntry`, Transparent = `Point_tN`/`Point_tNe`/`Point_tNEntry`; robot int registers `ScrewNum`, `shell_int` (colour, probably from PLC `W0102`). Robot program (`A300 Shell 05092022.urp`) must still be changed to use the new prefix points; not yet tested on the robot. Old Siemens recipe module in `Modules/Recipe` is NOT in the csproj.
 - MT_002 Robot page – waiting robot engineer.
 - MT_003 CSV – done in code, needs machine test; "result remedy" undefined.
-- MT_004 Lot handling, MT_005 Init button, MT_006 Hard reset pop-up (`PopUp.xml`), MT_008 remove Top Clamp (`MachineLayout.xml`, Dry Run) – need PLC changes first.
+- MT_005 Init button + MT_006 Hard reset pop-up – done in HMI (region `Hard Reset / Force Init` in `FrameView.xaml.cs`, `Modules/Frame/ConfirmView.xaml`; Initialize button added in code because machine `ControlPanel.xml` has only Start/Stop/Reset). Not `PopUp.xml`: that pop-up needs a PLC message string and every button writes a PLC bit. Needs machine test.
+- MT_004 Lot handling, MT_008 remove Top Clamp (`MachineLayout.xml`, Dry Run) – need PLC changes first.
 - MT_009 "Spare" alarm texts in `Alarm.mdb`: Error 5, 12, 35, 56, 79, 80, 130; Warning 21 – texts written (from PLC `Error_Control`/`Warning_Control` comments) into dev `C:\HMI_A300\MachineSettings\Alarm.mdb` and a copy of the production backup Alarm.mdb; to be copied to machine `C:\HMI\MachineSettings\`. Action texts of Error 5/130, Warning 21 to be confirmed by PLC team.
 - Known bug (not fixed): `initializeAlarmContent()` opens `C:\HMI\MachineSettings\Alarm.mdb` (path built before FolderPath init) → fails in Debug.
 - Questions: `PLC_Export/A300_Questions_for_PLC_and_Robot_Team.md`, `PLC_Export/A300_Questions_for_Customer.md`.

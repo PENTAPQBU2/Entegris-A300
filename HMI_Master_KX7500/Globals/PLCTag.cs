@@ -174,5 +174,17 @@ namespace HMI_Master_KX7500.Globals
         public const string Rework_SideColumn = "MR4510";
         // Overall_Pass (MR49600, Camline region) is set at step 340 when screw set 4 is done, reset at step 360.
         #endregion
+
+        #region Hard Reset / Force Init (MT_006, MT_005)
+        // Hard_Reset_Req: PLC sets it when the operator holds the physical Reset button 5 s (any machine condition).
+        // HMI resets it and shows the pop-up "Hard Reset? Proceed / Cancel".
+        public const string Hard_Reset_Req = "MR1612";
+        // Hard_Reset_Confirm: HMI sets it on Proceed, PLC resets it. Cancel writes nothing.
+        public const string Hard_Reset_Confirm = "MR1613";
+        // HMI_Data_Trf_DB_HMI_Init: Initialize button (after Confirm). PLC sets Machine_Sys_DB_StartInit and resets it.
+        public const string HMI_Init = "MR003";
+        // Machine_Sys_DB_StartInit: ON while the machine initializes (Initialize button greyed out).
+        public const string Machine_Sys_DB_StartInit = "MR3000";
+        #endregion
     }
 }
