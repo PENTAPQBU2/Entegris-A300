@@ -41,9 +41,10 @@ Questions sent: `PLC_Export/A300_Questions_for_PLC_and_Robot_Team.md`, `PLC_Expo
 - Each recipe has a **Robot Point Prefix** (1–5 letters/numbers, starts with a letter, unique). Black and Transparent have no prefix and use the existing robot points.
 - **Create Points** (`Service/ShellRecipe/RobotPointService.cs`):
   - Reads an installation file copied from the robot (PolyScope `*.installation`).
-  - Adds a copy of the 33 Black points under the prefix: `Point_1b..Point_21b` → `<prefix>_P01..P21`, the 12 entry points `Point_NbEntry` (screws 1, 2, 3, 7, 8, 10, 16–21) → `<prefix>_P22..P33`.
-  - Existing points are never changed; points that already exist are kept.
-  - Saves `<yyyyMMddHHmmss>.installation` and `recipe_points.script` in the same folder. The script has `rcp_height(n)` / `rcp_entry(n)` that return the point list of recipe ID `n` (index = screw number).
+  - **(Temporary, for robot testing 2026-10-20)** Renames the old Black / Transparent points: `Point_Nb` → `Black_PNN`, `Point_NbEntry` → `Black_PNNEntry`, `Point_tN` → `Transparent_PNN`, `Point_t1e..t3e` / `Point_tNEntry` → `Transparent_PNNEntry`; adds `Transparent_P10Entry` as a copy of `Black_P10Entry` (Transparent screw 10 uses the Black entry).
+  - Adds a copy of the 33 Black points under the prefix: `Black_P01..P21` → `<prefix>_P01..P21`, the 12 entry points (screws 1, 2, 3, 7, 8, 10, 16–21) → `<prefix>_P01Entry..P21Entry`.
+  - Points of the prefix that already exist are kept. Sets made by the earlier version (`<prefix>_P22..P33` = entry points) are renamed to `<prefix>_PxxEntry`, poses kept.
+  - Saves `<yyyyMMddHHmmss>.installation` and `recipe_points.script` in the same folder. The script has `rcp_height(n)` (index 1–21 = screw number) / `rcp_entry(n)` (index 1–12 = entry of screw 1, 2, 3, 7, 8, 10, 16–21) for recipe ID `n`.
 - Tested offline on the dev PC: Amber/Green/Red/Blue created, poses identical to Black, rest of the installation file unchanged. **Not yet tested on the robot.**
 
 #### How to add a new recipe with robot points (example Yellow)
@@ -51,7 +52,7 @@ Questions sent: `PLC_Export/A300_Questions_for_PLC_and_Robot_Team.md`, `PLC_Expo
 2. Recipe page: add recipe **Yellow**, fill in Robot Point Prefix **Yel**, press **Save**.
 3. Select Yellow, press **Create Points**, choose the installation file from step 1, save the new file.
 4. Load the new `.installation` on the robot and copy `recipe_points.script` to the robot.
-5. Teach `Yel_P01..Yel_P33` on the teach pendant (they start as a copy of Black) and save the installation on the robot.
+5. Teach `Yel_P01..Yel_P21` and `Yel_PxxEntry` on the teach pendant (they start as a copy of Black) and save the installation on the robot.
 
 Robot program (`A300 Shell 05092022.urp`) must still include `recipe_points.script` and use `rcp_height(shell_int)[ScrewNum]` / `rcp_entry(shell_int)[ScrewNum]` – robot engineer.
 

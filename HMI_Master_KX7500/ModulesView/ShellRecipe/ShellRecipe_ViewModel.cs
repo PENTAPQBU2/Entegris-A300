@@ -300,7 +300,7 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
             catch (Exception ex) { logger.Error(ex); }
         }
 
-        // Robot points for the selected recipe (Point_1b.. -> <prefix>_P01..P33) in a new installation file
+        // Robot points for the selected recipe (Black_P01.. -> <prefix>_P01..P21, <prefix>_PxxEntry) in a new installation file
         // + recipe_points.script with the point sets of all recipes, both files are loaded on the robot
         private void createPointCommand()
         {
