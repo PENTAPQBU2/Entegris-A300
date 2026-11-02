@@ -16,7 +16,7 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
     /// Robot points per recipe (MT_001), requested by robot team (CK). Create Points writes 2 files for the robot:
     /// 1. installation file (PolyScope *.installation = gzip XML):
     ///    - the old Black / Transparent points are renamed (Point_1b -> Black_P01, Point_1bEntry -> Black_P01Entry,
-    ///      Point_t1 -> Transparent_P01, Point_t1e -> Transparent_P01Entry, ...), Transparent_P10Entry = copy of Black_P10Entry
+    ///      Point_t1 -> Trans_P01, Point_t1e -> Trans_P01Entry, Transparent_P01 -> Trans_P01 ...), Trans_P10Entry = copy of Black_P10Entry
     ///    - copy of the 33 Black points under the recipe prefix (Black_P01..P21 -> Blue_P01..P21, Black_PxxEntry -> Blue_PxxEntry)
     /// 2. recipe_points.script: rcp_height(n) / rcp_entry(n) return the point set of recipe ID n (= shell_int on the robot).
     /// </summary>
@@ -35,7 +35,10 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
         private const int builtInBlackID = 0;
         private const int builtInTransparentID = 1;
         private const string blackPrefix = "Black";
-        private const string transparentPrefix = "Transparent";
+        // max 5 like the recipe prefixes: Transparent_P01Entry (20 chars) is not defined on the robot (PolyScope 5.12), Trans_P01Entry (14) is
+        private const string transparentPrefix = "Trans";
+        // Transparent_.. = names of the earlier HMI version, renamed to Trans_..
+        private const string oldTransparentPrefix = "Transparent";
 
         // reference = Black set, the prefix points are a copy of it
         private static readonly string[] referencePoints = GetPointNames(blackPrefix);
@@ -84,6 +87,15 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
                 .Concat(entryScrews.Select(x => GetEntryPointName(prefix, x))).ToArray();
         }
 
+        // Black / Trans (and the old Transparent) belong to the built-in recipes 0 / 1, another recipe would get their points
+        public static bool IsReservedPrefix(int recipeID, string prefix)
+        {
+            prefix = NormalizePrefix(prefix);
+            return (string.Equals(prefix, blackPrefix, StringComparison.OrdinalIgnoreCase) && recipeID != builtInBlackID)
+                || ((string.Equals(prefix, transparentPrefix, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(prefix, oldTransparentPrefix, StringComparison.OrdinalIgnoreCase)) && recipeID != builtInTransparentID);
+        }
+
         public static bool IsBuiltInSet(ShellRecipeModel recipe)
         {
             return string.IsNullOrEmpty(NormalizePrefix(recipe.RobotPointPrefix))
@@ -114,23 +126,17 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
 
         /// <summary>
         /// Reads sourceFile (installation copied from the robot), renames the old Black / Transparent points,
-        /// adds the points of prefix when they are not there yet (existing points are kept as they are, they may be adjusted already),
-        /// writes installationFile and scriptFile. sourceFile and installationFile may be the same file. Returns false with the reason in message.
+        /// adds the points of every recipe prefix that is not there yet (copy of Black; existing points are kept as they are,
+        /// they may be adjusted already), writes installationFile and scriptFile. Built-in Black / Transparent (recipe 0 / 1) get no copy.
+        /// sourceFile and installationFile may be the same file. Returns false with the reason in message.
         /// </summary>
-        public static bool CreatePoints(string sourceFile, string installationFile, string scriptFile, string prefix,
+        public static bool CreatePoints(string sourceFile, string installationFile, string scriptFile,
             List<ShellRecipeModel> recipes, out string message)
         {
             message = string.Empty;
 
             try
             {
-                if (!IsValidPrefix(prefix))
-                {
-                    message = $"Invalid prefix \"{prefix}\".";
-                    return false;
-                }
-                prefix = NormalizePrefix(prefix);
-
                 XDocument installation;
                 using (FileStream file = File.OpenRead(sourceFile))
                 using (GZipStream gzip = new GZipStream(file, CompressionMode.Decompress))
@@ -151,7 +157,18 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
                     features.Descendants().Select(x => (string)x.Attribute("name")).Where(x => x != null),
                     StringComparer.OrdinalIgnoreCase);
 
-                // old names -> Black_.. / Transparent_.. (skipped when the new name exists already)
+                // Transparent_.. and Trans_.. both in the file (e.g. Trans_ = copy of Black made by a recipe prefix "Trans"):
+                // the taught Transparent points cannot be renamed, the robot points must be checked by hand
+                List<string> conflicts = GetPointNames(oldTransparentPrefix).Zip(GetPointNames(transparentPrefix), (o, n) => new { o, n })
+                    .Where(x => existingNames.Contains(x.o) && existingNames.Contains(x.n)).Select(x => x.n).ToList();
+                if (conflicts.Count > 0)
+                {
+                    message = $"{oldTransparentPrefix}_.. and {transparentPrefix}_.. points are both in the installation file ({string.Join(", ", conflicts.Take(3))} ...). " +
+                        $"Please use the original installation from the robot or delete the {transparentPrefix}_.. points on the robot.";
+                    return false;
+                }
+
+                // old names -> Black_.. / Trans_.. (skipped when the new name exists already)
                 int renamedCount = 0;
                 foreach (XElement wrapper in pointWrappers)
                 {
@@ -201,7 +218,7 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
 
                 XElement insertAfter = pointWrappers.Last();
 
-                // Transparent_P10Entry = copy of Black_P10Entry, only when the Transparent set is in the file
+                // Trans_P10Entry = copy of Black_P10Entry, only when the Transparent set is in the file
                 bool transparentEntry10Added = false;
                 if (existingNames.Contains(GetPointName(transparentPrefix, 1)) && !existingNames.Contains(transparentEntry10))
                 {
@@ -210,22 +227,62 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
                     transparentEntry10Added = true;
                 }
 
-                string[] newNames = GetPointNames(prefix);
-                int existingCount = newNames.Count(x => existingNames.Contains(x));
-
-                if (existingCount > 0 && existingCount < newNames.Length)
+                // every recipe with its own prefix: check all first, nothing is written when one set is incomplete
+                List<Tuple<ShellRecipeModel, string[]>> toCreate = new List<Tuple<ShellRecipeModel, string[]>>();
+                List<string> kept = new List<string>();
+                List<string> problems = new List<string>();
+                foreach (ShellRecipeModel recipe in recipes.OrderBy(x => x.RecipeID))
                 {
-                    message = $"Only {existingCount} of {newNames.Length} points with prefix \"{prefix}\" exist in the installation file. Please check the robot points.";
+                    string prefix = NormalizePrefix(recipe.RobotPointPrefix);
+                    if (prefix.Length == 0)
+                    {
+                        continue;
+                    }
+                    if (!IsValidPrefix(prefix))
+                    {
+                        problems.Add($"{recipe.DisplayName}: invalid prefix \"{prefix}\".");
+                        continue;
+                    }
+                    if (IsReservedPrefix(recipe.RecipeID, prefix))
+                    {
+                        problems.Add($"{recipe.DisplayName}: prefix \"{prefix}\" is used by the built-in Black / Transparent points.");
+                        continue;
+                    }
+
+                    string[] newNames = GetPointNames(prefix);
+                    int existingCount = newNames.Count(x => existingNames.Contains(x));
+                    if (existingCount == newNames.Length)
+                    {
+                        kept.Add($"{recipe.DisplayName} ({prefix}_..)");
+                    }
+                    else if (existingCount > 0)
+                    {
+                        problems.Add($"{recipe.DisplayName}: only {existingCount} of {newNames.Length} points with prefix \"{prefix}\" exist.");
+                    }
+                    else if (recipe.RecipeID == builtInBlackID || recipe.RecipeID == builtInTransparentID)
+                    {
+                        // a copy of Black would replace the taught Black / Transparent points in the script
+                        problems.Add($"{recipe.DisplayName}: built-in recipe, clear the prefix \"{prefix}\" (uses {(recipe.RecipeID == builtInBlackID ? blackPrefix : transparentPrefix)}_..).");
+                    }
+                    else
+                    {
+                        toCreate.Add(Tuple.Create(recipe, newNames));
+                    }
+                }
+
+                if (problems.Count > 0)
+                {
+                    message = "Please check the recipes / robot points:\n" + string.Join("\n", problems);
                     return false;
                 }
 
-                if (existingCount == 0)
+                // new points go after the last existing point
+                foreach (Tuple<ShellRecipeModel, string[]> set in toCreate)
                 {
-                    // new points go after the last existing point
                     for (int i = 0; i < referencePoints.Length; i++)
                     {
-                        insertAfter = insertCopy(points[referencePoints[i]], newNames[i], insertAfter);
-                        existingNames.Add(newNames[i]);
+                        insertAfter = insertCopy(points[referencePoints[i]], set.Item2[i], insertAfter);
+                        existingNames.Add(set.Item2[i]);
                     }
                 }
 
@@ -234,9 +291,14 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
                 List<string> skipped;
                 File.WriteAllText(scriptFile, buildScript(recipes, existingNames, out skipped), new UTF8Encoding(false));
 
-                message = existingCount == 0
-                    ? $"{newNames.Length} points created ({newNames.First()} ... {newNames.Last()})."
-                    : $"Points {newNames.First()} ... {newNames.Last()} already exist, kept as they are.";
+                message = toCreate.Count == 0
+                    ? "No new points created."
+                    : "Points created (copy of Black):\n" + string.Join("\n", toCreate.Select(x =>
+                        $"{x.Item1.DisplayName}: {x.Item2.First()} ... {x.Item2.Last()} ({x.Item2.Length} points)"));
+                if (kept.Count > 0)
+                {
+                    message += "\n\nAlready exist, kept as they are:\n" + string.Join("\n", kept);
+                }
                 if (renamedCount > 0)
                 {
                     message += $"\n{renamedCount} old points renamed (Point_1b -> {GetPointName(blackPrefix, 1)}, Point_t1 -> {GetPointName(transparentPrefix, 1)}, ...).";
@@ -254,7 +316,8 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
                     message += "\n\nNot in the script (no robot points):\n" + string.Join("\n", skipped);
                 }
 
-                logger.Info($"Robot points: prefix {prefix}, {(existingCount == 0 ? "created" : "already exist")}, {renamedCount} renamed, " +
+                logger.Info($"Robot points: created {(toCreate.Count > 0 ? string.Join(", ", toCreate.Select(x => NormalizePrefix(x.Item1.RobotPointPrefix))) : "none")}, " +
+                    $"kept {kept.Count}, {renamedCount} renamed, " +
                     $"{sourceFile} -> {installationFile}, {scriptFile}");
                 return true;
             }
@@ -290,6 +353,14 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
             foreach (int screw in new[] { 7, 8, 16, 17, 18, 19, 20, 21 })
             {
                 renames.Add($"Point_t{screw}Entry", GetEntryPointName(transparentPrefix, screw));
+            }
+
+            // earlier HMI version: Transparent_P01 -> Trans_P01, Transparent_P01Entry -> Trans_P01Entry (incl. the P10Entry copy)
+            string[] oldNames = GetPointNames(oldTransparentPrefix);
+            string[] newNames = GetPointNames(transparentPrefix);
+            for (int i = 0; i < oldNames.Length; i++)
+            {
+                renames.Add(oldNames[i], newNames[i]);
             }
             return renames;
         }
