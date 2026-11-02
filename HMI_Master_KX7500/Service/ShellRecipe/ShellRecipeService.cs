@@ -34,6 +34,12 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
                     {
                         recipeList = XmlTools.Deserialize<List<ShellRecipeModel>>(FilePath.ShellRecipe, recipeList);
                     }
+                    else
+                    {
+                        // first start: built-in Black / Transparent (robot points already taught), file created so later edits are kept
+                        recipeList = getDefaultRecipeList();
+                        XmlTools.Serialize(FilePath.ShellRecipe, recipeList);
+                    }
                 }
             }
             catch (Exception ex) { logger.Error(ex); }
@@ -61,6 +67,18 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
         {
             ShellRecipeModel recipe = GetRecipeList().FirstOrDefault(x => x.RecipeID == recipeID);
             return recipe != null ? recipe.RecipeName : $"Recipe {recipeID}";
+        }
+        #endregion
+
+        #region PrivateMethods
+        // empty prefix = built-in robot points (Black_.. / Transparent_..)
+        private static List<ShellRecipeModel> getDefaultRecipeList()
+        {
+            return new List<ShellRecipeModel>
+            {
+                new ShellRecipeModel { RecipeID = 0, RecipeName = "Black" },
+                new ShellRecipeModel { RecipeID = 1, RecipeName = "Transparent" },
+            };
         }
         #endregion
     }
