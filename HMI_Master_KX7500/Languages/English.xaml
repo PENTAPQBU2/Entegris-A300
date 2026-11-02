@@ -2852,6 +2852,7 @@
     <system:String x:Key="Bypass_Screw_Driver_Sequence">Bypass Screw Driver Sequence</system:String>
     <system:String x:Key="Bypass_CAMLINE">Bypass CAMLINE</system:String>
     <system:String x:Key="Bypass_Soft_Start_Valve">Bypass Soft Start Valve</system:String>
+    <system:String x:Key="Bypass_Side_Column">Bypass Side Column</system:String>
     <system:String x:Key="O-Ring_Loaded">O-Ring Loaded</system:String>
     <system:String x:Key="Shim_Loaded">Shim Loaded</system:String>
 
