@@ -140,7 +140,7 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
             NewRecipeCommand = new RelayCommand(newRecipeCommand);
             SaveRecipeCommand = new RelayCommand(saveRecipeCommand, () => IsNewRecipe || SelectedRecipe != null);
             DeleteRecipeCommand = new RelayCommand(deleteRecipeCommand, () => !IsNewRecipe && SelectedRecipe != null);
-            CreatePointCommand = new RelayCommand(createPointCommand, () => !IsNewRecipe && SelectedRecipe != null);
+            CreatePointCommand = new RelayCommand(createPointCommand, () => !IsNewRecipe);
         }
         #endregion
 
@@ -225,6 +225,12 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
                         "Recipe", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+                if (RobotPointService.IsReservedPrefix(editID, prefix))
+                {
+                    MessageBox.Show($"Robot Point Prefix \"{prefix}\" is used by the built-in Black / Transparent points (recipe 0 / 1).",
+                        "Recipe", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
                 ShellRecipeModel samePrefix = list.FirstOrDefault(x => x.RecipeID != editID && prefix.Length > 0
                     && string.Equals(RobotPointService.NormalizePrefix(x.RobotPointPrefix), prefix, StringComparison.OrdinalIgnoreCase));
                 if (samePrefix != null)
@@ -300,26 +306,17 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
             catch (Exception ex) { logger.Error(ex); }
         }
 
-        // Robot points for the selected recipe (Black_P01.. -> <prefix>_P01..P21, <prefix>_PxxEntry) in a new installation file
+        // Robot points for all recipes with a prefix (Black_P01.. -> <prefix>_P01..P21, <prefix>_PxxEntry) in a new installation file
         // + recipe_points.script with the point sets of all recipes, both files are loaded on the robot
         private void createPointCommand()
         {
             try
             {
                 ShellRecipeModel recipe = SelectedRecipe;
-                string prefix = RobotPointService.NormalizePrefix(recipe.RobotPointPrefix);
-
-                if (!string.Equals(prefix, RobotPointService.NormalizePrefix(RobotPointPrefix), StringComparison.Ordinal))
+                if (IsNewRecipe || (recipe != null && !string.Equals(RobotPointService.NormalizePrefix(recipe.RobotPointPrefix),
+                    RobotPointService.NormalizePrefix(RobotPointPrefix), StringComparison.Ordinal)))
                 {
-                    MessageBox.Show("Robot Point Prefix is changed, please Save the recipe first.", "Create Points", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                if (prefix.Length == 0)
-                {
-                    MessageBox.Show(RobotPointService.IsBuiltInSet(recipe)
-                        ? $"Recipe {recipe.DisplayName} uses the built-in robot points, no need to create points."
-                        : "Please fill in the Robot Point Prefix and Save the recipe first.",
-                        "Create Points", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("The recipe is not saved, please Save the recipe first.", "Create Points", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -347,14 +344,14 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
                 }
 
                 string scriptFile = Path.Combine(Path.GetDirectoryName(saveDialog.FileName), RobotPointService.ScriptFileName);
-                if (!RobotPointService.CreatePoints(openDialog.FileName, saveDialog.FileName, scriptFile, prefix,
+                if (!RobotPointService.CreatePoints(openDialog.FileName, saveDialog.FileName, scriptFile,
                     ShellRecipeService.GetRecipeList(), out string message))
                 {
                     MessageBox.Show($"Create Points failed: {message}", "Create Points", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                MessageBox.Show($"Recipe {recipe.DisplayName}: {message}\n\n" +
+                MessageBox.Show($"{message}\n\n" +
                     $"Files:\n{saveDialog.FileName}\n{scriptFile}\n\n" +
                     "Load both files on the robot, then adjust the points on the teach pendant.",
                     "Create Points", MessageBoxButton.OK, MessageBoxImage.Information);

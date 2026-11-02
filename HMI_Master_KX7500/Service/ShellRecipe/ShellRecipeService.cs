@@ -71,7 +71,7 @@ namespace HMI_Master_KX7500.Service.ShellRecipe
         #endregion
 
         #region PrivateMethods
-        // empty prefix = built-in robot points (Black_.. / Transparent_..)
+        // empty prefix = built-in robot points (Black_.. / Trans_..)
         private static List<ShellRecipeModel> getDefaultRecipeList()
         {
             return new List<ShellRecipeModel>
