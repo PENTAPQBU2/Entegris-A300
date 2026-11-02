@@ -186,5 +186,10 @@ namespace HMI_Master_KX7500.Globals
         // Machine_Sys_DB_StartInit: ON while the machine initializes (Initialize button greyed out).
         public const string Machine_Sys_DB_StartInit = "MR3000";
         #endregion
+
+        #region Bypass
+        // Bypass_Side_Column: Settings page toggle (General > Bypass).
+        public const string Bypass_Side_Column = "MR1708";
+        #endregion
     }
 }

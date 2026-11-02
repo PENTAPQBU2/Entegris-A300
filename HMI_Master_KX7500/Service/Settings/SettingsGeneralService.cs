@@ -241,6 +241,18 @@ namespace HMI_Master_KX7500.Services
                             SettingsGeneralGroupToggleOffIcon = GetIconSource("LightBulbOff"),
                             SettingsGeneralGroupToggleOnIcon = GetIconSource("LightBulbOn"),
                         },
+                        new SettingsGeneralGroupToggleModel
+                        {
+                            SettingsGeneralGroupToggleKey = "Bypass_Side_Column",
+                            SettingsGeneralGroupToggleOnLabelKey = "On",
+                            SettingsGeneralGroupToggleOffLabelKey = "Off",
+                            SettingsGeneralGroupToggleTagModel = new SettingsGeneralGroupToggleTagModel()
+                            {
+                                SettingsGeneralGroupToggleTag = Globals.PLCTag.Bypass_Side_Column
+                            },
+                            SettingsGeneralGroupToggleOffIcon = GetIconSource("LightBulbOff"),
+                            SettingsGeneralGroupToggleOnIcon = GetIconSource("LightBulbOn"),
+                        },
                     }
                 });
                 settingsGeneralModel.SettingsGeneralGroupList.Add(new SettingsGeneralGroupModel()
