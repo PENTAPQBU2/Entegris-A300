@@ -10,21 +10,6 @@ namespace HMI_Master_KX7500.Model.LotEntry
     {
         #region PublicCommandProperties
 
-        private ICommand tSOColumnCommand = null;
-        [XmlIgnore]
-        public ICommand TSOColumnCommand
-        {
-            get { return tSOColumnCommand; }
-            set
-            {
-                if (tSOColumnCommand != value)
-                {
-                    tSOColumnCommand = value;
-                    RaisePropertyChanged(nameof(TSOColumnCommand));
-                }
-            }
-        }
-
         private ICommand newLotCommand = null;
         [XmlIgnore]
         public ICommand NewLotCommand
@@ -211,21 +196,6 @@ namespace HMI_Master_KX7500.Model.LotEntry
         }
 
 
-        private bool tsoColumnValue = false;
-        [XmlIgnore]
-        public bool TSOColumnValue
-        {
-            get { return tsoColumnValue; }
-            set
-            {
-                if (tsoColumnValue != value)
-                {
-                    tsoColumnValue = value;
-                    RaisePropertyChanged(nameof(TSOColumnValue));
-                }
-            }
-        }
-
 
         private string lotID = string.Empty;
         [XmlIgnore]
@@ -276,7 +246,7 @@ namespace HMI_Master_KX7500.Model.LotEntry
             }
         }
 
-        // Lot Entry inputs, TSO and New Lot disabled from New Lot click until End Lot
+        // Lot Entry inputs and New Lot disabled from New Lot click until End Lot
         [XmlIgnore]
         public bool LotLocked
         {

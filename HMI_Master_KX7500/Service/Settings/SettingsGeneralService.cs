@@ -17,6 +17,16 @@ namespace HMI_Master_KX7500.Services
         public const string ResourceDictionarySource = "pack://application:,,,/HMI;component/";
         #endregion
 
+        #region PublicFields
+        // Safety bypasses hidden on the Settings page (operator must not bypass them), still in Settings.xml
+        public static readonly HashSet<string> HiddenToggleKeys = new HashSet<string>
+        {
+            "Bypass_Door_Switch",
+            "Bypass_E-Stop",
+            "Bypass_Safety_Relay",
+        };
+        #endregion
+
         #region PublicMethods
         public static bool SerializeSettingsGeneral(SettingsGeneralModel settingsGeneralModel)
         {
@@ -294,6 +304,13 @@ namespace HMI_Master_KX7500.Services
 
             settingsGeneralModel = XmlTools.Deserialize<SettingsGeneralModel>(
                 FilePath.Settings);
+
+            // Hidden bypasses to the end of their group (also for an existing machine Settings.xml)
+            foreach (var group in settingsGeneralModel.SettingsGeneralGroupList)
+            {
+                group.SettingsGeneralGroupToggleList = group.SettingsGeneralGroupToggleList
+                    .OrderBy(x => x.SettingsGeneralGroupToggleHidden).ToList();
+            }
 
             return settingsGeneralModel;
         }

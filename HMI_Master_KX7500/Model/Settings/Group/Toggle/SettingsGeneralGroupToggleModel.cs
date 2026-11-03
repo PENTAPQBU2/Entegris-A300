@@ -24,8 +24,16 @@ namespace HMI_Master_KX7500.Model
                 {
                     settingsGeneralGroupToggleKey = value;
                     RaisePropertyChanged(nameof(SettingsGeneralGroupToggleKey));
+                    RaisePropertyChanged(nameof(SettingsGeneralGroupToggleHidden));
                 }
             }
+        }
+
+        // Safety bypasses not shown on the Settings page (kept in Settings.xml, moved to the end of the list)
+        [XmlIgnore]
+        public bool SettingsGeneralGroupToggleHidden
+        {
+            get { return Services.SettingsGeneralService.HiddenToggleKeys.Contains(settingsGeneralGroupToggleKey); }
         }
 
         private string settingsGeneralGroupToggleName = string.Empty;

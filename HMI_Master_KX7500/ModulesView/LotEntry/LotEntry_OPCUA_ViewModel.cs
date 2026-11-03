@@ -134,14 +134,7 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                     entergris_TcpCommService.tcpIpClient.Send($"COMPLETED|BATCHID:{batchID}|SERIAL_NO:{serialNumber}|EQID:{equipID}|RESULT:PASS");
                     keyenceDll.Write<bool>(PLCTag.Trigger_HMI_Send_Job_Complete, false);
                 }
-                else if (keyenceDll.Read<bool>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.TSOColumnTag) != LotEntryInterfaceModel.LotEntryModel.TSOColumnValue)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        LotEntryInterfaceModel.LotEntryModel.TSOColumnValue = keyenceDll.Read<bool>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.TSOColumnTag);
-                    });
-                }
-            }           
+            }
         }
         #endregion
 
@@ -301,7 +294,6 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
             {
                 LotEntryInterfaceModel.LotEntryModel = LotEntryService.DeserializeLotEntry();
                 LotEntryInterfaceModel.LotEntryModel.NewLotCommand = new RelayCommand<string>(newLotCommand);
-                LotEntryInterfaceModel.LotEntryModel.TSOColumnCommand = new RelayCommand<object>(TSOColumnCommandEvent);
                 LotEntryInterfaceModel.LotEntryModel.EndLotCommand = new RelayCommand(endLotCommand);
 
                 RefreshRecipeList();
@@ -309,15 +301,6 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                 //Messenger.Default.Register<OPCUA_>(this, initializeOpcUa);
             }
             catch (Exception ex) { logger.Error(ex); }
-        }
-
-        private void TSOColumnCommandEvent(object obj)
-        {
-            try
-            {
-                keyenceDll.Write<bool>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.TSOColumnTag, LotEntryInterfaceModel.LotEntryModel.TSOColumnValue);
-            }
-            catch (Exception ex) { logger.Error(ex);}
         }
 
         //private void opcUpdate(_OPC opc_)

@@ -109,7 +109,11 @@ namespace HMI_Master_KX7500.ModulesView.PopUp
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             window.Show();
-                            window.Activate();
+                            // Hard Reset / Initialize confirm open: do not take the focus from it every poll
+                            if (!Modules.Frame.ConfirmView.IsOpen)
+                            {
+                                window.Activate();
+                            }
                         });
                     }
                     else
@@ -118,7 +122,10 @@ namespace HMI_Master_KX7500.ModulesView.PopUp
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             window.Show();
-                            window.Activate();
+                            if (!Modules.Frame.ConfirmView.IsOpen)
+                            {
+                                window.Activate();
+                            }
                         });
                     }                   
                 }
