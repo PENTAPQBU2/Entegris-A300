@@ -5,12 +5,14 @@ using GalaSoft.MvvmLight.Messaging;
 using HMI_Master_KX7500.CommunicationProtocols;
 using HMI_Master_KX7500.Globals;
 using HMI_Master_KX7500.Interface;
+using HMI_Master_KX7500.MachinePath;
 using HMI_Master_KX7500.Service.LotEntry;
 using HMI_Master_KX7500.Service.ShellRecipe;
 using MahApps.Metro.Controls;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,6 +30,10 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
         public Entergris_TcpCommService entergris_TcpCommService = new Entergris_TcpCommService();
 
         private SetupSettingModel _tcpIPModel = new SetupSettingModel();
+
+        // PLC sets New_Lot_Created 10 s after the New Lot bit (TMR #100), unlock if it did not come
+        private DateTime newLotClickTime = DateTime.MinValue;
+        private static readonly TimeSpan newLotTimeout = TimeSpan.FromSeconds(15);
         #endregion
 
         #region PublicProperties
@@ -147,6 +153,19 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
             {
                 var model = LotEntryInterfaceModel.LotEntryModel;
                 bool lotCreated = keyenceDll.Read<bool>(model.LotEntryTagModel.Work_Order_Started_Tag);
+                // End Lot only when the PLC accepts it (lot created AND machine empty), otherwise the PLC drops the bit
+                bool okToStopLot = keyenceDll.Read<bool>(PLCTag.OK_To_Stop_Lot);
+                // New Lot pending: until MR49500 is ON, or the PLC did not start the lot (timeout)
+                bool newLotPending = model.NewLotPending && !lotCreated && DateTime.Now - newLotClickTime < newLotTimeout;
+                if (okToStopLot != model.OkToStopLot || newLotPending != model.NewLotPending)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        model.OkToStopLot = okToStopLot;
+                        model.NewLotPending = newLotPending;
+                    });
+                }
+
                 if (lotCreated == model.LotCreated)
                 {
                     return;
@@ -221,6 +240,20 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
                     MessageBox.Show("Please choose a Recipe.", "Lot Entry", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+                // PLC does not start a lot with an empty Lot ID
+                if (string.IsNullOrWhiteSpace(lotID))
+                {
+                    MessageBox.Show("Please enter a Lot ID.", "Lot Entry", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                lotID = lotID.Trim();
+
+                // FOUP CSV: one folder per Lot ID, same Lot ID again -> FOUPs continue in the existing folder
+                try
+                {
+                    Directory.CreateDirectory(FolderPath.FoupCsvLotFolder(lotID));
+                }
+                catch (Exception ex) { logger.Error(ex); }
 
                 keyenceDll.Write<string>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.Work_Order_ID_Tag, lotID, 50);
                 keyenceDll.Write<string>(LotEntryInterfaceModel.LotEntryModel.LotEntryTagModel.OperatorID_Tag, LotEntryInterfaceModel.LotEntryModel.OperatorID, 10);
@@ -231,6 +264,10 @@ namespace HMI_Master_KX7500.ModulesView.LotEntry
 
                 // New Lot bit last: PLC copies Shell_Colour_ID to the robot (W0102) on its rising edge
                 keyenceDll.Write<bool>(PLCTag.New_Lot_Bit, true);
+
+                // Lock the inputs now, not only after the PLC's 10 s
+                newLotClickTime = DateTime.Now;
+                LotEntryInterfaceModel.LotEntryModel.NewLotPending = true;
 
                 //
                 //if(LotEntryInterfaceModel.LotEntryModel.Shell_Colour == "System.Windows.Controls.ComboBoxItem: Transparent")

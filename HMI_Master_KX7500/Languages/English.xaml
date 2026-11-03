@@ -1957,7 +1957,7 @@
     <system:String x:Key="IRON_MAN_MODE">Iron Man Mode</system:String>
     <system:String x:Key="OPERATOR_ID">Operator ID</system:String>
     <system:String x:Key="PROBE_CARD_ID">Probe Card ID</system:String>
-    <system:String x:Key="LOT_QUANTITY">Lot Quantity</system:String>
+    <system:String x:Key="LOT_QUANTITY">Shell Quantity</system:String>
     <system:String x:Key="MACHINE_TESTER">Machine Tester</system:String>
     <system:String x:Key="TESTER_RECIPE">Tester Recipe</system:String>
     <system:String x:Key="NUMBER_OF_OCR_CHARACTER">Number of OCR Character</system:String>

@@ -1959,7 +1959,7 @@
     <system:String x:Key="IRON_MAN_MODE">Iron Man 模式</system:String>
     <system:String x:Key="OPERATOR_ID">操作员编号</system:String>
     <system:String x:Key="PROBE_CARD_ID">探针卡编号</system:String>
-    <system:String x:Key="LOT_QUANTITY">编号数量</system:String>
+    <system:String x:Key="LOT_QUANTITY">壳体数量</system:String>
     <system:String x:Key="MACHINE_TESTER">机器测试仪</system:String>
     <system:String x:Key="TESTER_RECIPE">测试仪配方</system:String>
     <system:String x:Key="NUMBER_OF_OCR_CHARACTER">OCR字符数量</system:String>

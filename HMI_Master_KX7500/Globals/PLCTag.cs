@@ -152,6 +152,12 @@ namespace HMI_Master_KX7500.Globals
 
         // Lot_Info_DB_New_Lot_Bit: set by HMI on New Lot (after the lot data), PLC resets it after 100 ms.
         public const string New_Lot_Bit = "MR49501";
+
+        // Lot_Info_DB_OK_To_Stop_Lot (EM1500.4): New_Lot_Created AND Machine_Empty (MR3013 = no shell on I20 AND
+        // main sequence waiting for operator). PLC drops End Lot when it is OFF -> End Lot button enabled only when ON.
+        // Bit number with 2 digits (".04"): KeyenceDll removes the dot, "EM1500.4" would be EM150 bit 04.
+        // (MR49503 Lot_Info_DB_OK_To_End_Lot is never written by the PLC.)
+        public const string OK_To_Stop_Lot = "EM1500.04";
         #endregion
 
         #region Shell Colour
