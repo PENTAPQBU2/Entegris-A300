@@ -27,23 +27,23 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
                        Text="{DynamicResource Work_Order_ID}"/>
         <TextBox Grid.Row="0" Grid.Column="1" x:Name="LotIDTextBox" Text="{Binding LotID}"
-                 IsEnabled="{Binding LotLocked, Converter={StaticResource InverseBooleanConverter}}"/>
+                 IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
                        Text="{DynamicResource OPERATOR_ID}"/>
         <TextBox Grid.Row="1" Grid.Column="1" x:Name="OPIDTextBox" Text="{Binding OperatorID}"
-                 IsEnabled="{Binding LotLocked, Converter={StaticResource InverseBooleanConverter}}"/>
+                 IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
         
         <!--<TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
                        Text="{DynamicResource Customer_ID}"/>
         <TextBox Grid.Row="2" Grid.Column="1" x:Name="CustIDTextBox" Text="{Binding Customer_ID}"
-                 IsEnabled="{Binding LotLocked, Converter={StaticResource InverseBooleanConverter}}"/>-->
+                 IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>-->
 
         
         <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
                        Text="{DynamicResource LOT_QUANTITY}"/>
         <mahApps:NumericUpDown Grid.Row="2" Grid.Column="1" x:Name="NumericUpDownLotQuantity" Value="{Binding Lot_Quantity}" Minimum="0"
-                               IsEnabled="{Binding LotLocked, Converter={StaticResource InverseBooleanConverter}}"/>
+                               IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
                        Text="{DynamicResource RECIPE_NAME}"/>
@@ -51,12 +51,12 @@
         <ComboBox Grid.Row="3" Grid.Column="1" x:Name="RECIPEIDComboBox" ItemsSource="{Binding RecipeList}"
                   DisplayMemberPath="DisplayName" SelectedValuePath="RecipeID" SelectedValue="{Binding Recipe}"
                   DropDownOpened="RecipeComboBox_DropDownOpened"
-                  IsEnabled="{Binding LotLocked, Converter={StaticResource InverseBooleanConverter}}"/>
+                  IsEnabled="{Binding LotCreated, Converter={StaticResource InverseBooleanConverter}}"/>
 
         
         <!--<TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource LeftTextBlock}"
                        Text="{DynamicResource LOT_CREATED}"/>
-        <mahApps:NumericUpDown Grid.Row="3" Grid.Column="1" x:Name="NumericUpDownLotCreated" Value="{Binding LotLocked}" Minimum="0"/>-->
+        <mahApps:NumericUpDown Grid.Row="3" Grid.Column="1" x:Name="NumericUpDownLotCreated" Value="{Binding LotCreated}" Minimum="0"/>-->
 
         <!--<Button Grid.Row="1" Grid.Column="2" Command="{Binding StopLotCommand}"
                     Content="{DynamicResource StopLot}" IsEnabled="{Binding OkToStopLot}"/>-->
@@ -67,12 +67,12 @@
             <Button.Style>
                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonBaseStyle}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding LotLocked}" Value="True">
+                        <DataTrigger Binding="{Binding LotCreated}" Value="True">
                             <Setter Property="IsEnabled" Value="False"/>
                         </DataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding ElementName=LotIDTextBox, Path=Text}"
                                                Value=""/>
                             </MultiDataTrigger.Conditions>
@@ -80,7 +80,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding ElementName=OPIDTextBox, Path=Text}"
                                                Value=""/>
                                 <Condition Binding="{Binding ElementName=CustIDTextBox, Path=Text}"
@@ -92,7 +92,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding ElementName=LotIDTextBox, Path=Text}"
                                                Value="{x:Null}"/>
                             </MultiDataTrigger.Conditions>
@@ -101,7 +101,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding ElementName=OPIDTextBox, Path=Text}"
                                                Value="{x:Null}"/>
                                 <Condition Binding="{Binding ElementName=CustIDTextBox, Path=Text}"
@@ -114,7 +114,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding LotQty}"
                                                Value=""/>
                             </MultiDataTrigger.Conditions>
@@ -125,18 +125,17 @@
             </Button.Style>
         </Button>
 
-        <!-- End Lot only when the PLC accepts it: lot created AND machine empty (EM1500.4 OK_To_Stop_Lot) -->
         <Button Grid.Row="2" Grid.Column="2" Command="{Binding EndLotCommand}"
-                    Content="{DynamicResource END_LOT}" IsEnabled="{Binding OkToStopLot}">
+                    Content="{DynamicResource END_LOT}">
             <!--<Button.Style>
                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonBaseStyle}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding LotLocked}" Value="True">
+                        <DataTrigger Binding="{Binding LotCreated}" Value="True">
                             <Setter Property="IsEnabled" Value="False"/>
                         </DataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding ElementName=LotIDTextBox, Path=Text}"
                                                Value=""/>
                             </MultiDataTrigger.Conditions>
@@ -144,7 +143,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding ElementName=OPIDTextBox, Path=Text}"
                                                Value=""/>
                             </MultiDataTrigger.Conditions>
@@ -152,7 +151,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding ElementName=LotIDTextBox, Path=Text}"
                                                Value="{x:Null}"/>
                             </MultiDataTrigger.Conditions>
@@ -161,7 +160,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding ElementName=OPIDTextBox, Path=Text}"
                                                Value="{x:Null}"/>
                             </MultiDataTrigger.Conditions>
@@ -170,7 +169,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding LotLocked}" Value="False"/>
+                                <Condition Binding="{Binding LotCreated}" Value="False"/>
                                 <Condition Binding="{Binding LotQty}"
                                                Value=""/>
                             </MultiDataTrigger.Conditions>
