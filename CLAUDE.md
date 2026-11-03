@@ -15,6 +15,7 @@ Context for Claude Code. Read this before changing code.
 - Machine data (`MachineConfiguration\*.xml`, `MachineSettings\*.mdb`) comes from machine backup; normal user must have write access to `C:\HMI_A300`.
 - Login: `penta` / `#penta123` (Pentamaster level), stored in `MachineSettings\UserAccountSetting.mdb`.
 - No PLC on dev PC → **offline mode** (see below). PLC reads return ""/0/false, writes do nothing.
+- Single instance (`App.xaml.cs`, named mutex `HMI_SSDC_PIM_Entegris_A300`): a second copy shows "HMI is already running." and exits before `FrameView` opens (no `StartupUri`, `OnStartup` creates the window). Several copies each tracked the shells (FOUP numbers 1,2,3 for one shell, only one gets COM6). Message box uses `DefaultDesktopOnly`, otherwise the WPF splash screen closes it.
 
 ## Offline mode – DEV PC ONLY, NEVER COMMIT
 Marked with `// OFFLINE MODE` (search for it). Documented in `OFFLINE_MODE_CHANGES.md`.
