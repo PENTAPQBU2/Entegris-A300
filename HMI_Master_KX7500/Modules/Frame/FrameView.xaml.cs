@@ -211,11 +211,10 @@ namespace HMI_Master_KX7500.Modules.Frame
         string serialData = string.Empty;
 
         #region FOUP CSV (MT_003)
-        // One folder per lot (created by New Lot), in it one folder + one CSV per shell (FOUP).
+        // One folder per lot (created by New Lot), in it one CSV per shell (FOUP).
         // Format follows customer example (insert machine CSV):
-        //   folder : D:\HMI\FOUP CSV\<LotID>\<LotID>_<00001>_InProgress   (while running)
-        //            D:\HMI\FOUP CSV\<LotID>\<LotID>_<00001>_Pass / _Fail  (when finished)
-        //   file   : <yyyyMMddHHmmss>.csv  (shell start time)
+        //   file   : D:\HMI\FOUP CSV\<LotID>\<LotID>_<00001>_InProgress.csv   (while running)
+        //            D:\HMI\FOUP CSV\<LotID>\<LotID>_<00001>_Pass.csv / _Fail.csv  (when finished)
         //   content: FOUPBarcode,<LotID>_<00001>_Pass
         //            LotID,<LotID>
         //            Recipe,<recipe name of shell ID in EM1559, e.g. Black>
@@ -226,12 +225,13 @@ namespace HMI_Master_KX7500.Modules.Frame
         // <00001> = running number per Lot ID = highest FOUP number in the lot folder + 1
         //           (same Lot ID again after End Lot -> continues in the same lot folder).
         //           MachineConfiguration\FoupCsvRunningNumber.txt remembers the last FOUP for rework / HMI restart.
-        // Rework     = continues the last FOUP of the same Lot ID: same FOUP ID, folder and CSV, screw rows appended,
-        //              folder renamed back to _InProgress and then to _Pass / _Fail with the rework result.
+        // Rework     = continues the last FOUP of the same Lot ID: same FOUP ID and CSV, screw rows appended,
+        //              file renamed back to _InProgress and then to _Pass / _Fail with the rework result.
         // Shell start = rising edge of New_Shell or Rework_Shell (operator choice, PLC step 1-2).
         // Shell end   = falling edge of New_Shell and Rework_Shell (PLC step 360 or hard reset).
-        // Pass        = Result column of the CSV: latest row of every screw 1-21 is OK, otherwise Fail
-        //               (screw missing = shell removed before it was finished).
+        // Pass        = Result column of the CSV: latest row of every screw in the file is OK, otherwise Fail
+        //               (NOK then OK on retry / rework = OK; no screw rows = Fail).
+        // HMI restart: shell still running -> CSV continued; shell already ended -> left _InProgress CSV finished.
         // Shell without lot (Lot ID empty): lot folder NoLotID.
         // Screw results outside a shell: D:\HMI\FOUP CSV\<LotID>\NoShell\NoShell_<yyyyMMdd>.csv
         private readonly object foupCsvLock = new object();
@@ -241,11 +241,9 @@ namespace HMI_Master_KX7500.Modules.Frame
         private string foupCsvRecipe = string.Empty;
         private string foupCsvLotFolder = string.Empty;  // D:\HMI\FOUP CSV\<LotID>
         private string foupCsvUnitName = string.Empty;   // <LotID>_<00001>
-        private string foupCsvShellFolder = string.Empty;
-        private string foupCsvFile = string.Empty;
+        private string foupCsvFile = string.Empty;       // <lot folder>\<LotID>_<00001>_InProgress.csv
         private bool foupCsvLastShellBit = false;
         private bool foupCsvFirstPoll = true;
-        private const int foupCsvScrewCount = 21;
         private const string foupCsvTableHeader = ",Result,ScrewDateTime,Torque,TargetTorque,TorqueUnit,Angle,Time,ScrewType,Error";
 #if DEBUG
         private int debugScrewNum = 0;
@@ -256,7 +254,8 @@ namespace HMI_Master_KX7500.Modules.Frame
             return (value ?? string.Empty).Replace("\0", string.Empty).Trim();
         }
 
-        // FoupCsvRunningNumber.txt: <LotID>|<last running number>|<last FOUP folder name>|<last CSV file name>
+        // FoupCsvRunningNumber.txt: <LotID>|<last running number>|<last CSV file name>|<last CSV file name>
+        // (4 parts kept from the folder-per-FOUP version, part 2 was the folder name)
         private static string foupCsvStateFile
         {
             get { return Path.Combine(FolderPath.MachineConfiguration, "FoupCsvRunningNumber.txt"); }
@@ -275,25 +274,26 @@ namespace HMI_Master_KX7500.Modules.Frame
             return new string[0];
         }
 
-        private static void foupCsvWriteState(string lotName, int number, string folderName, string csvName)
+        private static void foupCsvWriteState(string lotName, int number, string csvName)
         {
             try
             {
-                File.WriteAllText(foupCsvStateFile, $"{lotName}|{number}|{folderName}|{csvName}");
+                File.WriteAllText(foupCsvStateFile, $"{lotName}|{number}|{csvName}|{csvName}");
             }
             catch (Exception ex) { LogHelper.Error(nameof(FrameView), ex); }
         }
 
-        // Next running number for this Lot ID (1, 2, 3 ...) = highest <LotID>_<00001>_* folder in the lot folder + 1
+        // Next running number for this Lot ID (1, 2, 3 ...) = highest <LotID>_<00001>_* file (or folder of the
+        // folder-per-FOUP version) in the lot folder + 1
         private static int foupCsvNextRunningNumber(string lotFolder, string lotName)
         {
             int last = 0;
             if (Directory.Exists(lotFolder))
             {
-                Regex unit = new Regex($"^{Regex.Escape(lotName)}_(\\d{{5}})(_|$)");
-                foreach (string folder in Directory.GetDirectories(lotFolder))
+                Regex unit = new Regex($"^{Regex.Escape(lotName)}_(\\d{{5}})(_|\\.|$)");
+                foreach (string entry in Directory.GetFileSystemEntries(lotFolder))
                 {
-                    Match m = unit.Match(Path.GetFileName(folder));
+                    Match m = unit.Match(Path.GetFileName(entry));
                     if (m.Success && int.TryParse(m.Groups[1].Value, out int number) && number > last)
                     {
                         last = number;
@@ -309,8 +309,8 @@ namespace HMI_Master_KX7500.Modules.Frame
             return last + 1;
         }
 
-        // Pass = latest row of every screw 1-21 has Result OK (retry / rework rows are appended, the latest counts).
-        // Caller must hold foupCsvLock.
+        // Pass = latest row of every screw in the file has Result OK (retry / rework rows are appended, the latest
+        // counts), no screw rows = Fail. Caller must hold foupCsvLock.
         private static bool foupCsvResultPass(string file)
         {
             if (!File.Exists(file))
@@ -328,8 +328,8 @@ namespace HMI_Master_KX7500.Modules.Frame
                     screwResult[int.Parse(m.Groups[1].Value)] = m.Groups[2].Value.Trim();
                 }
             }
-            return Enumerable.Range(1, foupCsvScrewCount).All(screw =>
-                screwResult.TryGetValue(screw, out string result) && string.Equals(result, "OK", StringComparison.OrdinalIgnoreCase));
+            return screwResult.Count > 0
+                && screwResult.Values.All(result => string.Equals(result, "OK", StringComparison.OrdinalIgnoreCase));
         }
 
         // Reopen the last FOUP of this Lot ID (1 shell = 1 CSV). Caller must hold foupCsvLock.
@@ -340,36 +340,32 @@ namespace HMI_Master_KX7500.Modules.Frame
             try
             {
                 string[] parts = foupCsvReadState();
-                if (parts.Length < 4 || parts[0] != lotName || !int.TryParse(parts[1], out int number)
-                    || string.IsNullOrEmpty(parts[2]) || string.IsNullOrEmpty(parts[3])
-                    || (inProgressOnly && !parts[2].EndsWith("_InProgress")))
+                if (parts.Length < 3 || parts[0] != lotName || !int.TryParse(parts[1], out int number)
+                    || !parts[2].EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
+                    || (inProgressOnly && !parts[2].EndsWith("_InProgress.csv", StringComparison.OrdinalIgnoreCase)))
                 {
                     return false;
                 }
 
-                string lastFolder = Path.Combine(foupCsvLotFolder, parts[2]);
-                if (!Directory.Exists(lastFolder))
+                string lastFile = Path.Combine(foupCsvLotFolder, parts[2]);
+                if (!File.Exists(lastFile))
                 {
                     return false;
                 }
 
                 foupCsvUnitName = $"{lotName}_{number:00000}";
-                foupCsvShellFolder = Path.Combine(foupCsvLotFolder, $"{foupCsvUnitName}_InProgress");
-                if (!Directory.Exists(foupCsvShellFolder))
+                foupCsvFile = Path.Combine(foupCsvLotFolder, $"{foupCsvUnitName}_InProgress.csv");
+                if (!string.Equals(lastFile, foupCsvFile, StringComparison.OrdinalIgnoreCase))
                 {
-                    Directory.Move(lastFolder, foupCsvShellFolder);
+                    File.Move(lastFile, foupCsvFile);
                 }
-                foupCsvFile = Path.Combine(foupCsvShellFolder, parts[3]);
 
                 // Remove the header block of the last result, it is written again when the rework finishes
-                if (File.Exists(foupCsvFile))
+                List<string> lines = File.ReadAllLines(foupCsvFile).ToList();
+                int tableStart = lines.IndexOf(foupCsvTableHeader);
+                if (tableStart > 0)
                 {
-                    List<string> lines = File.ReadAllLines(foupCsvFile).ToList();
-                    int tableStart = lines.IndexOf(foupCsvTableHeader);
-                    if (tableStart > 0)
-                    {
-                        File.WriteAllLines(foupCsvFile, lines.Skip(tableStart));
-                    }
+                    File.WriteAllLines(foupCsvFile, lines.Skip(tableStart));
                 }
                 return true;
             }
@@ -393,6 +389,10 @@ namespace HMI_Master_KX7500.Modules.Frame
                     string recipe = ShellRecipeService.GetRecipeName(keyenceDll.Read<int>(PLCTag.Recipe_ID));
                     // shell bit already ON at first poll = HMI restarted during a shell
                     foupCsvStartShell(reworkShell ? "Rework" : "New", lotId, recipe, foupCsvFirstPoll);
+                }
+                else if (foupCsvFirstPoll && !shellBit)
+                {
+                    foupCsvCloseLeftover(); // HMI was closed during a shell that has ended meanwhile
                 }
                 foupCsvFirstPoll = false;
 
@@ -443,20 +443,70 @@ namespace HMI_Master_KX7500.Modules.Frame
                 {
                     int runningNumber = foupCsvNextRunningNumber(foupCsvLotFolder, lotName);
                     foupCsvUnitName = $"{lotName}_{runningNumber:00000}";
-                    foupCsvShellFolder = Path.Combine(foupCsvLotFolder, $"{foupCsvUnitName}_InProgress");
-                    foupCsvFile = Path.Combine(foupCsvShellFolder, $"{DateTime.Now:yyyyMMddHHmmss}.csv");
+                    foupCsvFile = Path.Combine(foupCsvLotFolder, $"{foupCsvUnitName}_InProgress.csv");
                 }
-                // Remember the running FOUP (finish updates the folder name)
+                // Remember the running FOUP (finish updates the file name)
                 foupCsvWriteState(lotName, int.Parse(foupCsvUnitName.Substring(foupCsvUnitName.LastIndexOf('_') + 1)),
-                    Path.GetFileName(foupCsvShellFolder), Path.GetFileName(foupCsvFile));
+                    Path.GetFileName(foupCsvFile));
                 foupCsvShellActive = true;
 
-                if (!Directory.Exists(foupCsvShellFolder))
+                if (!Directory.Exists(foupCsvLotFolder))
                 {
-                    Directory.CreateDirectory(foupCsvShellFolder);
+                    Directory.CreateDirectory(foupCsvLotFolder);
                 }
                 LogHelper.COMPort(GetType().Name, $"FOUP CSV shell start ({shellType}, {recipe}): {foupCsvFile}");
             }
+        }
+
+        // HMI start with no shell running: an _InProgress CSV left by the last shell (HMI closed / restarted during
+        // the shell) is finished now (header + _Pass / _Fail by its rows), otherwise it stays _InProgress forever
+        private void foupCsvCloseLeftover()
+        {
+            try
+            {
+                string[] parts = foupCsvReadState();
+                if (parts.Length < 3 || !int.TryParse(parts[1], out int number)
+                    || !parts[2].EndsWith("_InProgress.csv", StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                string lotFolder = FolderPath.FoupCsvLotFolder(parts[0]);
+                string file = Path.Combine(lotFolder, parts[2]);
+                if (!File.Exists(file))
+                {
+                    return;
+                }
+
+                // Lot ID / recipe from the PLC when it is still the same lot, otherwise the lot folder name
+                string lotId = cleanPlcString(keyenceDll.Read<string>(PLCTag.Lot_ID, 50));
+                string recipe = string.Empty;
+                if (FolderPath.FoupCsvLotName(lotId) == parts[0])
+                {
+                    recipe = ShellRecipeService.GetRecipeName(keyenceDll.Read<int>(PLCTag.Recipe_ID));
+                }
+                else
+                {
+                    lotId = parts[0];
+                }
+
+                lock (foupCsvLock)
+                {
+                    if (foupCsvShellActive)
+                    {
+                        return;
+                    }
+                    foupCsvLotId = lotId;
+                    foupCsvRecipe = recipe;
+                    foupCsvShellType = "Closed after HMI restart";
+                    foupCsvLotFolder = lotFolder;
+                    foupCsvUnitName = $"{parts[0]}_{number:00000}";
+                    foupCsvFile = file;
+                    foupCsvShellActive = true;
+                    foupCsvFinishFileLocked();
+                }
+            }
+            catch (Exception ex) { LogHelper.Error(GetType().Name, ex); }
         }
 
         private void foupCsvEndShell()
@@ -470,7 +520,7 @@ namespace HMI_Master_KX7500.Modules.Frame
             }
         }
 
-        // Add the header block (now that Pass/Fail is known) and rename the folder. Caller must hold foupCsvLock.
+        // Add the header block (now that Pass/Fail is known) and rename the file. Caller must hold foupCsvLock.
         private void foupCsvFinishFileLocked()
         {
             try
@@ -478,10 +528,11 @@ namespace HMI_Master_KX7500.Modules.Frame
                 bool passed = foupCsvResultPass(foupCsvFile);
                 string status = passed ? "Pass" : "Fail";
                 string finalName = $"{foupCsvUnitName}_{status}";
-                if (Directory.Exists(Path.Combine(foupCsvLotFolder, finalName))) // should not happen (running number), keep both
+                if (File.Exists(Path.Combine(foupCsvLotFolder, $"{finalName}.csv"))) // should not happen (running number), keep both
                 {
                     finalName = $"{finalName}_{DateTime.Now:yyyyMMddHHmmss}";
                 }
+                string finalFile = Path.Combine(foupCsvLotFolder, $"{finalName}.csv");
 
                 if (File.Exists(foupCsvFile))
                 {
@@ -493,31 +544,25 @@ namespace HMI_Master_KX7500.Modules.Frame
                         $"Result,{(passed ? 0 : 1)}{Environment.NewLine}" +
                         Environment.NewLine;
                     File.WriteAllText(foupCsvFile, header + rows);
+                    File.Move(foupCsvFile, finalFile);
+
+                    // Remember this FOUP, a following rework continues it
+                    string[] state = foupCsvReadState();
+                    if (state.Length >= 2 && int.TryParse(state[1], out int number))
+                    {
+                        foupCsvWriteState(state[0], number, Path.GetFileName(finalFile));
+                    }
+                    LogHelper.COMPort(GetType().Name, $"FOUP CSV shell end ({foupCsvShellType}): {finalFile}");
                 }
                 else
                 {
                     LogHelper.COMPort(GetType().Name, $"FOUP CSV shell end ({status}) without screw data: {foupCsvUnitName}");
                 }
-
-                string finalFolder = Path.Combine(foupCsvLotFolder, finalName);
-                if (Directory.Exists(foupCsvShellFolder))
-                {
-                    Directory.Move(foupCsvShellFolder, finalFolder);
-                }
-
-                // Remember this FOUP, a following rework continues it
-                string[] state = foupCsvReadState();
-                if (state.Length >= 2 && int.TryParse(state[1], out int number))
-                {
-                    foupCsvWriteState(state[0], number, finalName, Path.GetFileName(foupCsvFile));
-                }
-                LogHelper.COMPort(GetType().Name, $"FOUP CSV shell end ({foupCsvShellType}): {finalFolder}");
             }
             catch (Exception ex) { LogHelper.Error(GetType().Name, ex); }
             finally
             {
                 foupCsvShellActive = false;
-                foupCsvShellFolder = string.Empty;
                 foupCsvFile = string.Empty;
             }
         }
