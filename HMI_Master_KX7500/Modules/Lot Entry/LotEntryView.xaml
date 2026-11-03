@@ -181,13 +181,5 @@
             </Button.Style>-->
         </Button>
 
-        <TextBlock Grid.Row="7" Grid.Column="0" Text="TSO Column" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <!-- TSO fixed within a lot, like the recipe (shell colour) -->
-        <UniformGrid Rows="1" Grid.Row="7" Grid.Column="1"
-                     IsEnabled="{Binding LotLocked, Converter={StaticResource InverseBooleanConverter}}">
-            <TextBlock Text="{DynamicResource Off}" Style="{StaticResource RightTextBlock}"/>
-            <mahApps:ToggleSwitch x:Name="GeneralToggleSwitch" IsChecked="{Binding TSOColumnValue}" CheckChangedCommand="{Binding TSOColumnCommand}" CheckChangedCommandParameter="{Binding }" VerticalAlignment="Center"/>
-            <TextBlock Text="{DynamicResource On}" Style="{StaticResource LeftTextBlock}"/>
-        </UniformGrid>
     </Grid>
 </UserControl>

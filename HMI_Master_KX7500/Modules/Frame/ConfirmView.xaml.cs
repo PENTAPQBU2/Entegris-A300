@@ -7,6 +7,11 @@ namespace HMI_Master_KX7500.Modules.Frame
     /// </summary>
     public partial class ConfirmView : Window
     {
+        #region PublicProperties
+        // While open the PLC pop-up (PopUpView, also Topmost) does not activate itself over it
+        public static bool IsOpen { get; private set; }
+        #endregion
+
         #region Constructor
         public ConfirmView(string title, string message, string yesText, string noText)
         {
@@ -27,11 +32,25 @@ namespace HMI_Master_KX7500.Modules.Frame
             {
                 view.Owner = owner;
             }
-            return view.ShowDialog() == true;
+            IsOpen = true;
+            try
+            {
+                return view.ShowDialog() == true;
+            }
+            finally { IsOpen = false; }
         }
         #endregion
 
         #region PrivateEvents
+        // Bottom of the screen, below the PLC pop-up (centre), so both stay visible
+        private void Window_ContentRendered(object sender, System.EventArgs e)
+        {
+            Rect workArea = SystemParameters.WorkArea;
+            Left = workArea.Left + (workArea.Width - ActualWidth) / 2;
+            Top = workArea.Bottom - ActualHeight - 20;
+            Activate();
+        }
+
         private void ButtonYes_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;

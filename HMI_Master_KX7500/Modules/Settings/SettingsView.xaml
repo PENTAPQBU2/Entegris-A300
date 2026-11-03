@@ -56,7 +56,17 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
+                                        <!-- Door switch / E-Stop / Safety relay bypass hidden (moved to the end of the list) -->
                                         <UniformGrid Rows="1">
+                                            <UniformGrid.Style>
+                                                <Style TargetType="{x:Type UniformGrid}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SettingsGeneralGroupToggleHidden}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </UniformGrid.Style>
                                             <TextBlock Text="{Binding SettingsGeneralGroupToggleName}" VerticalAlignment="Center"/>
                                             <UniformGrid Rows="1">
                                                 <TextBlock Text="{DynamicResource Off}" Style="{StaticResource RightTextBlock}"/>
