@@ -26,10 +26,12 @@
 
         #region FOUP CSV (MT_003)
         // FOUP CSV\<LotID>\<LotID>_<00001>_Pass\<yyyyMMddHHmmss>.csv, lot folder created by New Lot
+        // Property, not a field: FrameView.initializeFolderPath() sets every public field of this class by
+        // reflection (GetFields), a const field there throws and stops the HMI start-up (all pages empty).
 #if DEBUG
-        public const string FoupCsv = @"D:\HMI_A300\FOUP CSV\";
+        public static string FoupCsv { get { return @"D:\HMI_A300\FOUP CSV\"; } }
 #else
-        public const string FoupCsv = @"D:\HMI\FOUP CSV\";
+        public static string FoupCsv { get { return @"D:\HMI\FOUP CSV\"; } }
 #endif
 
         // Lot ID as folder name, empty Lot ID (shell without lot) -> "NoLotID"
