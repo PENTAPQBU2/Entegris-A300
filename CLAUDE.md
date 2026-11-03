@@ -67,8 +67,8 @@ PLC program export (KV STUDIO mnemonic, UTF-16 text): `PLC_Export/Program/*.mnm`
 
 ## Lot Entry / shell colour (done)
 - TSO Column toggle (`MR4515`) removed from Lot Entry (HMI no longer reads/writes it). Settings page hides the Door Switch / E-Stop / Safety Relay bypass (`SettingsGeneralService.HiddenToggleKeys`, moved to the end of the list). Hard Reset / Initialize confirm (`ConfirmView`) opens at the bottom of the screen and the PLC pop-up does not re-activate over it while it is open.
-- Inputs (Lot ID, Operator, Shell Quantity, Recipe) + New Lot button locked (`LotLocked`) from the New Lot click (`NewLotPending`, PLC needs 10 s, 15 s timeout) while `MR49500` New_Lot_Created is ON (`updateLotCreated()` in `LotEntry_OPCUA_ViewModel.Update()`, like Welding HMI). On lot start the running lot data is read back from PLC into the inputs. Unlock = End Lot.
-- End Lot button enabled only when `EM1500.4` Lot_Info_DB_OK_To_Stop_Lot is ON (lot created AND `MR3013` Machine_Empty = no shell on `R10400` I20 AND `EM0.2` waiting for operator); otherwise the PLC drops `MR49502`. `MR49503` OK_To_End_Lot is never written by the PLC. PLCTag uses `"EM1500.04"` (KeyenceDll removes the dot, bit needs 2 digits).
+- Inputs (Lot ID, Operator, Shell Quantity, Recipe) + New Lot button locked while `MR49500` New_Lot_Created is ON (comes 10 s after the click; `updateLotCreated()` in `LotEntry_OPCUA_ViewModel.Update()`, like Welding HMI). On lot start the running lot data is read back from PLC into the inputs. Unlock = End Lot.
+- End Lot button always enabled (user decision). PLC accepts `MR49502` only when `EM1500.4` Lot_Info_DB_OK_To_Stop_Lot is ON (lot created AND `MR3013` Machine_Empty = no shell on `R10400` I20 AND `EM0.2` waiting for operator), otherwise drops it silently. `MR49503` OK_To_End_Lot is never written by the PLC.
 - Operator ID and Shell Quantity (`EM1561`, label key `LOT_QUANTITY`) are free inputs, written on New Lot, no HMI logic.
 - `Modules/Lot Entry/LotEntryView.xaml`, `ModulesView/LotEntry/LotEntry_OPCUA_ViewModel.cs` (`selectShellColourCommand(string colour)`), `Model/LotEntry/LotEntryModel.cs` (`SelectShellColourCommand`).
 
