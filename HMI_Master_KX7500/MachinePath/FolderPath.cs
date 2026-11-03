@@ -23,5 +23,34 @@
         public static string RecipeSetting = string.Empty;
         public static string FoupDataFolder = string.Empty;
         #endregion
+
+        #region FOUP CSV (MT_003)
+        // FOUP CSV\<LotID>\<LotID>_<00001>_Pass\<yyyyMMddHHmmss>.csv, lot folder created by New Lot
+#if DEBUG
+        public const string FoupCsv = @"D:\HMI_A300\FOUP CSV\";
+#else
+        public const string FoupCsv = @"D:\HMI\FOUP CSV\";
+#endif
+
+        // Lot ID as folder name, empty Lot ID (shell without lot) -> "NoLotID"
+        public static string FoupCsvLotName(string lotId)
+        {
+            string name = (lotId ?? string.Empty).Replace("\0", string.Empty).Trim();
+            if (string.IsNullOrEmpty(name))
+            {
+                return "NoLotID";
+            }
+            foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+            {
+                name = name.Replace(c, '_');
+            }
+            return name;
+        }
+
+        public static string FoupCsvLotFolder(string lotId)
+        {
+            return System.IO.Path.Combine(FoupCsv, FoupCsvLotName(lotId));
+        }
+        #endregion
     }
 }

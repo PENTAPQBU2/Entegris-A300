@@ -254,6 +254,47 @@ namespace HMI_Master_KX7500.Model.LotEntry
                 {
                     lotCreated = value;
                     RaisePropertyChanged(nameof(LotCreated));
+                    RaisePropertyChanged(nameof(LotLocked));
+                }
+            }
+        }
+
+        // New Lot clicked, waiting for the PLC (MR49500 comes ON after 10 s): lock already now
+        private bool newLotPending = false;
+        [XmlIgnore]
+        public bool NewLotPending
+        {
+            get { return newLotPending; }
+            set
+            {
+                if (newLotPending != value)
+                {
+                    newLotPending = value;
+                    RaisePropertyChanged(nameof(NewLotPending));
+                    RaisePropertyChanged(nameof(LotLocked));
+                }
+            }
+        }
+
+        // Lot Entry inputs, TSO and New Lot disabled from New Lot click until End Lot
+        [XmlIgnore]
+        public bool LotLocked
+        {
+            get { return lotCreated || newLotPending; }
+        }
+
+        // PLC Lot_Info_DB_OK_To_Stop_Lot (EM1500.4): lot created AND machine empty -> End Lot enabled
+        private bool okToStopLot = false;
+        [XmlIgnore]
+        public bool OkToStopLot
+        {
+            get { return okToStopLot; }
+            set
+            {
+                if (okToStopLot != value)
+                {
+                    okToStopLot = value;
+                    RaisePropertyChanged(nameof(OkToStopLot));
                 }
             }
         }
