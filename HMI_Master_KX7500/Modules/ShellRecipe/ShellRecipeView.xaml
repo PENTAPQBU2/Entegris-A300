@@ -64,7 +64,7 @@
                     <TextBlock Text="{Binding RobotPointInfo}" TextWrapping="Wrap" Margin="0 0 0 8"/>
                     <Button Content="Create Points" Command="{Binding CreatePointCommand}" HorizontalAlignment="Left" MinWidth="160"/>
                     <TextBlock TextWrapping="Wrap" Margin="0 8 0 0" FontSize="12"
-                               Text="Renames the old Black/Transparent points (Black_P01.., Trans_P01..), copies the 33 Black points to &lt;prefix&gt;_P01..P21 + &lt;prefix&gt;_PxxEntry for every recipe with a prefix in the robot installation file and makes recipe_points.script. Load both files on the robot."/>
+                               Text="Renames the old Black/Transparent points (Black_P01.., Trans_P01..), copies the 33 Black points to &lt;prefix&gt;_P01..P21 + &lt;prefix&gt;_PxxEntry for every recipe with a prefix in the robot installation file and makes the recipe script. Reads the installation from the robot and puts the new installation + script into a new folder &quot;Robot Program (date time)&quot; on the robot (pendrive if the robot cannot be reached); copy both over the files in use on the pendant."/>
                 </StackPanel>
             </GroupBox>
         </Grid>
