@@ -220,7 +220,7 @@ namespace HMI_Master_KX7500.Modules.Frame
         //            Recipe,<recipe name of shell ID in EM1559, e.g. Black>
         //            Result,0 (0 = Pass, 1 = Fail)
         //            (blank line)
-        //            ,Result,ScrewDateTime,Torque,TargetTorque,TorqueUnit,Angle,Time,ScrewType,Error
+        //            ,Result,ScrewDateTime,Torque,TargetTorque,TorqueUnit,Angle(deg),Time(s),ScrewType,Error
         //            Screw No 1,OK,...
         // <00001> = running number per Lot ID = highest FOUP number in the lot folder + 1
         //           (same Lot ID again after End Lot -> continues in the same lot folder).
@@ -244,7 +244,9 @@ namespace HMI_Master_KX7500.Modules.Frame
         private string foupCsvFile = string.Empty;       // <lot folder>\<LotID>_<00001>_InProgress.csv
         private bool foupCsvLastShellBit = false;
         private bool foupCsvFirstPoll = true;
-        private const string foupCsvTableHeader = ",Result,ScrewDateTime,Torque,TargetTorque,TorqueUnit,Angle,Time,ScrewType,Error";
+        private const string foupCsvTableHeader = ",Result,ScrewDateTime,Torque,TargetTorque,TorqueUnit,Angle(deg),Time(s),ScrewType,Error";
+        // header of CSVs written before the units were added (a rework can reopen such a CSV)
+        private const string foupCsvLegacyTableHeader = ",Result,ScrewDateTime,Torque,TargetTorque,TorqueUnit,Angle,Time,ScrewType,Error";
 #if DEBUG
         private int debugScrewNum = 0;
 #endif
@@ -363,6 +365,10 @@ namespace HMI_Master_KX7500.Modules.Frame
                 // Remove the header block of the last result, it is written again when the rework finishes
                 List<string> lines = File.ReadAllLines(foupCsvFile).ToList();
                 int tableStart = lines.IndexOf(foupCsvTableHeader);
+                if (tableStart < 0)
+                {
+                    tableStart = lines.IndexOf(foupCsvLegacyTableHeader);
+                }
                 if (tableStart > 0)
                 {
                     File.WriteAllLines(foupCsvFile, lines.Skip(tableStart));
