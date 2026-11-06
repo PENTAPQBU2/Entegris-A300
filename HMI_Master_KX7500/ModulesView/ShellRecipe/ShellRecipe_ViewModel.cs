@@ -1,14 +1,17 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using HMI_Master_KX7500.MachinePath;
 using HMI_Master_KX7500.Model.ShellRecipe;
 using HMI_Master_KX7500.Service.ShellRecipe;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -307,9 +310,17 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
         }
 
         // Robot points for all recipes with a prefix (Black_P01.. -> <prefix>_P01..P21, <prefix>_PxxEntry) in a new installation file
-        // + recipe_points.script with the point sets of all recipes, both files are loaded on the robot
-        private void createPointCommand()
+        // + script with the point sets of all recipes. The source is the installation in use on the robot (SFTP, RobotProgramExport.ToRobot);
+        // the 2 files go into a new folder "Robot Program (..)" on the robot, the operator copies them over the files in use on the pendant.
+        // Robot not reachable -> pendrive way: local source file, same folder and names in a chosen folder.
+        private bool creatingPoints;
+
+        private async void createPointCommand()
         {
+            if (creatingPoints)
+            {
+                return;
+            }
             try
             {
                 ShellRecipeModel recipe = SelectedRecipe;
@@ -320,43 +331,90 @@ namespace HMI_Master_KX7500.ModulesView.ShellRecipe
                     return;
                 }
 
-                OpenFileDialog openDialog = new OpenFileDialog
-                {
-                    Title = "Select the robot installation file (latest copy from the robot)",
-                    Filter = "Robot installation (*.installation)|*.installation",
-                    FileName = "default.installation"
-                };
-                if (openDialog.ShowDialog() != true)
-                {
-                    return;
-                }
-
-                SaveFileDialog saveDialog = new SaveFileDialog
-                {
-                    Title = $"Save the new robot installation file ({RobotPointService.ScriptFileName} is saved in the same folder)",
-                    Filter = "Robot installation (*.installation)|*.installation",
-                    InitialDirectory = Path.GetDirectoryName(openDialog.FileName),
-                    FileName = $"{DateTime.Now:yyyyMMddHHmmss}.installation"
-                };
-                if (saveDialog.ShowDialog() != true)
+                creatingPoints = true;
+                RobotSettingModel robot = RobotProgramExport.LoadSettings(FilePath.Robot_Settings_File);
+                string source = robot.RemotePath(robot.InstallationFileName);
+                if (MessageBox.Show($"Create the robot points from {source} on the robot {robot.Host}?\n\n" +
+                    $"The new files go into a new folder \"{RobotProgramExport.FolderName(DateTime.Now)}\" on the robot, nothing on the robot is overwritten.",
+                    "Create Points", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }
 
-                string scriptFile = Path.Combine(Path.GetDirectoryName(saveDialog.FileName), RobotPointService.ScriptFileName);
-                if (!RobotPointService.CreatePoints(openDialog.FileName, saveDialog.FileName, scriptFile,
-                    ShellRecipeService.GetRecipeList(), out string message))
+                List<ShellRecipeModel> recipes = ShellRecipeService.GetRecipeList();
+                DateTime now = DateTime.Now;
+                RobotExportResult result = await Task.Run(() =>
                 {
-                    MessageBox.Show($"Create Points failed: {message}", "Create Points", MessageBoxButton.OK, MessageBoxImage.Error);
+                    using (IRobotFiles files = new SftpRobotFiles(robot))
+                    {
+                        return RobotProgramExport.ToRobot(files, robot, recipes, now);
+                    }
+                });
+
+                if (result.Status == RobotExportStatus.NotReachable)
+                {
+                    logger.Warn($"Create Points: robot not reachable: {result.Message}");
+                    if (MessageBox.Show($"The robot cannot be reached:\n{result.Message}\n\nUse a pendrive instead?",
+                        "Create Points", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                    RobotExportResult local = await createPointsLocal(robot, recipes);
+                    if (local == null)
+                    {
+                        return;
+                    }
+                    result = local;
+                }
+
+                if (result.Status != RobotExportStatus.Created)
+                {
+                    logger.Warn($"Create Points failed: {result.Message}");
+                    MessageBox.Show($"Create Points failed: {result.Message}", "Create Points", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                MessageBox.Show($"{message}\n\n" +
-                    $"Files:\n{saveDialog.FileName}\n{scriptFile}\n\n" +
-                    "Load both files on the robot, then adjust the points on the teach pendant.",
+                logger.Info($"Robot points: {result.Folder}: {result.Message}");
+                MessageBox.Show($"{result.Message}\n\nNew folder:\n{result.Folder}\n  {robot.InstallationFileName}\n  {result.ScriptName}\n\n" +
+                    $"On the pendant copy both files over the ones in use ({source} and the script), load them, then adjust the points.",
                     "Create Points", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex) { logger.Error(ex); }
+            finally { creatingPoints = false; }
+        }
+
+        // pendrive way: installation copied from the robot -> same folder and names in a chosen folder; null = cancelled
+        private async Task<RobotExportResult> createPointsLocal(RobotSettingModel robot, List<ShellRecipeModel> recipes)
+        {
+            OpenFileDialog openDialog = new OpenFileDialog
+            {
+                Title = $"Select the robot installation file (copy of {robot.InstallationFileName} from the robot)",
+                Filter = "Robot installation (*.installation)|*.installation",
+                FileName = robot.InstallationFileName
+            };
+            if (openDialog.ShowDialog() != true)
+            {
+                return null;
+            }
+
+            string target;
+            using (CommonOpenFileDialog folderDialog = new CommonOpenFileDialog
+            {
+                Title = "Select where to make the \"Robot Program (..)\" folder (e.g. the pendrive)",
+                IsFolderPicker = true,
+                InitialDirectory = Path.GetDirectoryName(openDialog.FileName)
+            })
+            {
+                if (folderDialog.ShowDialog() != CommonFileDialogResult.Ok)
+                {
+                    return null;
+                }
+                target = folderDialog.FileName;
+            }
+
+            string source = openDialog.FileName;
+            DateTime now = DateTime.Now;
+            return await Task.Run(() => RobotProgramExport.ToLocal(source, target, robot, recipes, now));
         }
         #endregion
 

@@ -47,5 +47,6 @@
 
         public static string Setup_Settings_File = string.Empty;
         public static string COMPort_Settings_File = string.Empty;
+        public static string Robot_Settings_File = string.Empty; // MT_001 Create Points: robot pendant SFTP settings
     }
 }
